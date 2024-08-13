@@ -1,4 +1,5 @@
 import Header from '@/components/auth/Header'
+import Link from 'next/link'
 import React from 'react'
 
 export default function page() {
@@ -30,12 +31,12 @@ export default function page() {
                 </div>
 
                 <div className="d-flex gap-3 align-items-center mt-4">
-                  <a href="./index.html" className="dashboard-btn">
+                  <Link href="/admin" className="dashboard-btn">
                     Dashboard
-                  </a>
-                  <a href="./add-Product.html" className="add-product-btn">
+                  </Link>
+                  <Link href="/admin/add-product" className="add-product-btn">
                     Add Product
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
