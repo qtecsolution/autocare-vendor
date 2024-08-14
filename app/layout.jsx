@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
           rel="shortcut icon"
           href="./assets/images/favicon.ico"
           type="image/x-icon"
-        ></link>
+        />
         <title>AutoCare vendor-Login</title>
         <link
           rel="shortcut icon"
