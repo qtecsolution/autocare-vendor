@@ -2,10 +2,9 @@ import Image from "next/image";
 import styles from "./page.module.css";
 import Header from "@/components/auth/Header";
 import Link from "next/link";
-
 export default function Home() {
   return (
-    <div>
+    <>
       <Header />
       <section className="login-section">
         <div className="container">
@@ -88,6 +87,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }

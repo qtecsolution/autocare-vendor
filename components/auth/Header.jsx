@@ -18,6 +18,7 @@ export default function Header() {
         return '';
      };
     return (
+        <>
         <header className="header-section">
             <div className="container">
                 <div className="header-section-inner d-flex align-items-center justify-content-between gap-4">
@@ -39,5 +40,6 @@ export default function Header() {
                 </div>
             </div>
         </header>
+        </>
     );
 }
