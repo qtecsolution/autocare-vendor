@@ -22,7 +22,6 @@ export default function RootLayout({ children }) {
        <SideBar />
         {children}
       </div>
-      </body>
 
       {/* <!-- jquery js --> */}
       <script src="./assets/js/jquery.min.js"></script>
@@ -33,6 +32,7 @@ export default function RootLayout({ children }) {
       <script src="./assets/js/nice-select2/nice-select2.js"></script>
       {/* <!-- main js --> */}
       <script src="./assets/js/main.js"></script>
+      </body>
     </html>
   );
 }

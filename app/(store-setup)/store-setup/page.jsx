@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 function page() {
@@ -51,9 +52,9 @@ function page() {
               </select>
             </div>
 
-            <a href="store-availabilities" class="login-btn">
+            <Link href="/store-availabilities" class="login-btn">
               Save & Continue
-            </a>
+            </Link>
           </form>
         </div>
       </div>

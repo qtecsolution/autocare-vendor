@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 function page() {
@@ -50,13 +51,13 @@ function page() {
               </svg>
               <span>Import</span>
             </a>
-            <a href="#" className="add-product-btn">
+            <Link href="/products/add" className="add-product-btn">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M9.99984 4.1665V15.8332M4.1665 9.99984H15.8332" stroke="white" stroke-width="1.67"
                   stroke-linecap="round" stroke-linejoin="round" />
               </svg>
               <span>Add Product</span>
-            </a>
+            </Link>
           </div>
         </div>
 

@@ -29,7 +29,7 @@ export default function page() {
             </div>
 
             <div class="d-flex gap-3 align-items-center mt-4">
-              <Link href="/admin" class="dashboard-btn">
+              <Link href="/dashboard" class="dashboard-btn">
                 Manage Garage
               </Link>
               <Link href="/products/add" class="add-product-btn">

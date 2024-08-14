@@ -37,12 +37,13 @@ export default function RootLayout({ children }) {
         {/* <!-- CUSTOM-CSS --> */}
         <link rel="stylesheet" href="assets/css/style.css" />
       </head>
-      <body>{children}</body>
-
-      {/* <!-- BOOTSTRAP-JS --> */}
-      <script src="assets/js/bootstrap/bootstrap.bundle.min.js"></script>
-      {/* <!-- main js --> */}
-      <script src="./assets/js/main.js"></script>
+      <body>
+        {children}
+        {/* <!-- BOOTSTRAP-JS --> */}
+        <script src="assets/js/bootstrap/bootstrap.bundle.min.js"></script>
+        {/* <!-- main js --> */}
+        <script src="./assets/js/main.js"></script>
+      </body>
     </html>
   );
 }
