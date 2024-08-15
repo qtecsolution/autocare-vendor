@@ -1,6 +1,5 @@
 'use client';
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link';
 function SideBar() {
   return (
     <nav id="sidebar">
@@ -364,25 +363,25 @@ function SideBar() {
           <div className="collapse" id="dropdownmenu-7">
             <ul className="submenu list-unstyled mt-2">
               <li className="sumenu-item">
-                <Link href="./seller-profile.html" className="submenu-link">
+                <Link href="/seller-profile" className="submenu-link">
                   <span className="text">Seller Profile</span>
                </Link>
               </li>
 
               <li className="sumenu-item">
-                <Link href="./account-setting.html" className="submenu-link">
-                  <span className="text">Account Setting</span>
+                <Link href="/account-settings" className="submenu-link">
+                  <span className="text">Account Settings</span>
                </Link>
               </li>
 
               <li className="sumenu-item">
-                <Link href="./setting.html" className="submenu-link">
+                <Link href="/settings" className="submenu-link">
                   <span className="text">Settings</span>
                </Link>
               </li>
 
               <li className="sumenu-item">
-                <Link href="./user-management.html" className="submenu-link">
+                <Link href="/user-management" className="submenu-link">
                   <span className="text">User Management</span>
                </Link>
               </li>
