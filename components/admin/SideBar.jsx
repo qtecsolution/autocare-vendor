@@ -79,13 +79,13 @@ function SideBar() {
           <div className="collapse" id="dropdownmenu-1">
             <ul className="submenu list-unstyled mt-2">
               <li className="sumenu-item">
-                <Link href="/products/add" className="submenu-link">
+                <Link href="/product-add" className="submenu-link">
                   <span className="text">Add Product</span>
                 </Link>
               </li>
 
               <li className="sumenu-item">
-                <Link href="/products/list" className="submenu-link">
+                <Link href="/product-list" className="submenu-link">
                   <span className="text">All Products</span>
                 </Link>
               </li>

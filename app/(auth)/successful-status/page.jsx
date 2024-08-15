@@ -34,7 +34,7 @@ export default function page() {
                   <Link href="/dashboard" className="dashboard-btn">
                     Dashboard
                   </Link>
-                  <Link href="/products/add" className="add-product-btn">
+                  <Link href="/product-add" className="add-product-btn">
                     Add Product
                   </Link>
                 </div>

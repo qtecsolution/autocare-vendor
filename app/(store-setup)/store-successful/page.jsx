@@ -32,7 +32,7 @@ export default function page() {
               <Link href="/dashboard" class="dashboard-btn">
                 Dashboard
               </Link>
-              <Link href="/products/add" class="add-product-btn">
+              <Link href="/product-add" class="add-product-btn">
                 Add Product
               </Link>
             </div>

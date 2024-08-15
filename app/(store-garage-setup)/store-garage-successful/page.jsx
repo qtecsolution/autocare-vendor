@@ -32,7 +32,7 @@ export default function page() {
               <Link href="#" class="dashboard-btn">
                 Manage Store
               </Link>
-              <Link href="/products/add" class="add-product-btn">
+              <Link href="/product-add" class="add-product-btn">
                 Add Product
               </Link>
               <Link href="#" class="add-product-btn">
