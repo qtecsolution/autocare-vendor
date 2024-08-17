@@ -89,8 +89,8 @@ function page() {
             <div class="inner-bar-chart">
               <div class="bar-chart">
 
-              {/* <div class="bar" style="width: 100%;">
-                  <span style="width: 20%;"></span> */}
+              {/* <div class="bar" style={{width: '100%'}}>
+                  <span style={{width: '20%'}}></span> */}
                 <div class="bar">
                   <span></span>
                 </div>

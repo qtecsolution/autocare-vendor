@@ -245,7 +245,7 @@ function SideBar() {
         </li>
 
         <li className="menu-list-item">
-          <Link className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-4" role="button"
+          <Link className={`menu-list-link collapsed ${isLinkActive(['/flash-sales'])}`} data-toggle="collapse" href="#dropdownmenu-4" role="button"
             aria-expanded="false">
             <span className="icontitle">
               <span className="icon supporticon">
@@ -270,19 +270,19 @@ function SideBar() {
           <div className="collapse" id="dropdownmenu-4">
             <ul className="submenu list-unstyled mt-2">
               <li className="sumenu-item">
-                <Link href="./campaign-management-emply.html" className="submenu-link">
+                <Link href="/campaign-management" className="submenu-link">
                   <span className="text">Campaign Management</span>
                </Link>
               </li>
 
               <li className="sumenu-item">
-                <Link href="./campaign-list.html" className="submenu-link">
+                <Link href="/campaign-list" className="submenu-link">
                   <span className="text">Campaign List</span>
                </Link>
               </li>
 
               <li className="sumenu-item">
-                <Link href="./flash-sales.html" className="submenu-link">
+                <Link href="/flash-sales" className="submenu-link">
                   <span className="text">Flash Sales</span>
                </Link>
               </li>

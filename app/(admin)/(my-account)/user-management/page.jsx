@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 export default function page() {
   return (
@@ -32,7 +33,7 @@ export default function page() {
           <div class="order-management-header">
             <div class="d-flex justify-content-between align-items-center">
               <h1 class="title">User Management</h1>
-              <a href="./add-sub-account.html" class="new-campaign-btn">
+              <Link href="/add-sub-account" class="new-campaign-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                   <path d="M9.99984 4.16675V15.8334M4.1665 10.0001H15.8332" stroke="white" stroke-width="1.67"
                     stroke-linecap="round" stroke-linejoin="round" />
@@ -40,7 +41,7 @@ export default function page() {
                 <span>
                   Add Sub Account
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -49,8 +50,8 @@ export default function page() {
       <section class="user-management-section">
         <div class="user-management-section-inner">
           <div class="user-management-all-btn">
-            <a href="./user-management.html" class="user-management-btn active">Manage Sub Account</a>
-            <a href="./manage-roles.html" class="user-management-btn ">Manage Roles</a>
+            <Link href="/add-sub-account" class="user-management-btn active">Manage Sub Account</Link>
+            <Link href="/manage-roles" class="user-management-btn ">Manage Roles</Link>
           </div>
 
           <div class="user-management-inner">
