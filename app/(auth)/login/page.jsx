@@ -1,8 +1,39 @@
+'use client';
 import Header from '@/components/auth/Header'
 import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React,{ useState } from 'react';
 
 export default function page() {
+
+    const router = useRouter()
+    const [username, setUsername] = useState('emilys');
+    const [password, setPassword] = useState('emilyspass');
+  
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username,
+            password,
+            expiresInMins: 30,
+          }),
+        });
+  
+        const data = await response.json();
+        if (data.token) {
+          localStorage.setItem('authuser', JSON.stringify(data));
+          router.push('/dashboard');
+        } else {
+          alert("Invalid Credentials");
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
   return (
     <div>
   <Header />
@@ -51,7 +82,7 @@ export default function page() {
                   </p>
                 </div>
 
-                <form className="form-inner">
+                <form className="form-inner" onSubmit={handleSubmit}>
                   <div className="inner-input">
                     <label className="input-label" for="phone-number">Phone Number</label>
                     <div className="input-field">
@@ -75,10 +106,12 @@ export default function page() {
                     Forgot Password?
                     <a href="#">Reset</a>
                   </p>
-
-                  <Link href="signup" className="login-btn">
+                  <button type="submit" className="login-btn">
+                     Login
+                  </button>
+                  {/* <Link href="signup" className="login-btn">
                     Login
-                  </Link>
+                  </Link> */}
                 </form>
               </div>
             </div>
