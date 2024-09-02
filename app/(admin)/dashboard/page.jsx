@@ -1,7 +1,8 @@
 'use client';
 import Link from "next/link";
+import withAuth from "@/hoc/withAuth";
 
-export default function Home() {
+export function Home() {
   return (
     <div id="content">
       <div className="main-content">
@@ -482,3 +483,4 @@ export default function Home() {
     </div>
   )
 }
+export default withAuth(Home);

@@ -1,20 +1,21 @@
 import axios from 'axios';
 
 export const login = async (number, password) => {
-  try {
-    const response = await axios.post('/api/login', {
-      number,
-      password,
-    });
+    try {
+        const response = await axios.post('https://www.spider.autocare.com.bd/api/token/', {
+            username: number,
+            password: password,
+        });
 
-    const { accessToken } = response.data;
+        const { access, refresh, customer } = response.data;
 
-    // Store the token in local storage
-    localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('accessToken', access); // Save access token
+        localStorage.setItem('refreshToken', refresh); // Save refresh token
+        localStorage.setItem('customerInfo', JSON.stringify(customer));
 
-    return response.data;
-  } catch (error) {
-    console.error('Login failed:', error);
-    throw error; // Re-throw the error to be handled by the caller
-  }
+        return response.data;
+    } catch (error) {
+        console.error('Login failed:', error);
+        throw error; // Re-throw the error to be handled by the caller
+    }
 };
