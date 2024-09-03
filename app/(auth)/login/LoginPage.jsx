@@ -15,7 +15,7 @@ function LoginPage() {
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken) {
-          router.push('/dashboard');
+          router.push('/');
         }
       }, [router]);
 
@@ -23,7 +23,7 @@ function LoginPage() {
         e.preventDefault();
         try {
             await login(number, password);
-            router.push('/dashboard');
+            router.push('/');
         } catch (error) {
             setError('Login failed');
         }

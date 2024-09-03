@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { setAccessTokenToCookies, setRefreshTokenToCookies } from '@/actions/actions';
 
 export const login = async (number, password) => {
     try {
@@ -9,9 +10,10 @@ export const login = async (number, password) => {
 
         const { access, refresh, customer } = response.data;
 
-        localStorage.setItem('accessToken', access); // Save access token
-        localStorage.setItem('refreshToken', refresh); // Save refresh token
-        localStorage.setItem('customerInfo', JSON.stringify(customer));
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+        await setAccessTokenToCookies(access);
+        await setRefreshTokenToCookies(refresh);
 
         return response.data;
     } catch (error) {

@@ -1,36 +1,52 @@
 'use client';
+import { deleteAccessToken, deleteRefreshToken } from '@/actions/actions';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-function SideBar() {
+export default function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isLinkActive = (paths) => (paths.includes(pathname) ? "active" : "");
+  const isLinkActive = (paths) => (paths.includes(pathname) ? "active" : "collapsed");
+  const isShowMenu = (paths) => (paths.includes(pathname) ? "show" : "");
+  const [sidebarActive, sidebarSetActive] = useState(true);
 
-  function logout() {
+  const logout = async () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('customerInfo');
+    await deleteAccessToken();
+    await deleteRefreshToken();
     router.push('/login');
   }
 
   return (
-    <nav id="sidebar">
+    <nav id="sidebar" className={sidebarActive ? '' : 'active'}>
       <div className="custom-menu">
-        <button type="button" id="sidebarCollapse" className="toggle-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd"
-              d="M11.7798 5.22007C11.9203 5.3607 11.9992 5.55132 11.9992 5.75007C11.9992 5.94882 11.9203 6.13945 11.7798 6.28007L8.05983 10.0001L11.7798 13.7201C11.8535 13.7887 11.9126 13.8715 11.9536 13.9635C11.9946 14.0555 12.0166 14.1548 12.0184 14.2556C12.0202 14.3563 12.0017 14.4563 11.964 14.5497C11.9262 14.6431 11.8701 14.7279 11.7989 14.7991C11.7276 14.8703 11.6428 14.9265 11.5494 14.9642C11.456 15.0019 11.356 15.0204 11.2553 15.0187C11.1546 15.0169 11.0553 14.9948 10.9633 14.9539C10.8713 14.9129 10.7885 14.8538 10.7198 14.7801L6.46983 10.5301C6.32938 10.3894 6.25049 10.1988 6.25049 10.0001C6.25049 9.80132 6.32938 9.6107 6.46983 9.47007L10.7198 5.22007C10.8605 5.07962 11.0511 5.00073 11.2498 5.00073C11.4486 5.00073 11.6392 5.07962 11.7798 5.22007Z"
-              fill="#0D9488" />
-          </svg>
+        <button type="button" id="sidebarCollapse" className="toggle-button" onClick={() => sidebarSetActive(sidebarActive ? false : true)}>
+          {sidebarActive ?
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M11.7798 5.22007C11.9203 5.3607 11.9992 5.55132 11.9992 5.75007C11.9992 5.94882 11.9203 6.13945 11.7798 6.28007L8.05983 10.0001L11.7798 13.7201C11.8535 13.7887 11.9126 13.8715 11.9536 13.9635C11.9946 14.0555 12.0166 14.1548 12.0184 14.2556C12.0202 14.3563 12.0017 14.4563 11.964 14.5497C11.9262 14.6431 11.8701 14.7279 11.7989 14.7991C11.7276 14.8703 11.6428 14.9265 11.5494 14.9642C11.456 15.0019 11.356 15.0204 11.2553 15.0187C11.1546 15.0169 11.0553 14.9948 10.9633 14.9539C10.8713 14.9129 10.7885 14.8538 10.7198 14.7801L6.46983 10.5301C6.32938 10.3894 6.25049 10.1988 6.25049 10.0001C6.25049 9.80132 6.32938 9.6107 6.46983 9.47007L10.7198 5.22007C10.8605 5.07962 11.0511 5.00073 11.2498 5.00073C11.4486 5.00073 11.6392 5.07962 11.7798 5.22007Z"
+                fill="#0D9488" />
+            </svg>
+            :
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M8.22007 14.7798C8.07945 14.6393 8.00056 14.4487 8.00056 14.25C8.00056 14.0513 8.07945 13.8607 8.22007 13.7201L11.9401 10L8.22007 6.27993C8.14638 6.21126 8.08726 6.12849 8.0463 6.03649C8.00534 5.9445 7.98336 5.84519 7.98152 5.74445C7.97968 5.64371 7.99822 5.54373 8.03597 5.45034C8.07371 5.35694 8.12983 5.27217 8.20107 5.20093C8.27231 5.12969 8.35708 5.07357 8.45048 5.03583C8.54388 4.99808 8.64387 4.97954 8.74461 4.98138C8.84535 4.98321 8.94464 5.00524 9.03664 5.0462C9.12864 5.08716 9.21142 5.14627 9.28007 5.22007L13.5301 9.47007C13.6705 9.6107 13.7494 9.80132 13.7494 10C13.7494 10.1988 13.6705 10.3894 13.5301 10.5301L9.28007 14.7799C9.13944 14.9204 8.94882 14.9993 8.75007 14.9993C8.55132 14.9993 8.3607 14.9204 8.22007 14.7798Z"
+                fill="#0D9488" />
+            </svg>
+          }
         </button>
       </div>
 
       <div className="sidebar-scroll">
         <div className="sidebar-header">
-          <figure className="d-flex justify-content-center">
-            <img src="./assets/images/logo.png" alt="logo" />
-          </figure>
+          <Link href="/">
+            <figure className="d-flex justify-content-center">
+              <img src="./assets/images/logo.png" alt="logo" />
+            </figure>
+          </Link>
 
           <form className="search-input">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -44,7 +60,7 @@ function SideBar() {
 
         <ul className="list-unstyled menu-list">
           <li className="menu-list-item">
-            <Link href="/dashboard" className={`menu-list-link ${isLinkActive(['/dashboard'])}`}>
+            <Link href="/" className={`menu-list-link ${isLinkActive(['/'])}`}>
               <span className="icontitle">
                 <span className="icon">
                   <svg className="" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -64,7 +80,7 @@ function SideBar() {
           </li>
 
           <li className="menu-list-item">
-            <Link className={`menu-list-link collapsed ${isLinkActive(['/product-add', '/product-list', '/brand-management'])}`} href="#dropdownmenu-1" data-toggle="collapse" aria-expanded="false">
+            <a className={`menu-list-link ${isLinkActive(['/add-product','/product-list'])}`} href="#dropdownmenu-1" data-toggle="collapse" aria-expanded="false">
               <span className="icontitle">
                 <span className="icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -86,33 +102,33 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
-            <div className="collapse" id="dropdownmenu-1">
+            <div className={`collapse ${isShowMenu(['/add-product','/product-list'])}`} id="dropdownmenu-1">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="/product-add" className="submenu-link">
+                  <Link href="/add-product" className={`submenu-link ${isLinkActive(['/add-product'])}`}>
                     <span className="text">Add Product</span>
                   </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="/product-list" className="submenu-link">
-                    <span className="text">All Products</span>
+                  <Link href="/product-list" className={`submenu-link ${isLinkActive(['/product-list'])}`}>
+                    <span className="text">Manage Product</span>
                   </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="./brand-management-empty.html" className="submenu-link">
                     <span className="text">Brand Management</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
 
           <li className="menu-list-item">
-            <Link className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-2" role="button"
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-2" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon">
@@ -132,35 +148,36 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
             <div className="collapse" id="dropdownmenu-2">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="./order-management-empty.html" className="submenu-link active">
+                  <a href="./order-management-empty.html" className="submenu-link">
                     <span className="text">Orders</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Return Refund</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Review</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
-          <li class="menu-list-item">
-            <Link class={`menu-list-link ${isLinkActive(['/add-services', '/service-list', 'mange-service', 'garage-manage'])}`} data-toggle="collapse" href="#dropdownmenu-8" role="button"
+
+          <li className="menu-list-item">
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-8" role="button"
               aria-expanded="false">
-              <span class="icontitle">
-                <span class="icon">
+              <span className="icontitle">
+                <span className="icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path fill-rule="evenodd" clip-rule="evenodd"
                       d="M12.0006 6.7499C12.0004 5.9299 12.1923 5.12126 12.5609 4.38876C12.9295 3.65626 13.4645 3.02028 14.1231 2.53179C14.7817 2.0433 15.5456 1.71587 16.3535 1.57575C17.1615 1.43563 17.991 1.48671 18.7756 1.7249C18.8997 1.76247 19.0118 1.83153 19.1012 1.92535C19.1906 2.01917 19.2541 2.13455 19.2857 2.26024C19.3172 2.38593 19.3156 2.51764 19.2811 2.64254C19.2466 2.76744 19.1803 2.88126 19.0886 2.9729L15.7686 6.2919C15.8316 6.7669 16.0446 7.2259 16.4096 7.5909C16.7746 7.9559 17.2336 8.1689 17.7096 8.2309L21.0276 4.9119C21.1193 4.8203 21.2331 4.754 21.358 4.71947C21.4829 4.68494 21.6146 4.68336 21.7403 4.71488C21.866 4.7464 21.9814 4.80995 22.0752 4.89934C22.169 4.98872 22.2381 5.10089 22.2756 5.2249C22.5249 6.04576 22.5691 6.91518 22.4046 7.7571C22.24 8.59902 21.8717 9.3878 21.3318 10.0544C20.7918 10.721 20.0968 11.2452 19.3074 11.581C18.518 11.9169 17.6584 12.0542 16.8036 11.9809C15.7856 11.8949 14.9336 12.0809 14.4946 12.6149L7.34465 21.2999C7.05189 21.6537 6.68848 21.9424 6.27769 22.1476C5.8669 22.3528 5.41779 22.47 4.95911 22.4916C4.50043 22.5132 4.04229 22.4388 3.61402 22.2731C3.18576 22.1075 2.7968 21.8542 2.47207 21.5295C2.14734 21.2049 1.89398 20.816 1.72823 20.3877C1.56247 19.9595 1.48797 19.5014 1.50948 19.0427C1.531 18.584 1.64806 18.1349 1.85318 17.724C2.0583 17.3132 2.34695 16.9497 2.70065 16.6569L11.3846 9.5059C11.9176 9.0659 12.1046 8.2149 12.0186 7.1969C12.0064 7.04822 12.0004 6.89909 12.0006 6.7499ZM4.11765 19.1249C4.11765 18.926 4.19667 18.7352 4.33732 18.5946C4.47797 18.4539 4.66874 18.3749 4.86765 18.3749H4.87565C5.07456 18.3749 5.26533 18.4539 5.40598 18.5946C5.54663 18.7352 5.62565 18.926 5.62565 19.1249V19.1329C5.62565 19.3318 5.54663 19.5226 5.40598 19.6632C5.26533 19.8039 5.07456 19.8829 4.87565 19.8829H4.86765C4.66874 19.8829 4.47797 19.8039 4.33732 19.6632C4.19667 19.5226 4.11765 19.3318 4.11765 19.1329V19.1249Z"
@@ -174,41 +191,42 @@ function SideBar() {
                   </svg>
                 </span>
 
-                <span class="linktitle">Services</span>
+                <span className="linktitle">Services</span>
               </span>
 
-              <span class="arrowicon">
+              <span className="arrowicon">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5 7.5L10 12.5L15 7.5" stroke="#141B34" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
-            <div class="collapse show" id="dropdownmenu-8">
-              <ul class="submenu list-unstyled mt-2">
-                <li class="sumenu-item">
-                  <Link href="/add-service" class="submenu-link">
-                    <span class="text">Add Services</span>
-                  </Link>
+            <div className="collapse" id="dropdownmenu-8">
+              <ul className="submenu list-unstyled mt-2">
+                <li className="sumenu-item">
+                  <a href="./add-services.html" className="submenu-link">
+                    <span className="text">Add Services</span>
+                  </a>
                 </li>
 
-                <li class="sumenu-item">
-                  <Link href="/service-list" class="submenu-link active">
-                    <span class="text">Manage Services</span>
-                  </Link>
+                <li className="sumenu-item">
+                  <a href="./all-services-empty.html" className="submenu-link">
+                    <span className="text">Manage Services</span>
+                  </a>
                 </li>
 
-                <li class="sumenu-item">
-                  <Link href="#" class="submenu-link">
-                    <span class="text">Garage Management</span>
-                  </Link>
+                <li className="sumenu-item">
+                  <a href="./garage-management.html" className="submenu-link">
+                    <span className="text">Garage Management</span>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
+
           <li className="menu-list-item">
-            <Link className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-3" role="button"
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-3" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -228,33 +246,33 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
             <div className="collapse" id="dropdownmenu-3">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Return Orders 1</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Return Orders 2</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Return Orders 3</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
 
           <li className="menu-list-item">
-            <Link className={`menu-list-link collapsed ${isLinkActive(['/flash-sales'])}`} data-toggle="collapse" href="#dropdownmenu-4" role="button"
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-4" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -274,39 +292,39 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
             <div className="collapse" id="dropdownmenu-4">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="/campaign-management" className="submenu-link">
+                  <a href="./campaign-management-emply.html" className="submenu-link">
                     <span className="text">Campaign Management</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="/campaign-list" className="submenu-link">
+                  <a href="./campaign-list.html" className="submenu-link">
                     <span className="text">Campaign List</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="/flash-sales" className="submenu-link">
+                  <a href="./flash-sales.html" className="submenu-link">
                     <span className="text">Flash Sales</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Promotion</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
 
           <li className="menu-list-item">
-            <Link className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-5" role="button"
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-5" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -329,33 +347,33 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
             <div className="collapse" id="dropdownmenu-5">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Finance 1</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Finance 2</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Finance 3</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
 
           <li className="menu-list-item">
-            <Link className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-6" role="button"
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-6" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -375,33 +393,33 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
             <div className="collapse" id="dropdownmenu-6">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Analytics 1</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Analytics 2</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Analytics 3</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
           </li>
 
           <li className="menu-list-item">
-            <Link className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-7" role="button"
+            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-7" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -421,38 +439,38 @@ function SideBar() {
                     stroke-linejoin="round" />
                 </svg>
               </span>
-            </Link>
+            </a>
 
             <div className="collapse" id="dropdownmenu-7">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <Link href="/seller-profile" className="submenu-link">
+                  <a href="./seller-profile.html" className="submenu-link">
                     <span className="text">Seller Profile</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="/account-settings" className="submenu-link">
-                    <span className="text">Account Settings</span>
-                  </Link>
+                  <a href="./account-setting.html" className="submenu-link">
+                    <span className="text">Account Setting</span>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="/settings" className="submenu-link">
+                  <a href="./setting.html" className="submenu-link">
                     <span className="text">Settings</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="/user-management" className="submenu-link">
+                  <a href="./user-management.html" className="submenu-link">
                     <span className="text">User Management</span>
-                  </Link>
+                  </a>
                 </li>
 
                 <li className="sumenu-item">
-                  <Link href="#" className="submenu-link">
+                  <a href="#" className="submenu-link">
                     <span className="text">Seller Level</span>
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -462,7 +480,7 @@ function SideBar() {
         <div className="sidebar-footer">
           <ul className="list-unstyled">
             <li className="menu-list-item">
-              <Link href="#" className="menu-list-link">
+              <a href="#" className="menu-list-link">
                 <span className="icontitle">
                   <span className="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -474,11 +492,11 @@ function SideBar() {
 
                   <span className="linktitle">Support</span>
                 </span>
-              </Link>
+              </a>
             </li>
 
             <li className="menu-list-item">
-              <Link href="#" className="menu-list-link">
+              <a href="#" className="menu-list-link">
                 <span className="icontitle">
                   <span className="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -490,7 +508,7 @@ function SideBar() {
 
                   <span className="linktitle">Settings</span>
                 </span>
-              </Link>
+              </a>
             </li>
           </ul>
 
@@ -518,5 +536,3 @@ function SideBar() {
     </nav>
   )
 }
-
-export default SideBar

@@ -1,9 +1,9 @@
 import React from 'react'
-import AllProductPage from './AllProductPage'
+import BrandListPage from './BrandListPage'
 
 function page() {
   return (
-    <AllProductPage />
+    <BrandListPage />
   )
 }
 

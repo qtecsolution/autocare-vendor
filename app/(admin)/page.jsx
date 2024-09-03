@@ -1,8 +1,7 @@
-'use client';
-import Link from "next/link";
-import withAuth from "@/hoc/withAuth";
+import Link from 'next/link'
+import React from 'react'
 
-export function Home() {
+function page() {
   return (
     <div id="content">
       <div className="main-content">
@@ -18,7 +17,7 @@ export function Home() {
                   </svg>
                 </label>
 
-                <input className="page-search-input" type="text" name="" id="search-input" placeholder="Search"/>
+                <input className="page-search-input" type="text" name="" id="search-input" placeholder="Search" />
               </form>
 
               <Link href="/notifications" className="notification-svg">
@@ -483,4 +482,5 @@ export function Home() {
     </div>
   )
 }
-export default withAuth(Home);
+
+export default page
