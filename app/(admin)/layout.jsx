@@ -2,7 +2,7 @@
 import SideBar from "@/components/admin/SideBar";
 import withAuth from "@/hoc/withAuth";
 
-function DashBoardLayout({ children }) {
+function layout({ children }) {
   return (
     <div className="wrapper d-flex align-items-stretch">
       <SideBar />
@@ -10,4 +10,4 @@ function DashBoardLayout({ children }) {
     </div>
   );
 }
-export default withAuth(DashBoardLayout);
+export default withAuth(layout);

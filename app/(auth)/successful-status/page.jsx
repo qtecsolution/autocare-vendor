@@ -31,7 +31,7 @@ export default function page() {
                 </div>
 
                 <div className="d-flex gap-3 align-items-center mt-4">
-                  <Link href="/dashboard" className="dashboard-btn">
+                  <Link href="/" className="dashboard-btn">
                     Dashboard
                   </Link>
                   <Link href="/product-add" className="add-product-btn">

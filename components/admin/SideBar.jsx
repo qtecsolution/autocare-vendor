@@ -10,6 +10,7 @@ export default function SideBar() {
   const isLinkActive = (paths) => (paths.includes(pathname) ? "active" : "collapsed");
   const isShowMenu = (paths) => (paths.includes(pathname) ? "show" : "");
   const [sidebarActive, sidebarSetActive] = useState(true);
+  const [searchText, setSearchText] = useState('');
 
   const logout = async () => {
     localStorage.removeItem('accessToken');
@@ -44,7 +45,7 @@ export default function SideBar() {
         <div className="sidebar-header">
           <Link href="/">
             <figure className="d-flex justify-content-center">
-              <img src="./assets/images/logo.png" alt="logo" />
+              <img src="/assets/images/logo.png" alt="logo" />
             </figure>
           </Link>
 
@@ -54,7 +55,8 @@ export default function SideBar() {
                 d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z"
                 stroke="#667085" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <input type="text" name="" id="" placeholder="Search" />
+            
+            <input type="text" name="" id="" placeholder="Search" onChange={(e) => setSearchText(e.target.value)} />
           </form>
         </div>
 
@@ -80,7 +82,7 @@ export default function SideBar() {
           </li>
 
           <li className="menu-list-item">
-            <a className={`menu-list-link ${isLinkActive(['/add-product','/product-list'])}`} href="#dropdownmenu-1" data-toggle="collapse" aria-expanded="false">
+            <a className={`menu-list-link ${isLinkActive(['/add-product', '/product-list', '/brand-list'])}`} href="#dropdownmenu-1" data-toggle="collapse" aria-expanded="false">
               <span className="icontitle">
                 <span className="icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -104,7 +106,7 @@ export default function SideBar() {
               </span>
             </a>
 
-            <div className={`collapse ${isShowMenu(['/add-product','/product-list'])}`} id="dropdownmenu-1">
+            <div className={`collapse ${isShowMenu(['/add-product', '/product-list', '/brand-list'])}`} id="dropdownmenu-1">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
                   <Link href="/add-product" className={`submenu-link ${isLinkActive(['/add-product'])}`}>
@@ -119,16 +121,16 @@ export default function SideBar() {
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./brand-management-empty.html" className="submenu-link">
+                  <Link href="/brand-list" className={`submenu-link ${isLinkActive(['/brand-list'])}`}>
                     <span className="text">Brand Management</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
           </li>
 
           <li className="menu-list-item">
-            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-2" role="button"
+            <a className={`menu-list-link ${isLinkActive(['/order-list'])}`} data-toggle="collapse" href="#dropdownmenu-2" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon">
@@ -150,12 +152,12 @@ export default function SideBar() {
               </span>
             </a>
 
-            <div className="collapse" id="dropdownmenu-2">
+            <div className={`collapse ${isShowMenu(['/order-list'])}`} id="dropdownmenu-2">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <a href="./order-management-empty.html" className="submenu-link">
+                  <Link href="/order-list" className={`submenu-link ${isLinkActive(['/order-list'])}`}>
                     <span className="text">Orders</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
@@ -174,7 +176,7 @@ export default function SideBar() {
           </li>
 
           <li className="menu-list-item">
-            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-8" role="button"
+            <a className={`menu-list-link ${isLinkActive(['/add-service', '/service-list', '/garage-management', '/garage-management/edit'])}`} data-toggle="collapse" href="#dropdownmenu-8" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon">
@@ -202,24 +204,24 @@ export default function SideBar() {
               </span>
             </a>
 
-            <div className="collapse" id="dropdownmenu-8">
+            <div className={`collapse ${isShowMenu(['/add-service', '/service-list', '/garage-management', '/garage-management/edit'])}`} id="dropdownmenu-8">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <a href="./add-services.html" className="submenu-link">
+                  <Link href="/add-service" className={`submenu-link ${isLinkActive(['/add-service'])}`}>
                     <span className="text">Add Services</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./all-services-empty.html" className="submenu-link">
+                  <Link href="/service-list" className={`submenu-link ${isLinkActive(['/service-list'])}`}>
                     <span className="text">Manage Services</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./garage-management.html" className="submenu-link">
+                  <Link href="/garage-management" className={`submenu-link ${isLinkActive(['/garage-management', '/garage-management/edit'])}`}>
                     <span className="text">Garage Management</span>
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -272,7 +274,7 @@ export default function SideBar() {
           </li>
 
           <li className="menu-list-item">
-            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-4" role="button"
+            <a className={`menu-list-link ${isLinkActive(['/campaign-management', '/campaign-list', '/flash-sales'])}`} data-toggle="collapse" href="#dropdownmenu-4" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -294,24 +296,24 @@ export default function SideBar() {
               </span>
             </a>
 
-            <div className="collapse" id="dropdownmenu-4">
+            <div className={`collapse ${isShowMenu(['/campaign-management', '/campaign-list', '/flash-sales'])}`} id="dropdownmenu-4">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <a href="./campaign-management-emply.html" className="submenu-link">
+                  <Link href="/campaign-management" className={`submenu-link ${isLinkActive(['/campaign-management'])}`}>
                     <span className="text">Campaign Management</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./campaign-list.html" className="submenu-link">
+                  <Link href="/campaign-list" className={`submenu-link ${isLinkActive(['/campaign-list'])}`}>
                     <span className="text">Campaign List</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./flash-sales.html" className="submenu-link">
+                  <Link href="/flash-sales" className={`submenu-link ${isLinkActive(['/flash-sales'])}`}>
                     <span className="text">Flash Sales</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
@@ -419,7 +421,7 @@ export default function SideBar() {
           </li>
 
           <li className="menu-list-item">
-            <a className="menu-list-link collapsed" data-toggle="collapse" href="#dropdownmenu-7" role="button"
+            <a className={`menu-list-link ${isLinkActive(['/seller-profile', '/account-settings', '/settings', '/user-management', '/manage-roles'])}`} data-toggle="collapse" href="#dropdownmenu-7" role="button"
               aria-expanded="false">
               <span className="icontitle">
                 <span className="icon supporticon">
@@ -441,30 +443,30 @@ export default function SideBar() {
               </span>
             </a>
 
-            <div className="collapse" id="dropdownmenu-7">
+            <div className={`collapse ${isShowMenu(['/seller-profile', '/account-settings', '/settings', '/user-management', '/manage-roles'])}`} id="dropdownmenu-7">
               <ul className="submenu list-unstyled mt-2">
                 <li className="sumenu-item">
-                  <a href="./seller-profile.html" className="submenu-link">
+                  <Link href="/seller-profile" className={`submenu-link ${isLinkActive(['/seller-profile'])}`}>
                     <span className="text">Seller Profile</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./account-setting.html" className="submenu-link">
+                  <Link href="/account-settings" className={`submenu-link ${isLinkActive(['/account-settings'])}`}>
                     <span className="text">Account Setting</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./setting.html" className="submenu-link">
+                  <Link href="/settings" className={`submenu-link ${isLinkActive(['/settings'])}`}>
                     <span className="text">Settings</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
-                  <a href="./user-management.html" className="submenu-link">
+                  <Link href="/user-management" className={`submenu-link ${isLinkActive(['/user-management', '/manage-roles'])}`}>
                     <span className="text">User Management</span>
-                  </a>
+                  </Link>
                 </li>
 
                 <li className="sumenu-item">
@@ -515,7 +517,7 @@ export default function SideBar() {
           <div className="user-info">
             <div className="d-flex gap-3">
               <figure className="user-image">
-                <img src="./assets/images/user.png" alt="user" />
+                <img src="/assets/images/user.png" alt="user" />
               </figure>
               <div className="">
                 <h2 className="user-name">Olivia Rhye</h2>
