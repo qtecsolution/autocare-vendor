@@ -7,8 +7,19 @@ import { useState } from 'react';
 export default function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isLinkActive = (paths) => (paths.includes(pathname) ? "active" : "collapsed");
-  const isShowMenu = (paths) => (paths.includes(pathname) ? "show" : "");
+  const isLinkActive = (paths) =>
+    paths.some(path =>
+      path === "/"
+        ? pathname === "/"
+        : pathname.startsWith(path)
+    ) ? "active" : "collapsed";
+
+  const isShowMenu = (paths) =>
+    paths.some(path =>
+      path === "/"
+        ? pathname === "/"
+        : pathname.startsWith(path)
+    ) ? "show" : "";
   const [sidebarActive, sidebarSetActive] = useState(true);
   const [searchText, setSearchText] = useState('');
 
