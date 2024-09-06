@@ -32,11 +32,12 @@ const Pagination = ({ totalPages, currentPage, handlePagination }) => {
                     <button
                         onClick={() => handlePagination(page)}
                         className="pagination-nav-link"
+                        style={{ border: "none" }}
                     >
                         {page}
                     </button>
                 ) : (
-                    <span className="h-8 w-8 flex justify-center items-center text-sm text-[#A7AAB9]">
+                    <span className="pagination-nav-link">
                         {page}
                     </span>
                 )}
@@ -45,31 +46,29 @@ const Pagination = ({ totalPages, currentPage, handlePagination }) => {
     };
 
     return (
-        <div className="flex justify-center lg:justify-start mt-8 lg:ml-20">
-            <nav className="pagination-nav">
-                <ul className="list-unstyled d-flex align-items-center gap-2">
-                    <li className="pagination-nav-list">
-                        <button
-                            onClick={() => handlePagination(Math.max(currentPage - 1, 1))}
-                            disabled={currentPage === 1}
-                            className="pagination-nav-link previous"
-                        >
-                            « Previous
-                        </button>
-                    </li>
-                    {renderPageNumbers()}
-                    <li>
-                        <button
-                            onClick={() => handlePagination(Math.min(currentPage + 1, totalPages))}
-                            disabled={currentPage === totalPages}
-                            className="pagination-nav-link next"
-                        >
-                            Next »
-                        </button>
-                    </li>
-                </ul>
-            </nav>
-        </div>
+        <nav className="pagination-nav">
+            <ul className="list-unstyled d-flex align-items-center gap-2">
+                <li className="pagination-nav-list">
+                    <button
+                        onClick={() => handlePagination(Math.max(currentPage - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="pagination-nav-link previous"
+                    >
+                        « Previous
+                    </button>
+                </li>
+                {renderPageNumbers()}
+                <li className="pagination-nav-list">
+                    <button
+                        onClick={() => handlePagination(Math.min(currentPage + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="pagination-nav-link next"
+                    >
+                        Next »
+                    </button>
+                </li>
+            </ul>
+        </nav>
     );
 };
 

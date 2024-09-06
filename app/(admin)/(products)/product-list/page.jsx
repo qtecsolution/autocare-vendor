@@ -27,10 +27,10 @@ async function getProducts(q, page, pageSize) {
 }
 
 async function page({ searchParams }) {
-  const { q, page, category } = searchParams;
-  const pageSize = 6;
+  const { q, page } = searchParams;
+  const pageSize = 5;
 
-  const allProducts = await getProducts(q, page, pageSize, category);
+  const allProducts = await getProducts(q ? q : '', page ? page : 1, pageSize );
   console.log(allProducts);
 
 

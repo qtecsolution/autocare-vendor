@@ -16,21 +16,30 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
     const pathname = usePathname();
 
 
-   
-  const handleSearchQuery = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-  };
 
-  const handlePagination = (page) => {
-    setCurrentPage(page);
-    router.push(`${pathname}/?q=${searchQuery}&page=${page}`, { scroll: false });
-  };
+    const handleSearchQuery = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+    };
+
+    const handlePagination = (page) => {
+        setCurrentPage(page);
+        if (currentPage > 1 || searchQuery) {
+            router.push(`${pathname}/?q=${searchQuery}&page=${page}`, { scroll: false });
+        } else {
+            router.push(`${pathname}`, { scroll: false });
+        }
+
+    };
 
 
     useEffect(() => {
-        router.push(`${pathname}/?q=${searchQuery}&page=1`, { scroll: false });
-    }, [searchQuery])
+        if (currentPage > 1 || searchQuery) {
+            router.push(`${pathname}/?q=${searchQuery}&page=1`, { scroll: false });
+        } else {
+            router.push(`${pathname}`, { scroll: false });
+        }
+    }, [searchQuery, currentPage])
     return (
         <main id="content">
             <div className="inner-content">
