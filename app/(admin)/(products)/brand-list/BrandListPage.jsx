@@ -101,23 +101,472 @@ function BrandListPage() {
                         </div>
 
                         <div className="manage-all-product-section-inner-body">
-                            <div className="table-container">
-                                <table className="product-table">
-                                    <thead>
-                                        <tr>
+                            <div className="table-responsive">
+                                <table className="table">
+                                    <thead className="thead-light">
+                                        <tr scope="col">
                                             <th className="product-info-header">
                                                 <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox" />
                                                 <label for="table-header-checkbox" tabindex="4">Brand Details</label>
                                             </th>
-                                            <th>Relation</th>
-                                            <th>Category</th>
-                                            <th className="text-center">Authorization Date</th>
-                                            <th className="text-center">STATUS</th>
-                                            <th className="text-center">ACTIONS</th>
+                                            <th scope="col">Relation</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col" className="text-center">Authorization Date</th>
+                                            <th scope="col" className="text-center">STATUS</th>
+                                            <th scope="col" className="text-center">ACTIONS</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox1" />
+                                                    <label className="label-text" for="table-header-checkbox1" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Exclusive Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Engine & Transmission
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status active">Active</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox2" />
+                                                    <label className="label-text" for="table-header-checkbox2" tabindex="4">Ford</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Brakes & Suspension
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status inactive">Inactive</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox3" />
+                                                    <label className="label-text" for="table-header-checkbox3" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Brand / Manufacturer
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Tires & Wheels
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status violation">Rejected</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox4" />
+                                                    <label className="label-text" for="table-header-checkbox4" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Exclusive Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Fuel System
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status pending">Pending</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox5" />
+                                                    <label className="label-text" for="table-header-checkbox5" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Exclusive Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Engine & Transmission
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status active">Active</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox1" />
+                                                    <label className="label-text" for="table-header-checkbox1" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Exclusive Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Engine & Transmission
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status active">Active</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox2" />
+                                                    <label className="label-text" for="table-header-checkbox2" tabindex="4">Ford</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Brakes & Suspension
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status inactive">Inactive</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox3" />
+                                                    <label className="label-text" for="table-header-checkbox3" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Brand / Manufacturer
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Tires & Wheels
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status violation">Rejected</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox4" />
+                                                    <label className="label-text" for="table-header-checkbox4" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Exclusive Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Fuel System
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status pending">Pending</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="product-info-inner">
+                                                <div className="product-info">
+                                                    <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox5" />
+                                                    <label className="label-text" for="table-header-checkbox5" tabindex="4">Toyota</label>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div>
+                                                    <p className="relation-text">
+                                                        Exclusive Distributor
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div className="d-flex align-items-center gap-4">
+                                                    <p className="pice-text">
+                                                        Engine & Transmission
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <p className="pice-text ">
+                                                    20/12/2000
+                                                </p>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <span className="status active">Active</span>
+                                            </td>
+
+                                            <td className="text-center">
+                                                <figure className="action-btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                    </svg>
+                                                </figure>
+                                            </td>
+                                        </tr>
+
                                         <tr>
                                             <td className="product-info-inner">
                                                 <div className="product-info">
