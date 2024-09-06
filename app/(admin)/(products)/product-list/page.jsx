@@ -29,11 +29,7 @@ async function getProducts(q, page, pageSize) {
 async function page({ searchParams }) {
   const { q, page } = searchParams;
   const pageSize = 5;
-
   const allProducts = await getProducts(q ? q : '', page ? page : 1, pageSize );
-  console.log(allProducts);
-
-
   const calculateTotalPage = Math.ceil(allProducts.props.products?.count / pageSize);
   return (
     <AllProductPage allProducts={allProducts} pageProps={page}
