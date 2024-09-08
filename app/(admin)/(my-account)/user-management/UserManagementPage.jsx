@@ -1,8 +1,29 @@
+'use client'
 import GlobalSearch from '@/components/admin/GlobalSearch'
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
+import Select from 'react-select';
 
 function UserManagementPage() {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [selectedNew, setSelectedNew] = useState(null);
+
+    const categories = [
+        { value: 'cat1', label: 'Category 1' },
+        { value: 'cat2', label: 'Category 2' },
+        { value: 'cat3', label: 'Category 3' },
+    ];
+    const statuses = [
+        { value: 'st1', label: 'Status 1' },
+        { value: 'st2', label: 'Status 2' },
+        { value: 'st3', label: 'Status 3' },
+    ];
+    const newest = [
+        { value: 'new1', label: 'New 1' },
+        { value: 'new2', label: 'New 2' },
+        { value: 'new3', label: 'New 3' },
+    ];
     return (
         <main id="content">
             <div className="inner-content">
@@ -35,33 +56,32 @@ function UserManagementPage() {
 
                         <div className="user-management-inner">
                             <div className="user-management-inner-top">
-                                <div className="d-flex align-items-center gap-3">
-                                    <div className="box">
-                                        <select className="wide selectize">
-                                            <option data-display="Select">Role</option>
-                                            <option value="1">Role 1</option>
-                                            <option value="2">Role 2</option>
-                                            <option value="4">Role 3</option>
-                                        </select>
-                                    </div>
+                                <div className="d-flex gap-3 align-items-center">
 
-                                    <div className="box">
-                                        <select className="wide selectize">
-                                            <option data-display="Select">Status</option>
-                                            <option value="1">Status 1</option>
-                                            <option value="2">Status 2</option>
-                                            <option value="4">Status 3</option>
-                                        </select>
-                                    </div>
+                                    <Select
+                                        defaultValue={selectedCategory}
+                                        onChange={setSelectedCategory}
+                                        options={categories}
+                                        className='bg-color selectize'
+                                        placeholder="Role"
+                                    />
 
-                                    <div className="box">
-                                        <select className="wide selectize">
-                                            <option data-display="Select">Email</option>
-                                            <option value="1">Email 1</option>
-                                            <option value="2">Email 2</option>
-                                            <option value="4">Email 3</option>
-                                        </select>
-                                    </div>
+                                    <Select
+                                        defaultValue={selectedStatus}
+                                        onChange={setSelectedStatus}
+                                        options={statuses}
+                                        className='bg-color selectize'
+                                        placeholder="Status"
+                                    />
+
+                                    <Select
+                                        defaultValue={selectedNew}
+                                        onChange={setSelectedNew}
+                                        options={newest}
+                                        className='bg-color selectize'
+                                        placeholder="Email"
+                                    />
+
                                 </div>
 
                                 <div className="right">
@@ -121,8 +141,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -178,8 +198,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -235,8 +255,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -292,8 +312,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -349,8 +369,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -406,8 +426,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -463,8 +483,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -520,8 +540,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -577,8 +597,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -634,8 +654,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -691,8 +711,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -748,8 +768,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -805,8 +825,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -862,8 +882,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -919,8 +939,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -976,8 +996,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -1033,8 +1053,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -1090,8 +1110,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 
@@ -1147,8 +1167,8 @@ function UserManagementPage() {
                                                                     stroke-linejoin="round" />
                                                             </svg>
                                                         </span>
-                                                        <input type="checkbox" checked/>
-                                                            <span className="slider round"></span>
+                                                        <input type="checkbox" checked />
+                                                        <span className="slider round"></span>
                                                     </label>
                                                 </td>
 

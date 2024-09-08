@@ -1,7 +1,17 @@
-import React from 'react'
+"use client"
+import React, { useState } from 'react'
 import Link from 'next/link'
+import Select from 'react-select';
 
 function AddProductPage() {
+    const [selectedOption, setSelectedOption] = useState(null);
+
+    const options = [
+        { value: 'chocolate', label: 'Chocolate' },
+        { value: 'strawberry', label: 'Strawberry' },
+        { value: 'vanilla', label: 'Vanilla' },
+    ];
+
     return (
         <>
             <div id="content">
@@ -112,12 +122,12 @@ function AddProductPage() {
                                     <div class="category-select">
                                         <div class="box">
                                             <label class="category-select-label">Select Category <span>*</span></label>
-                                            <select class="wide selectize">
-                                                <option data-display="Select">Nothing</option>
-                                                <option value="1">Some option</option>
-                                                <option value="2">Another option</option>
-                                                <option value="4">Potato</option>
-                                            </select>
+                                            <Select
+                                                defaultValue={selectedOption}
+                                                onChange={setSelectedOption}
+                                                options={options}
+                                                className='bg-color selectize'
+                                            />
                                         </div>
 
                                         <div class="category-suggestions">

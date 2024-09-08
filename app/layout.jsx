@@ -1,6 +1,6 @@
 import Script from "next/script";
 import "./globals.css";
-// import "./assets/css/style.css"
+import ToasterProvider from "@/components/ToastProvider";
 
 export const metadata = {
   title: "Autocare Vendor",
@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
       <body className="body">
 
         {children}
-
+        <ToasterProvider />
         {/* <!-- jquery js --> */}
         <Script src="/assets/js/jquery.min.js"></Script>
         {/* <!-- BOOTSTRAP-JS --> */}

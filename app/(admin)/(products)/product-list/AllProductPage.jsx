@@ -5,6 +5,7 @@ import React, { useEffect } from 'react'
 import { useState } from 'react';
 import Pagination from '@/components/admin/Pagination';
 import { usePathname, useRouter } from "next/navigation";
+import Select from 'react-select';
 
 function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
 
@@ -14,8 +15,25 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
     const [searchQuery, setSearchQuery] = useState('');
     const router = useRouter();
     const pathname = usePathname();
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [selectedNew, setSelectedNew] = useState(null);
 
-
+    const categories = [
+        { value: 'cat1', label: 'Category 1' },
+        { value: 'cat2', label: 'Category 2' },
+        { value: 'cat3', label: 'Category 3' },
+    ];
+    const statuses = [
+        { value: 'st1', label: 'Status 1' },
+        { value: 'st2', label: 'Status 2' },
+        { value: 'st3', label: 'Status 3' },
+    ];
+    const newest = [
+        { value: 'new1', label: 'New 1' },
+        { value: 'new2', label: 'New 2' },
+        { value: 'new3', label: 'New 3' },
+    ];
 
     const handleSearchQuery = (e) => {
         const value = e.target.value;
@@ -135,30 +153,33 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
 
                             <div className="d-flex gap-3 align-items-center">
                                 <div className="box">
-                                    <select className="bg-color selectize">
-                                        <option data-display="Select">Category</option>
-                                        <option value="1">Category 1</option>
-                                        <option value="2">Category 2</option>
-                                        <option value="4">Category 3</option>
-                                    </select>
+                                    <Select
+                                        defaultValue={selectedCategory}
+                                        onChange={setSelectedCategory}
+                                        options={categories}
+                                        className='bg-color selectize'
+                                        placeholder="Category"
+                                    />
                                 </div>
 
                                 <div className="box">
-                                    <select className="bg-color selectize">
-                                        <option data-display="Select">Status</option>
-                                        <option value="1">Status 1</option>
-                                        <option value="2">Status 2</option>
-                                        <option value="4">Status 3</option>
-                                    </select>
+                                    <Select
+                                        defaultValue={selectedStatus}
+                                        onChange={setSelectedStatus}
+                                        options={statuses}
+                                        className='bg-color selectize'
+                                        placeholder="Status"
+                                    />
                                 </div>
 
                                 <div className="box">
-                                    <select className="bg-color selectize">
-                                        <option data-display="Select">Newest</option>
-                                        <option value="1">Newest 1</option>
-                                        <option value="2">Newest 2</option>
-                                        <option value="4">Newest 3</option>
-                                    </select>
+                                    <Select
+                                        defaultValue={selectedNew}
+                                        onChange={setSelectedNew}
+                                        options={newest}
+                                        className='bg-color selectize'
+                                        placeholder="Newest"
+                                    />
                                 </div>
                             </div>
                         </div>

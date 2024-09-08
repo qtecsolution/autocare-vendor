@@ -3,6 +3,8 @@ import { deleteAccessToken, deleteRefreshToken } from '@/actions/actions';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
+import SuccessToast from '@/components/toast/Success';
 
 export default function SideBar() {
   const pathname = usePathname();
@@ -32,6 +34,12 @@ export default function SideBar() {
     await deleteAccessToken();
     await deleteRefreshToken();
     router.push('/login');
+    toast.custom((t) => (
+      <SuccessToast
+          message="Logged Out !"
+          dismiss={() => toast.dismiss(t.id)}
+      />
+  ));
   }
 
   const menuItems = [

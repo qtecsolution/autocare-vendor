@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react';
 import { login } from '@/utils/auth';
+import toast from 'react-hot-toast';
+import AlertToast from '@/components/toast/AlertToast';
+import SuccessToast from '@/components/toast/Success';
 
 function LoginPage() {
     const router = useRouter()
@@ -15,24 +18,37 @@ function LoginPage() {
     useEffect(() => {
         const accessToken = localStorage.getItem('accessToken');
         if (accessToken) {
-          router.push('/');
+            router.push('/');
         }
-      }, [router]);
+    }, [router]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await login(number, password);
             router.push('/');
+            toast.custom((t) => (
+                <SuccessToast
+                    message="Logged In Successfully !"
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
         } catch (error) {
             setError('Login failed');
+            toast.custom((t) => (
+                <AlertToast
+                    message={`Login failed ! ${error.response?.data?.message || "Please try again later."
+                        }`}
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
         }
     };
 
     useEffect(() => {
-      setIsMounted(true);
+        setIsMounted(true);
     }, []);
-  
+
     return (
         <div>
             <Header />

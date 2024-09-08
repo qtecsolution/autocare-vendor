@@ -1,8 +1,29 @@
+'use client'
 import GlobalSearch from '@/components/admin/GlobalSearch'
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
+import Select from 'react-select';
 
 function ServiceListPage() {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [selectedNew, setSelectedNew] = useState(null);
+
+    const categories = [
+        { value: 'cat1', label: 'Category 1' },
+        { value: 'cat2', label: 'Category 2' },
+        { value: 'cat3', label: 'Category 3' },
+    ];
+    const statuses = [
+        { value: 'st1', label: 'Status 1' },
+        { value: 'st2', label: 'Status 2' },
+        { value: 'st3', label: 'Status 3' },
+    ];
+    const newest = [
+        { value: 'new1', label: 'New 1' },
+        { value: 'new2', label: 'New 2' },
+        { value: 'new3', label: 'New 3' },
+    ];
     return (
         <main id="content">
             <div className="inner-content">
@@ -87,30 +108,33 @@ function ServiceListPage() {
 
                             <div className="d-flex gap-3 align-items-center">
                                 <div className="box">
-                                    <select className="bg-color selectize">
-                                        <option data-display="Select">Category</option>
-                                        <option value="1">Category 1</option>
-                                        <option value="2">Category 2</option>
-                                        <option value="4">Category 3</option>
-                                    </select>
+                                    <Select
+                                        defaultValue={selectedCategory}
+                                        onChange={setSelectedCategory}
+                                        options={categories}
+                                        className='bg-color selectize'
+                                        placeholder="Category"
+                                    />
                                 </div>
 
                                 <div className="box">
-                                    <select className="bg-color selectize">
-                                        <option data-display="Select">Status</option>
-                                        <option value="1">Status 1</option>
-                                        <option value="2">Status 2</option>
-                                        <option value="4">Status 3</option>
-                                    </select>
+                                    <Select
+                                        defaultValue={selectedStatus}
+                                        onChange={setSelectedStatus}
+                                        options={statuses}
+                                        className='bg-color selectize'
+                                        placeholder="Status"
+                                    />
                                 </div>
 
                                 <div className="box">
-                                    <select className="bg-color selectize">
-                                        <option data-display="Select">Newest</option>
-                                        <option value="1">Newest 1</option>
-                                        <option value="2">Newest 2</option>
-                                        <option value="4">Newest 3</option>
-                                    </select>
+                                    <Select
+                                        defaultValue={selectedNew}
+                                        onChange={setSelectedNew}
+                                        options={newest}
+                                        className='bg-color selectize'
+                                        placeholder="Newest"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -136,39 +160,39 @@ function ServiceListPage() {
                                         <tr>
                                             <td class="product-info-inner">
                                                 <div class="product-info">
-                                                    <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox"/>
-                                                        <label class="d-flex align-items-center flex-shrink-0" for="table-body-checkbox" tabindex="4">
-                                                            <img class="product-image" src="/assets/images/products1.png" alt="Product Image"/>
-                                                        </label>
+                                                    <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox" />
+                                                    <label class="d-flex align-items-center flex-shrink-0" for="table-body-checkbox" tabindex="4">
+                                                        <img class="product-image" src="/assets/images/products1.png" alt="Product Image" />
+                                                    </label>
 
-                                                        <div class="product-details d-flex flex-column gap-2">
-                                                            <p class="title">Purolator Oil Filter 133500I99 - Fits Toyota Qualis</p>
+                                                    <div class="product-details d-flex flex-column gap-2">
+                                                        <p class="title">Purolator Oil Filter 133500I99 - Fits Toyota Qualis</p>
 
-                                                            <div class="d-flex align-items-center gap-3">
-                                                                <div class="d-flex align-items-center gap-2 buy-product">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
-                                                                        fill="none">
-                                                                        <path
-                                                                            d="M1.3125 1.3125C1.19647 1.3125 1.08519 1.35859 1.00314 1.44064C0.921094 1.52269 0.875 1.63397 0.875 1.75C0.875 1.86603 0.921094 1.97731 1.00314 2.05936C1.08519 2.14141 1.19647 2.1875 1.3125 2.1875H2.121C2.22017 2.1875 2.3065 2.254 2.33217 2.34967L3.82433 7.945C3.35567 8.06711 2.94074 8.34122 2.64454 8.7244C2.34834 9.10758 2.1876 9.57819 2.1875 10.0625C2.1875 10.304 2.3835 10.5 2.625 10.5H11.8125C11.9285 10.5 12.0398 10.4539 12.1219 10.3719C12.2039 10.2898 12.25 10.1785 12.25 10.0625C12.25 9.94647 12.2039 9.83519 12.1219 9.75314C12.0398 9.67109 11.9285 9.625 11.8125 9.625H3.13717C3.22766 9.36904 3.3953 9.14744 3.61699 8.99073C3.83868 8.83402 4.10351 8.74992 4.375 8.75H10.9188C11.0008 8.75 11.0811 8.72698 11.1506 8.68356C11.2201 8.64014 11.276 8.57807 11.312 8.50442C11.978 7.13773 12.5547 5.72933 13.0387 4.28808C13.0578 4.23107 13.0649 4.17072 13.0597 4.11082C13.0545 4.05091 13.0369 3.99273 13.0082 3.93991C12.9794 3.88708 12.9401 3.84075 12.8927 3.8038C12.8452 3.76686 12.7907 3.74009 12.7324 3.72517C9.6558 2.94067 6.48786 2.57241 3.31333 2.63025L3.178 2.1245C3.11591 1.8916 2.97862 1.68573 2.78748 1.53889C2.59633 1.39205 2.36204 1.31246 2.121 1.3125H1.3125ZM2.1875 11.8125C2.1875 11.5804 2.27969 11.3579 2.44378 11.1938C2.60788 11.0297 2.83044 10.9375 3.0625 10.9375C3.29456 10.9375 3.51712 11.0297 3.68122 11.1938C3.84531 11.3579 3.9375 11.5804 3.9375 11.8125C3.9375 12.0446 3.84531 12.2671 3.68122 12.4312C3.51712 12.5953 3.29456 12.6875 3.0625 12.6875C2.83044 12.6875 2.60788 12.5953 2.44378 12.4312C2.27969 12.2671 2.1875 12.0446 2.1875 11.8125ZM9.625 11.8125C9.625 11.5804 9.71719 11.3579 9.88128 11.1938C10.0454 11.0297 10.2679 10.9375 10.5 10.9375C10.7321 10.9375 10.9546 11.0297 11.1187 11.1938C11.2828 11.3579 11.375 11.5804 11.375 11.8125C11.375 12.0446 11.2828 12.2671 11.1187 12.4312C10.9546 12.5953 10.7321 12.6875 10.5 12.6875C10.2679 12.6875 10.0454 12.5953 9.88128 12.4312C9.71719 12.2671 9.625 12.0446 9.625 11.8125Z"
-                                                                            fill="#7B7F95" />
-                                                                    </svg>
-                                                                    <p>3256</p>
-                                                                </div>
+                                                        <div class="d-flex align-items-center gap-3">
+                                                            <div class="d-flex align-items-center gap-2 buy-product">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
+                                                                    fill="none">
+                                                                    <path
+                                                                        d="M1.3125 1.3125C1.19647 1.3125 1.08519 1.35859 1.00314 1.44064C0.921094 1.52269 0.875 1.63397 0.875 1.75C0.875 1.86603 0.921094 1.97731 1.00314 2.05936C1.08519 2.14141 1.19647 2.1875 1.3125 2.1875H2.121C2.22017 2.1875 2.3065 2.254 2.33217 2.34967L3.82433 7.945C3.35567 8.06711 2.94074 8.34122 2.64454 8.7244C2.34834 9.10758 2.1876 9.57819 2.1875 10.0625C2.1875 10.304 2.3835 10.5 2.625 10.5H11.8125C11.9285 10.5 12.0398 10.4539 12.1219 10.3719C12.2039 10.2898 12.25 10.1785 12.25 10.0625C12.25 9.94647 12.2039 9.83519 12.1219 9.75314C12.0398 9.67109 11.9285 9.625 11.8125 9.625H3.13717C3.22766 9.36904 3.3953 9.14744 3.61699 8.99073C3.83868 8.83402 4.10351 8.74992 4.375 8.75H10.9188C11.0008 8.75 11.0811 8.72698 11.1506 8.68356C11.2201 8.64014 11.276 8.57807 11.312 8.50442C11.978 7.13773 12.5547 5.72933 13.0387 4.28808C13.0578 4.23107 13.0649 4.17072 13.0597 4.11082C13.0545 4.05091 13.0369 3.99273 13.0082 3.93991C12.9794 3.88708 12.9401 3.84075 12.8927 3.8038C12.8452 3.76686 12.7907 3.74009 12.7324 3.72517C9.6558 2.94067 6.48786 2.57241 3.31333 2.63025L3.178 2.1245C3.11591 1.8916 2.97862 1.68573 2.78748 1.53889C2.59633 1.39205 2.36204 1.31246 2.121 1.3125H1.3125ZM2.1875 11.8125C2.1875 11.5804 2.27969 11.3579 2.44378 11.1938C2.60788 11.0297 2.83044 10.9375 3.0625 10.9375C3.29456 10.9375 3.51712 11.0297 3.68122 11.1938C3.84531 11.3579 3.9375 11.5804 3.9375 11.8125C3.9375 12.0446 3.84531 12.2671 3.68122 12.4312C3.51712 12.5953 3.29456 12.6875 3.0625 12.6875C2.83044 12.6875 2.60788 12.5953 2.44378 12.4312C2.27969 12.2671 2.1875 12.0446 2.1875 11.8125ZM9.625 11.8125C9.625 11.5804 9.71719 11.3579 9.88128 11.1938C10.0454 11.0297 10.2679 10.9375 10.5 10.9375C10.7321 10.9375 10.9546 11.0297 11.1187 11.1938C11.2828 11.3579 11.375 11.5804 11.375 11.8125C11.375 12.0446 11.2828 12.2671 11.1187 12.4312C10.9546 12.5953 10.7321 12.6875 10.5 12.6875C10.2679 12.6875 10.0454 12.5953 9.88128 12.4312C9.71719 12.2671 9.625 12.0446 9.625 11.8125Z"
+                                                                        fill="#7B7F95" />
+                                                                </svg>
+                                                                <p>3256</p>
+                                                            </div>
 
-                                                                <div class="d-flex align-items-center gap-2 see-product">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
-                                                                        fill="none">
-                                                                        <path
-                                                                            d="M7 8.75C7.46413 8.75 7.90925 8.56563 8.23744 8.23744C8.56563 7.90925 8.75 7.46413 8.75 7C8.75 6.53587 8.56563 6.09075 8.23744 5.76256C7.90925 5.43437 7.46413 5.25 7 5.25C6.53587 5.25 6.09075 5.43437 5.76256 5.76256C5.43437 6.09075 5.25 6.53587 5.25 7C5.25 7.46413 5.43437 7.90925 5.76256 8.23744C6.09075 8.56563 6.53587 8.75 7 8.75Z"
-                                                                            fill="#7B7F95" />
-                                                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                                                            d="M0.771754 6.67742C1.63975 4.06933 4.09967 2.1875 7.00059 2.1875C9.89975 2.1875 12.3585 4.06758 13.2277 6.67333C13.2977 6.8845 13.2977 7.112 13.2277 7.32258C12.3603 9.93067 9.89975 11.8125 6.99942 11.8125C4.10025 11.8125 1.64092 9.93242 0.772337 7.32667C0.70219 7.11593 0.70219 6.88815 0.772337 6.67742H0.771754ZM10.0625 7C10.0625 7.81223 9.73985 8.59118 9.16552 9.16551C8.59119 9.73984 7.81223 10.0625 7 10.0625C6.18778 10.0625 5.40882 9.73984 4.83449 9.16551C4.26016 8.59118 3.9375 7.81223 3.9375 7C3.9375 6.18777 4.26016 5.40882 4.83449 4.83449C5.40882 4.26016 6.18778 3.9375 7 3.9375C7.81223 3.9375 8.59119 4.26016 9.16552 4.83449C9.73985 5.40882 10.0625 6.18777 10.0625 7Z"
-                                                                            fill="#7B7F95" />
-                                                                    </svg>
-                                                                    <p>3256</p>
-                                                                </div>
+                                                            <div class="d-flex align-items-center gap-2 see-product">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
+                                                                    fill="none">
+                                                                    <path
+                                                                        d="M7 8.75C7.46413 8.75 7.90925 8.56563 8.23744 8.23744C8.56563 7.90925 8.75 7.46413 8.75 7C8.75 6.53587 8.56563 6.09075 8.23744 5.76256C7.90925 5.43437 7.46413 5.25 7 5.25C6.53587 5.25 6.09075 5.43437 5.76256 5.76256C5.43437 6.09075 5.25 6.53587 5.25 7C5.25 7.46413 5.43437 7.90925 5.76256 8.23744C6.09075 8.56563 6.53587 8.75 7 8.75Z"
+                                                                        fill="#7B7F95" />
+                                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                                        d="M0.771754 6.67742C1.63975 4.06933 4.09967 2.1875 7.00059 2.1875C9.89975 2.1875 12.3585 4.06758 13.2277 6.67333C13.2977 6.8845 13.2977 7.112 13.2277 7.32258C12.3603 9.93067 9.89975 11.8125 6.99942 11.8125C4.10025 11.8125 1.64092 9.93242 0.772337 7.32667C0.70219 7.11593 0.70219 6.88815 0.772337 6.67742H0.771754ZM10.0625 7C10.0625 7.81223 9.73985 8.59118 9.16552 9.16551C8.59119 9.73984 7.81223 10.0625 7 10.0625C6.18778 10.0625 5.40882 9.73984 4.83449 9.16551C4.26016 8.59118 3.9375 7.81223 3.9375 7C3.9375 6.18777 4.26016 5.40882 4.83449 4.83449C5.40882 4.26016 6.18778 3.9375 7 3.9375C7.81223 3.9375 8.59119 4.26016 9.16552 4.83449C9.73985 5.40882 10.0625 6.18777 10.0625 7Z"
+                                                                        fill="#7B7F95" />
+                                                                </svg>
+                                                                <p>3256</p>
                                                             </div>
                                                         </div>
+                                                    </div>
                                                 </div>
                                             </td>
 
@@ -191,8 +215,8 @@ function ServiceListPage() {
                                                                 stroke-linejoin="round" />
                                                         </svg>
                                                     </span>
-                                                    <input type="checkbox" checked/>
-                                                        <span class="slider round"></span>
+                                                    <input type="checkbox" checked />
+                                                    <span class="slider round"></span>
                                                 </label>
                                             </td>
 
