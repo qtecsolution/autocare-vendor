@@ -43,7 +43,7 @@ export default function page() {
               <div className="login-form">
                 <div className="d-flex flex-column gap-3">
                   <h1 className="form-title">
-                    Account Type
+                    Business Type
                   </h1>
 
                   <p className="form-details">
@@ -55,12 +55,12 @@ export default function page() {
                   <div className="login-checkbox-inner">
                     <div>
                       <input className="login-checkbox" type="radio" name="account-type" id="login-checkbox1"/>
-                      <label className="label-border" for="login-checkbox1" tabindex="4">Store</label>
+                      <label className="label-border" for="login-checkbox1" tabindex="4">Product</label>
                     </div>
 
                     <div>
                       <input className="login-checkbox" type="radio" name="account-type" id="login-checkbox2"/>
-                      <label className="label-border" for="login-checkbox2" tabindex="4">Garage</label>
+                      <label className="label-border" for="login-checkbox2" tabindex="4">Service</label>
                     </div>
 
                     <div>

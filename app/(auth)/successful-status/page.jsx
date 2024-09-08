@@ -32,10 +32,10 @@ export default function page() {
 
                 <div className="d-flex gap-3 align-items-center mt-4">
                   <Link href="/" className="dashboard-btn">
-                    Dashboard
+                    Skip
                   </Link>
                   <Link href="/product-add" className="add-product-btn">
-                    Add Product
+                    Verify Identity
                   </Link>
                 </div>
               </div>
