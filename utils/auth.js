@@ -3,12 +3,12 @@ import { setAccessTokenToCookies, setRefreshTokenToCookies } from '@/actions/act
 
 export const login = async (number, password) => {
     try {
-        const response = await axios.post('https://www.spider.autocare.com.bd/api/token/', {
+        const response = await axios.post('https://www.spider.autocare.com.bd/seller-panel-api/login/', {
             username: number,
             password: password,
         });
 
-        const { access, refresh, customer } = response.data;
+        const { access, refresh } = response.data;
 
         localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
@@ -18,6 +18,6 @@ export const login = async (number, password) => {
         return response.data;
     } catch (error) {
         console.error('Login failed:', error);
-        throw error; // Re-throw the error to be handled by the caller
+        throw error;
     }
 };

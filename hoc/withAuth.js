@@ -18,7 +18,7 @@ const withAuth = (WrappedComponent) => {
         }
 
         try {
-          const response = await axios.get('https://www.spider.autocare.com.bd/api/customer-info/', {
+          const response = await axios.get('https://www.spider.autocare.com.bd/seller-panel-api/seller-info/', {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
 
