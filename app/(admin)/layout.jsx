@@ -7,8 +7,8 @@ import { usePathname } from "next/navigation";
 function layout({ children }) {
   const pathname = usePathname();
   return (
-    <div className={pathname === "/identity-verify" ? '' : "wrapper d-flex align-items-stretch"}>
-      {pathname === "/identity-verify" ? <HeaderAdmin/> : <SideBar />}
+    <div className={pathname === "/identity-verify" || pathname === "/business-setup" ? '' : "wrapper d-flex align-items-stretch"}>
+      {pathname === "/identity-verify" || pathname === "/business-setup" ? <HeaderAdmin /> : <SideBar />}
       {children}
     </div>
   );
