@@ -9,6 +9,7 @@ import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
 function BusinessSetupPage() {
 
     const [step, setStep] = useState(1);
+    const [businessType, setBusinessType] = useState("");
     const [businessName, setBusinessName] = useState("");
     const [location, setLocation] = useState({
         latitude: null,
@@ -21,18 +22,21 @@ function BusinessSetupPage() {
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [selectedCity, setSelectedCity] = useState(null);
 
-    const [timeSlots, setTimeSlots] = useState([{ selectedTimeSlot: null, openingTime: '', closingTime: '' }]);
+    const [timeSlots, setTimeSlots] = useState([{ slot: 1, openingTime: '', closingTime: '' }]);
     const time_slot_options = [
-        { value: '1', label: 'Morning' },
-        { value: '2', label: 'Noon' },
-        { value: '3', label: 'Afternoon' },
-        { value: '4', label: 'Evening' },
+        { value: 1, label: 'Morning' },
+        { value: 2, label: 'Noon' },
+        { value: 3, label: 'Afternoon' },
+        { value: 4, label: 'Evening' },
     ];
 
-    // Handle adding new time slot
+    // Handle adding a new time slot
     const addTimeSlot = () => {
         if (timeSlots.length < 4) {
-            setTimeSlots([...timeSlots, { selectedTimeSlot: null, openingTime: '', closingTime: '' }]);
+            setTimeSlots([
+                ...timeSlots,
+                { slot: timeSlots.length + 1, openingTime: '', closingTime: '' },
+            ]);
         }
     };
 
@@ -42,6 +46,7 @@ function BusinessSetupPage() {
         updatedTimeSlots[index][field] = value;
         setTimeSlots(updatedTimeSlots);
     };
+
 
     const getLocation = (e) => {
         e.preventDefault();
@@ -110,7 +115,7 @@ function BusinessSetupPage() {
                 />
             ));
         } else {
-            setStep(2);
+            setStep(businessType === 1 ? 3 : 2);
         }
     }
 
@@ -122,6 +127,7 @@ function BusinessSetupPage() {
                     headers: { Authorization: `Bearer ${accessToken}` },
                 });
                 const places = response.data.places;
+                setBusinessType(response.data.business_type);
 
                 const divisionOptions = places.map((place) => ({
                     value: place.id,
@@ -166,8 +172,22 @@ function BusinessSetupPage() {
         }));
 
         setCities(cityOptions);
-        setSelectedCity(null); 
+        setSelectedCity(null);
     };
+
+    const complete2ndStep = async (e) =>{
+        e.preventDefault();
+        if (!timeSlots) {
+            toast.custom((t) => (
+                <AlertToast
+                    message="Time Slot Required !"
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
+        }else{
+            setStep(3);
+        }
+    }
 
     return (
         <>
@@ -179,17 +199,17 @@ function BusinessSetupPage() {
                                 <div className="center">
                                     <div className="d-flex flex-column gap-3">
                                         <h1 className="title">
-                                            Setup Store/Garage
+                                            Setup {businessType === 1 ? 'Store' : businessType === 2 ? 'Garage' : 'Store/Garage'}
                                         </h1>
 
                                         <p className="details">
-                                            Please submit your Store/Garage information to setup.
+                                            Please submit your {businessType === 1 ? 'Store' : businessType === 2 ? 'Garage' : 'Store/Garage'} information to setup.
                                         </p>
                                     </div>
 
                                     <form className="setup-store-form">
                                         <div className="inner-input">
-                                            <label className="input-label" for="BusinessName">Store/Garage Name</label>
+                                            <label className="input-label" for="BusinessName">{businessType === 1 ? 'Store' : businessType === 2 ? 'Garage' : 'Store/Garage'} Name</label>
                                             <div className="input-field">
                                                 <input type="text" name="" id="BusinessName" placeholder="Type here" value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
                                             </div>
@@ -271,15 +291,15 @@ function BusinessSetupPage() {
                                         </p>
                                     </div>
 
-                                    <form className="setup-store-form">
+                                    <form className="setup-store-form" >
                                         {timeSlots.map((slot, index) => (
                                             <div className="row" key={index}>
                                                 <div className="col-4">
                                                     <div className="box">
                                                         <label className="category-select-label">Time Slot</label>
                                                         <Select
-                                                            value={slot.selectedTimeSlot}
-                                                            onChange={(selectedOption) => handleTimeSlotChange(index, 'selectedTimeSlot', selectedOption)}
+                                                            value={time_slot_options.find(option => option.value === slot.slot)}
+                                                            onChange={(selectedOption) => handleTimeSlotChange(index, 'slot', selectedOption.value)}
                                                             options={time_slot_options}
                                                             className="wide selectize"
                                                             placeholder="Select"
@@ -296,6 +316,7 @@ function BusinessSetupPage() {
                                                                 value={slot.openingTime}
                                                                 onChange={(e) => handleTimeSlotChange(index, 'openingTime', e.target.value)}
                                                                 placeholder="Type here"
+                                                                required
                                                             />
                                                         </div>
                                                     </div>
@@ -310,6 +331,7 @@ function BusinessSetupPage() {
                                                                 value={slot.closingTime}
                                                                 onChange={(e) => handleTimeSlotChange(index, 'closingTime', e.target.value)}
                                                                 placeholder="Type here"
+                                                                required
                                                             />
                                                         </div>
                                                     </div>
@@ -325,9 +347,86 @@ function BusinessSetupPage() {
                                             </div>
                                         )}
 
-                                        <button className="login-btn">
+                                        <button className="login-btn" onClick={complete2ndStep}>
                                             Save & Continue
                                         </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            }
+            {
+                step === 3 &&
+                <section className="login-section">
+                    <div className="container">
+                        <div className="login-section-inner d-flex justify-content-center align-items-center">
+                            <div className="right">
+                                <div className="login-form">
+                                    <div className="d-flex flex-column gap-3">
+                                        <h1 className="form-title">
+                                            Verify
+                                        </h1>
+
+                                        <p className="form-details">
+                                            Help Us verify your Store by providing more info
+                                        </p>
+                                    </div>
+
+                                    <form className="form-inner">
+                                        <div className="d-flex flex-column gap-4">
+                                            <div className="d-flex flex-column gap-2">
+                                                <p className="text">
+                                                    Trade License <span className="text-danger">*</span>
+                                                </p>
+                                                <label for="frontPart" className="upload-card">
+                                                    <figure>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                            <path
+                                                                d="M6.66675 13.3333L10.0001 10M10.0001 10L13.3334 13.3333M10.0001 10V17.5M16.6667 13.9524C17.6847 13.1117 18.3334 11.8399 18.3334 10.4167C18.3334 7.88536 16.2814 5.83333 13.7501 5.83333C13.568 5.83333 13.3976 5.73833 13.3052 5.58145C12.2185 3.73736 10.2121 2.5 7.91675 2.5C4.46497 2.5 1.66675 5.29822 1.66675 8.75C1.66675 10.4718 2.36295 12.0309 3.48921 13.1613"
+                                                                stroke="#475467" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
+                                                        </svg>
+                                                    </figure>
+                                                    <div className="d-flex align-items-center gap-1">
+                                                        <p className="color-text">Click to upload</p>
+                                                        <p className="paragraph">or drag and drop</p>
+                                                    </div>
+                                                    <p className="paragraph">CSV, DOC, PDF, PNG & JPG</p>
+                                                    <input type="file" name="" id="frontPart" />
+                                                </label>
+                                                <p className="light-text">
+                                                    Please submit updated recent file
+                                                </p>
+                                            </div>
+
+                                            <div className="d-flex flex-column gap-2">
+                                                <p className="text">
+                                                    TIN Certificate / BIN Certificate *
+                                                </p>
+                                                <label for="backPart" className="upload-card">
+                                                    <figure>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                            <path
+                                                                d="M6.66675 13.3333L10.0001 10M10.0001 10L13.3334 13.3333M10.0001 10V17.5M16.6667 13.9524C17.6847 13.1117 18.3334 11.8399 18.3334 10.4167C18.3334 7.88536 16.2814 5.83333 13.7501 5.83333C13.568 5.83333 13.3976 5.73833 13.3052 5.58145C12.2185 3.73736 10.2121 2.5 7.91675 2.5C4.46497 2.5 1.66675 5.29822 1.66675 8.75C1.66675 10.4718 2.36295 12.0309 3.48921 13.1613"
+                                                                stroke="#475467" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
+                                                        </svg>
+                                                    </figure>
+                                                    <div className="d-flex align-items-center gap-1">
+                                                        <p className="color-text">Click to upload</p>
+                                                        <p className="paragraph">or drag and drop</p>
+                                                    </div>
+                                                    <p className="paragraph">CSV, DOC, PDF, PNG & JPG</p>
+                                                    <input type="file" name="" id="backPart" />
+                                                </label>
+                                                <p className="light-text">Please submit updated recent file</p>
+                                            </div>
+                                        </div>
+
+
+                                        <a href="./setup-store-garage-successful.html" className="login-btn">
+                                            Submit Application
+                                        </a>
                                     </form>
                                 </div>
                             </div>
