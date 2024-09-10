@@ -1,5 +1,4 @@
 'use client'
-import Header from '@/components/auth/Header'
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -13,7 +12,6 @@ function layout({ children }) {
     }, [router]);
     return (
         <div>
-            <Header />
             {children}
         </div>
     )

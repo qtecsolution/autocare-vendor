@@ -6,6 +6,8 @@ import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import { setAccessTokenToCookies, setRefreshTokenToCookies } from '@/actions/actions';
+import Header from '@/components/auth/Header';
+import Header2 from '@/components/auth/Header2';
 
 function SignupPage() {
     const [step, setStep] = useState(1);
@@ -242,6 +244,7 @@ function SignupPage() {
     }
     return (
         <>
+            {step === 5 ? <Header2 /> : <Header />}
             {step !== 5 &&
                 <section className="login-section">
                     <div className="container">
@@ -493,7 +496,7 @@ function SignupPage() {
                                         </Link>
                                     </figure>
 
-                                    <img src="./assets/images/Congratulation.svg" alt="Congratulation" />
+                                    <img src="/assets/images/Congratulation.svg" alt="Congratulation" />
 
                                     <div className="d-flex flex-column gap-2">
                                         <h1>
@@ -508,7 +511,7 @@ function SignupPage() {
                                         <Link href="/" className="dashboard-btn">
                                             Skip
                                         </Link>
-                                        <Link href="/product-add" className="add-product-btn">
+                                        <Link href="/identity-verify" className="add-product-btn">
                                             Verify Identity
                                         </Link>
                                     </div>

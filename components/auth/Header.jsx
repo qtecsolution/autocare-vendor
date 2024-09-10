@@ -11,7 +11,6 @@ export default function Header() {
     const pathname = usePathname();
     const isLinkActive = (href) => (pathname === href ? 'active' : '');
     function isLoginActive() {
-        console.log("pathname:",pathname);
         if(pathname==='/signup' || pathname === '' || pathname ==='/'|| pathname != '/login'){
             return 'active';
         }

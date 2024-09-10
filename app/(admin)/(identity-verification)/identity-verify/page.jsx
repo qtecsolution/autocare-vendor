@@ -1,8 +1,9 @@
 import React from 'react'
+import IdentityVerifyPage from './IdentityVerifyPage'
 
 function page() {
   return (
-    <div>Identity Verification</div>
+    <IdentityVerifyPage/>
   )
 }
 
