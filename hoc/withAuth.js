@@ -1,8 +1,9 @@
 // hoc/withAuth.js
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
 import { deleteAccessToken, deleteRefreshToken } from '@/actions/actions';
+import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
+import axiosInstance from '@/lib/axiosInstance';
 
 const withAuth = (WrappedComponent) => {
   return (props) => {
@@ -18,10 +19,7 @@ const withAuth = (WrappedComponent) => {
         }
 
         try {
-          const response = await axios.get('https://www.spider.autocare.com.bd/seller-panel-api/seller-info/', {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          });
-
+          const response = await axiosInstance.get('/seller-panel-api/seller-info/');
           if (response.status !== 200 || response.data.code === 'token_not_valid') {
             throw new Error('Token is invalid or expired');
           }

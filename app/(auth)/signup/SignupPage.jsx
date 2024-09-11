@@ -67,7 +67,6 @@ function SignupPage() {
         event.preventDefault();
 
         const phoneNumberRegex = /^\d{11,}$/;
-        let formErrors = [];
 
         if (!phoneNumberRegex.test(phoneNumber)) {
             toast.custom((t) => (
@@ -227,6 +226,7 @@ function SignupPage() {
                     ));
                     localStorage.setItem('accessToken', response.data.access);
                     localStorage.setItem('refreshToken', response.data.refresh);
+                    localStorage.setItem("seller", JSON.stringify(response.data.seller));
                     await setAccessTokenToCookies(response.data.access);
                     await setRefreshTokenToCookies(response.data.refresh);
                     setStep(5);
@@ -287,8 +287,8 @@ function SignupPage() {
                                                     </h1>
 
                                                     <p className="form-details">
-                                                        Already have an account?
-                                                        <a href="./login.html">Login</a>
+                                                        Already have an account?{" "}
+                                                        <Link href="/login">Login</Link>
                                                     </p>
                                                 </div>
 
@@ -296,7 +296,7 @@ function SignupPage() {
                                                     <div className="inner-input">
                                                         <label className="input-label" for="phone-number">Phone Number</label>
                                                         <div className="input-field">
-                                                            <input type="number" name="" id="phone-number" placeholder="Enter number" min={1}
+                                                            <input type="number" name="" id="phone-number" placeholder="Enter number" min={0}
                                                                 onChange={(e) => setPhoneNumber(e.target.value)}
                                                             />
                                                         </div>

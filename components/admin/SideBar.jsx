@@ -5,6 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import SuccessToast from '@/components/toast/Success';
+import { getAuthUser } from '@/utils/auth';
+import Image from 'next/image';
 
 export default function SideBar() {
   const pathname = usePathname();
@@ -30,17 +32,19 @@ export default function SideBar() {
   const logout = async () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('customerInfo');
+    localStorage.removeItem('seller');
     await deleteAccessToken();
     await deleteRefreshToken();
     router.push('/login');
     toast.custom((t) => (
       <SuccessToast
-          message="Logged Out !"
-          dismiss={() => toast.dismiss(t.id)}
+        message="Logged Out !"
+        dismiss={() => toast.dismiss(t.id)}
       />
-  ));
+    ));
   }
+
+  const sellerInfo = getAuthUser();
 
   const menuItems = [
     {
@@ -378,11 +382,11 @@ export default function SideBar() {
           <div className="user-info">
             <div className="d-flex gap-3">
               <figure className="user-image">
-                <img src="/assets/images/user.png" alt="user" />
+                <Image src={sellerInfo?.image ? sellerInfo.image : "/assets/images/user.png"} width={40} height={40} alt="user" />
               </figure>
               <div className="">
-                <h2 className="user-name">Olivia Rhye</h2>
-                <p className="user-email">olivia@untitledui.com</p>
+                <h2 className="user-name">{sellerInfo?.full_name}</h2>
+                <p className="user-email">{sellerInfo?.email}</p>
               </div>
             </div>
 

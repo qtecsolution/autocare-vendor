@@ -17,9 +17,9 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="/assets/css/quill-rich-text-editor/quill.snow.css" />
         {/* <!-- New style --> */}
         <link rel="stylesheet" href="/assets/css/style.css" />
+        <link rel="stylesheet" href="/assets/css/custom.css" />
       </head>
-      <body className="body">
-
+      <body>
         {children}
         <ToasterProvider />
         {/* <!-- jquery js --> */}

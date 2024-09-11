@@ -1,7 +1,7 @@
 'use client'
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
-import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
+import axiosInstance from '@/lib/axiosInstance';
 import Link from 'next/link';
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
@@ -74,7 +74,7 @@ function IdentityVerifyPage() {
                 />
             ));
         } else {
-            const accessToken = localStorage.getItem('accessToken');
+            // const accessToken = localStorage.getItem('accessToken');
             const formData = new FormData();
             formData.append('verificationType', idType);
             formData.append('frontPart', frontPartFile);
@@ -82,10 +82,9 @@ function IdentityVerifyPage() {
             formData.append('sellerImage', sellerImage);
 
             try {
-                const response = await axiosWithBaseURL.post('/seller-panel-api/seller-identity-verification/', formData, {
+                const response = await axiosInstance.post('/seller-panel-api/seller-identity-verification/', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        'Authorization': `Bearer ${accessToken}`
                     }
                 });
                 toast.custom((t) => (
@@ -322,7 +321,7 @@ function IdentityVerifyPage() {
                                         <Link href="/" className="dashboard-btn">
                                             Dashboard
                                         </Link>
-                                        <Link href="#" className="add-product-btn">
+                                        <Link href="/business-setup" className="add-product-btn">
                                             Setup Business
                                         </Link>
                                     </div>
@@ -332,6 +331,9 @@ function IdentityVerifyPage() {
                     </div>
                 </section>
             }
+            <div className='pb-5'>
+
+            </div>
         </>
     )
 }
