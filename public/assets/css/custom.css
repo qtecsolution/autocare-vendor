@@ -1,9 +1,67 @@
-.css-13cymwt-control{
+.css-13cymwt-control {
     min-height: 44px !important;
 }
-.css-16xfy0z-control{
+
+.css-16xfy0z-control {
     min-height: 44px !important;
 }
-.css-t3ipsp-control{
+
+.css-t3ipsp-control {
     min-height: 44px !important;
+}
+
+.product-img-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.product-img-footer .input-label {
+    color: #1f2937;
+    font-family: "Inter", sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+}
+
+.product-img-footer .input-inner {
+    border-radius: 8px;
+    border: 1px solid #e7eaef;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.product-img-footer .input-inner .text {
+    color: var(--Gray-600, #475467);
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px;
+    /* 171.429% */
+    border-right: 1px solid #e7eaef;
+    padding: 0.5rem 0.75rem;
+}
+
+.product-img-footer .input-inner .input {
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    width: 100%;
+}
+
+.product-img-footer .input-inner .input-icon {
+    padding-right: 0.75rem;
+}
+
+.product-img-footer .input-inner .input-icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.product-img-body .product-thumbnail {
+    width: 240px;
+    height: 130px;
+    border-radius: 0.875rem;
 }

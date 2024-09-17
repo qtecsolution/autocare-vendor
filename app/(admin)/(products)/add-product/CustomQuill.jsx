@@ -1,41 +1,35 @@
-'use client'
-import React, { useRef } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+'use client';
+import React from 'react';
+import dynamic from 'next/dynamic';
+import 'quill/dist/quill.snow.css';
 
-const CustomQuillEditor = ({ editorId, toolbarId, placeholder }) => {
-  const quillRef = useRef(null);
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false, // Disable server-side rendering for ReactQuill
+});
 
-  const undo = () => {
-    const editor = quillRef.current.getEditor();
-    editor.history.undo();
-  };
+const CustomQuillEditor = ({ editorId, toolbarId, placeholder, content, onContentChange }) => {
 
-  const redo = () => {
-    const editor = quillRef.current.getEditor();
-    editor.history.redo();
+  const handleEditorChange = (value) => {
+    if (onContentChange) {
+      onContentChange(value); // Notify parent component about content change
+    }
   };
 
   return (
-    <div>
-      <div id={toolbarId}>
-        <button type="button" onClick={undo}>
-          Undo
-        </button>
-        <button type="button" onClick={redo}>
-          Redo
-        </button>
-      </div>
+    <div className="container px-5 pb-3">
       <ReactQuill
-        ref={quillRef}
-        placeholder={placeholder}
+        style={{ minHeight: '300px' }}
+        value={content} // Use content from props
+        onChange={handleEditorChange} // Notify parent about changes
         modules={{
           toolbar: {
-            container: `#${toolbarId}`,
-            handlers: {
-              undo: undo,
-              redo: redo,
-            },
+            container: [
+              ['undo', 'redo'],
+              ['bold', 'italic', 'underline'],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              ['link'],
+              [{ header: [1, 2, 3, false] }],
+            ],
           },
           history: {
             delay: 2000,
@@ -43,7 +37,18 @@ const CustomQuillEditor = ({ editorId, toolbarId, placeholder }) => {
             userOnly: true,
           },
         }}
-        theme="snow"
+        formats={[
+          'header',
+          'bold',
+          'italic',
+          'underline',
+          'list',
+          'bullet',
+          'link',
+          'undo',
+          'redo',
+        ]}
+        placeholder={placeholder}
       />
     </div>
   );
