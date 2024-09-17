@@ -7,42 +7,42 @@ import axiosInstance from '@/lib/axiosInstance';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-function EditBrandPage({ brandDetails }) {
+function EditPage({ manufacturerDetails }) {
     const [step, setStep] = useState(1);
-    const [brandName, setBrandName] = useState(brandDetails?.name)
-    const [brandImage, setBrandImage] = useState(null)
+    const [manufacturerName, setManufacturerName] = useState(manufacturerDetails?.name)
+    const [manufacturerImage, setManufacturerImage] = useState(null)
     const [imagePreview, setImagePreview] = useState(null);
     const router = useRouter();
 
-    const handleBrandImage = (e) => {
-        setBrandImage(e.target.files[0]);
+    const handleManufacturerImage = (e) => {
+        setManufacturerImage(e.target.files[0]);
     };
     useEffect(() => {
-        if (brandImage) {
-            const objectUrl = URL.createObjectURL(brandImage);
+        if (manufacturerImage) {
+            const objectUrl = URL.createObjectURL(manufacturerImage);
             setImagePreview(objectUrl);
 
             // Clean up the URL object when the component is unmounted or a new file is selected
             return () => URL.revokeObjectURL(objectUrl);
         }
-    }, [brandImage]);
+    }, [manufacturerImage]);
 
-    const updateBrand = async (e) => {
+    const updateManufacturer = async (e) => {
         e.preventDefault();
 
-        if (!brandName) {
+        if (!manufacturerName) {
             toast.custom((t) => (
                 <AlertToast
-                    message="Brand Name Required !"
+                    message="Manufacturer Name Required !"
                     dismiss={() => toast.dismiss(t.id)}
                 />
             ));
         } else {
             const formData = new FormData();
-            formData.append('brandName', brandName);
-            formData.append('image', brandImage ? brandImage : '');
+            formData.append('manufacturerName', manufacturerName);
+            formData.append('image', manufacturerImage ? manufacturerImage : '');
             try {
-                const response = await axiosInstance.put(`/seller-panel-api/frontend/update-brand/${brandDetails?.id}/`, formData, {
+                const response = await axiosInstance.put(`/seller-panel-api/frontend/update-manufacturer/${manufacturerDetails?.id}/`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -88,21 +88,21 @@ function EditBrandPage({ brandDetails }) {
 
                                     <form className="setup-store-form form-inner">
                                         <div className="inner-input">
-                                            <label className="input-label" for="brandName">Brand Name <span className="text-danger">*</span></label>
+                                            <label className="input-label" for="manufacturerName">Brand Name <span className="text-danger">*</span></label>
                                             <div className="input-field">
-                                                <input type="text" name="" id="brandName" placeholder="Type here" value={brandName} onChange={(e) => setBrandName(e.target.value)} />
+                                                <input type="text" name="" id="manufacturerName" placeholder="Type here" value={manufacturerName} onChange={(e) => setManufacturerName(e.target.value)} />
                                             </div>
                                         </div>
 
                                         <div className="d-flex flex-column gap-2">
                                             <label className="input-label" far="frontPart"> Brand Image <span className="text-danger">*</span>
                                             </label>
-                                            <label for="brandImage" className="upload-card">
+                                            <label for="manufacturerImage" className="upload-card">
                                                 <figure>
                                                     {imagePreview ? (
                                                         <img src={imagePreview} alt="Selected Brand" />
-                                                    ) : brandDetails?.logo ? (
-                                                        <img src={brandDetails.logo} alt={brandDetails.name} />
+                                                    ) : manufacturerDetails?.logo ? (
+                                                        <img src={manufacturerDetails.logo} alt={manufacturerDetails.name} />
                                                     ) : (
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -125,12 +125,12 @@ function EditBrandPage({ brandDetails }) {
                                                     <p className="color-text">Click to upload</p>
                                                     <p className="paragraph">or drag and drop</p>
                                                 </div>
-                                                <p className="paragraph">{brandImage ? brandImage?.name : 'PNG, JPG & JPEG'}</p>
-                                                <input type="file" id="brandImage" accept=".png,.jpg,.jpeg" onChange={handleBrandImage} />
+                                                <p className="paragraph">{manufacturerImage ? manufacturerImage?.name : 'PNG, JPG & JPEG'}</p>
+                                                <input type="file" id="manufacturerImage" accept=".png,.jpg,.jpeg" onChange={handleManufacturerImage} />
                                             </label>
                                         </div>
 
-                                        <button className="login-btn" onClick={updateBrand}>
+                                        <button className="login-btn" onClick={updateManufacturer}>
                                             Update
                                         </button>
                                     </form>
@@ -171,8 +171,8 @@ function EditBrandPage({ brandDetails }) {
                                     </div>
 
                                     <div className="d-flex gap-3 align-items-center mt-4">
-                                        <Link href="/brand-list" className="dashboard-btn">
-                                            Brand List
+                                        <Link href="/manufacturer" className="dashboard-btn">
+                                            Manufacturer List
                                         </Link>
                                     </div>
                                 </div>
@@ -186,4 +186,4 @@ function EditBrandPage({ brandDetails }) {
     )
 }
 
-export default EditBrandPage
+export default EditPage

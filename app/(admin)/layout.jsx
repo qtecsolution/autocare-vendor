@@ -10,11 +10,12 @@ function layout({ children }) {
     <div className="body">
       <div
         className={pathname === "/identity-verify" || pathname === "/business-setup" ||
-          pathname === "/brand-list/add-brand" || pathname.startsWith('/brand-list/edit-brand')
+          pathname === "/brand-list/add-brand" || pathname.startsWith('/brand-list/edit-brand') || pathname.startsWith('/manufacturer/add') || pathname.startsWith('/manufacturer/edit')
           ? '' : "wrapper d-flex align-items-stretch"}>
         {
           pathname === "/identity-verify" || pathname === "/business-setup" ||
-            pathname === "/brand-list/add-brand" || pathname.startsWith('/brand-list/edit-brand') ?
+            pathname === "/brand-list/add-brand" || pathname.startsWith('/brand-list/edit-brand') || pathname.startsWith('/manufacturer/add') || pathname.startsWith('/manufacturer/edit')
+            ?
             <HeaderAdmin />
             :
             <SideBar />

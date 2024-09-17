@@ -34,6 +34,7 @@ export default function RootLayout({ children }) {
         {/* <!-- quill js --> */}
         {/* <Script src="/assets/js/quill-rich-text-editor/quill.js"></Script>
         <Script src="/assets/js/quill-rich-text-editor/custom.js"></Script> */}
+        <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></Script>
       </body>
     </html>
   );

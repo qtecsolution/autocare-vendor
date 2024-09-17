@@ -84,7 +84,8 @@ export default function SideBar() {
       submenu: [
         { name: 'Add Product', path: '/add-product' },
         { name: 'Products', path: '/product-list' },
-        { name: 'Brand', path: '/brand-list' }
+        { name: 'Brand', path: '/brand-list' },
+        { name: 'Manufacturer', path: '/manufacturer' }
       ]
     },
     {

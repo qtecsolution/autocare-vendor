@@ -5,11 +5,13 @@ import axiosInstance from '@/lib/axiosInstance';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
+import { useRouter } from 'next/navigation';
 
 function AddBrandPage() {
     const [step, setStep] = useState(1);
     const [brandName, setBrandName] = useState('')
     const [brandImage, setBrandImage] = useState(null)
+    const router = useRouter();
 
     const handleBrandImage = (e) => {
         setBrandImage(e.target.files[0]);
@@ -28,7 +30,7 @@ function AddBrandPage() {
         } else if (!brandImage) {
             toast.custom((t) => (
                 <AlertToast
-                    message="Brand Name Required !"
+                    message="Brand Image Required !"
                     dismiss={() => toast.dismiss(t.id)}
                 />
             ));
@@ -49,6 +51,7 @@ function AddBrandPage() {
                     />
                 ));
                 setStep(2);
+                router.refresh();
             } catch (error) {
                 console.log(error);
                 toast.custom((t) => (

@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Pagination from '@/components/admin/Pagination';
 import { formatDate } from '@/utils/formatDate';
 
-function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
+function ManufacturerPage({ allManufacturer, pageProps, calculatedTotalPages }) {
     const [currentPage, setCurrentPage] = useState(parseInt(pageProps) || 1);
     const totalPages = calculatedTotalPages;
     const [loading, setLoading] = useState(true);
@@ -44,7 +44,6 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
     }, [searchQuery, currentPage, filter]);
 
-
     return (
         <main id="content">
             <div className="inner-content">
@@ -52,16 +51,16 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                 <section className="manage-product-section">
                     <div className="manage-product-section-header">
                         <h3 className="heading-text">
-                            Brands
+                        Manufacturer
                         </h3>
 
                         <div className="d-flex align-items-center gap-3">
-                            <Link href="brand-list/add-brand" className="add-product-btn">
+                            <Link href="manufacturer/add" className="add-product-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                     <path d="M9.99984 4.1665V15.8332M4.1665 9.99984H15.8332" stroke="white" stroke-width="1.67"
                                         stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
-                                <span>Apply For New Brand</span>
+                                <span>Add Manufacturer</span>
                             </Link>
                         </div>
                     </div>
@@ -69,17 +68,17 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                     <div className="d-flex align-items-center gap-3 all-buttons-inner">
                         <button className={`manage-products-btn ${filter === '' ? 'active' : ''}`}
                             onClick={() => setFilter('')}>
-                            All <span>{allBrands?.props?.brands?.results?.allBrandsCount}</span>
+                            All <span>{allManufacturer?.props?.manufacturer?.results?.allManufacturersCount}</span>
                         </button>
 
                         <button className={`manage-products-btn ${filter === 'active' ? 'active' : ''}`}
                             onClick={() => setFilter('active')}>
-                            Active <span>{allBrands?.props?.brands?.results?.activeBrandsCount}</span>
+                            Active <span>{allManufacturer?.props?.manufacturer?.results?.activeManufacturersCount}</span>
                         </button>
 
                         <button className={`manage-products-btn ${filter === 'inactive' ? 'active' : ''}`}
                             onClick={() => setFilter('inactive')}>
-                            Inactive <span>{allBrands?.props?.brands?.results?.inactiveBrandsCount}</span>
+                            Inactive <span>{allManufacturer?.props?.manufacturer?.results?.inactiveManufacturers}</span>
                         </button>
                     </div>
                 </section>
@@ -111,10 +110,10 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                                         <tr scope="col">
                                             <th className="product-info-header">
                                                 {/* <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox" /> */}
-                                                <label for="table-header-checkbox" tabindex="4">Brand Details</label>
+                                                <label for="table-header-checkbox" tabindex="4">Manufacturer Details</label>
                                             </th>
                                             {/* <th scope="col">Relation</th>
-                                            <th scope="col">Category</th> */}
+                                        <th scope="col">Category</th> */}
                                             <th scope="col">Logo</th>
                                             <th scope="col" className="text-center">Authorization Date</th>
                                             <th scope="col" className="text-center">STATUS</th>
@@ -122,47 +121,30 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {allBrands?.props?.brands?.results?.brands?.map((brand) => (
-                                            <tr key={brand?.id}>
+                                        {allManufacturer?.props?.manufacturer?.results?.manufacturers?.map((manufacturer) => (
+                                            <tr key={manufacturer?.id}>
                                                 <td className="product-info-inner">
                                                     <div className="product-info">
                                                         {/* <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox1" /> */}
-                                                        <label className="label-text" for="table-header-checkbox1" tabindex="4">{brand?.name}</label>
+                                                        <label className="label-text" for="table-header-checkbox1" tabindex="4">{manufacturer?.name}</label>
                                                     </div>
                                                 </td>
 
-                                                {/* <td>
-                                                    <div>
-                                                        <p className="relation-text">
-                                                            Exclusive Distributor
-                                                        </p>
-                                                    </div>
-                                                </td> */}
-
-                                                {/* <td>
-                                                    <div className="d-flex align-items-center gap-4">
-                                                        <p className="pice-text">
-                                                            Engine & Transmission
-                                                        </p>
-                                                    </div>
-                                                </td> */}
-
                                                 <td className="text-center">
-                                                    <img src={brand?.logo ? brand.logo : ''} alt={brand?.name} width="40" height="40" />
+                                                    <img src={manufacturer?.logo ? manufacturer.logo : ''} alt={manufacturer?.name} width="40" height="40" />
                                                 </td>
                                                 <td className="text-center">
                                                     <p className="pice-text ">
-                                                        {formatDate(brand?.updated_at)}
+                                                        {formatDate(manufacturer?.updated_at)}
                                                     </p>
                                                 </td>
 
                                                 <td className="text-center">
-                                                    <span className={`status ${brand?.is_active ? 'active' : 'inactive'}`}>Active</span>
+                                                    <span className={`status ${manufacturer?.is_active ? 'active' : 'inactive'}`}>Active</span>
                                                 </td>
 
                                                 <td className="text-center">
-
-                                                    <div class="dropdown">
+                                                <div class="dropdown">
                                                         <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <figure className="action-btn">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
@@ -173,7 +155,7 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                                                             </figure>
                                                         </button>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                            <li><Link href={"/brand-list/edit-brand/" + brand?.id} class="dropdown-item">Edit</Link></li>
+                                                            <li><Link href={"/manufacturer/edit/" + manufacturer?.id} class="dropdown-item">Edit</Link></li>
                                                         </ul>
                                                     </div>
                                                 </td>
@@ -206,4 +188,4 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
     )
 }
 
-export default BrandListPage
+export default ManufacturerPage
