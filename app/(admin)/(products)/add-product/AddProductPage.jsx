@@ -26,7 +26,8 @@ function AddProductPage() {
     name: '',
     category: '',
     brand: '',
-    images: '',
+    main_image: '',
+    // images: '',
     price: '',
     stock: '',
     sku: '',
@@ -92,6 +93,8 @@ function AddProductPage() {
   const [viewImages, setViewImages] = useState([]);
   const [thumbnail, setThumbnail] = useState(null)
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [mainImage, setMainImage] = useState(null)
+  const [mainImagePreview, setMainImagePreview] = useState(null);
 
   const [youtubeLink, setYoutubeLink] = useState('');
   const [metaDesc, setMetaDesc] = useState('');
@@ -126,7 +129,6 @@ function AddProductPage() {
     }
   };
 
-
   useEffect(() => {
     if (thumbnail) {
       const objectUrl = URL.createObjectURL(thumbnail);
@@ -139,6 +141,43 @@ function AddProductPage() {
     e.preventDefault();
     setThumbnail(null);
     setThumbnailPreview(null);
+  };
+
+  const handleMainImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const { width, height } = img;
+        if (width === height) {
+          // Valid 1:1 ratio, update thumbnail
+          setMainImage(file);
+        } else {
+          // Show an error message if the image ratio is not 1:1
+          toast.custom((t) => (
+            <AlertToast
+              message="Thumbnail must have a 1:1 aspect ratio."
+              dismiss={() => toast.dismiss(t.id)}
+            />
+          ));
+        }
+      };
+    }
+  };
+
+  useEffect(() => {
+    if (mainImage) {
+      const objectUrl = URL.createObjectURL(mainImage);
+      setMainImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [mainImage]);
+
+  const removeMainImage = (e) => {
+    e.preventDefault();
+    setMainImage(null);
+    setMainImagePreview(null);
   };
 
   useEffect(() => {
@@ -243,10 +282,10 @@ function AddProductPage() {
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
-    if (images.length + files.length > 5) {
+    if (images.length + files.length > 4) {
       toast.custom((t) => (
         <AlertToast
-          message="You can upload a maximum of 5 images!"
+          message="You can upload a maximum of 4 images!"
           dismiss={() => toast.dismiss(t.id)}
         />
       ));
@@ -328,7 +367,8 @@ function AddProductPage() {
     if (!productNameEN) newErrors.name = 'Name is required';
     if (!selectedCategory) newErrors.category = 'Category is required';
     if (selectedCompatibleBrands.length === 0) newErrors.brand = 'Brand is required';
-    if (images.length === 0) newErrors.images = 'At least one product image is required';
+    if (!mainImage) newErrors.main_image = 'Product main image is required';
+    // if (images.length === 0) newErrors.images = 'At least one product image is required';
     if (!price || isNaN(price)) newErrors.price = 'Valid price is required';
     if (!stock || isNaN(stock)) newErrors.stock = 'Valid stock number is required';
     if (!skuName) newErrors.sku = 'SKU is required';
@@ -374,10 +414,12 @@ function AddProductPage() {
       formData.append('isPartNumberActive', isPartNumberActive);
       formData.append('warranty', warranty);
       formData.append('isWarrantyActive', isWarrantyActive);
-
+      if (mainImage) {
+        formData.append('productMainImage', mainImage);
+      }
       if (images) {
         images.forEach((image) => {
-          formData.append("productImages", image);
+          formData.append("productAdditionalImages", image);
         });
       }
       if (thumbnail) {
@@ -457,6 +499,8 @@ function AddProductPage() {
         setViewImages([]);
         setThumbnail(null)
         setThumbnailPreview(null);
+        setMainImage(null)
+        setMainImagePreview(null);
         setYoutubeLink('');
         setMetaDesc('');
         setMetaKeywords('');
@@ -628,11 +672,54 @@ function AddProductPage() {
                   </div>
 
                 </div>
-
                 <div className="product-image-section">
                   <div className="product-img-head">
                     <div className="d-flex align-items-center gap-1">
-                      <h1 className="title">Product Image <span>*</span> </h1>
+                      <h1 className="title">Product Main Image <span>*</span></h1>
+                    </div>
+
+                    <h1 className="example-text">
+                      See Example
+                    </h1>
+                  </div>
+
+                  <div className="product-img-body">
+                    <div className="uplod-img">
+                      {mainImagePreview &&
+                        <div className="product-img">
+                          <img src={mainImagePreview} alt="thumbnail" />
+                        </div>
+                      }
+
+                      {mainImage ? <span className='text-danger pointer' onClick={removeMainImage}>Remove</span>
+                        :
+                        <div className="add-product-img-inner">
+                          <label for="product-main-img" className="add-product-img">
+                            <input className="add-product-img-input" type="file" name="" id="product-main-img" accept='.png,.jpg,.jpeg' onChange={handleMainImage} />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                              <path d="M15 5.62451V24.3745M24.375 14.9995H5.625" stroke="#0F766D" stroke-width="1.875"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                          </label>
+                        </div>
+                      }
+
+                    </div>
+                    <div className="">
+                      <ul className="add-product-img-list">
+                        <li>Image Ratio: 1:1 </li>
+                        <li>Max file size: 1MB.</li>
+                        <li>Format: png, jpg</li>
+                      </ul>
+                    </div>
+                  </div>
+                  {errors.main_image && <div className="error-message text-danger"><small>{errors.main_image}</small></div>}
+
+                </div>
+                <div className="product-image-section">
+                  <div className="product-img-head">
+                    <div className="d-flex align-items-center gap-1">
+                      <h1 className="title">Product Additional Image <span>*</span> </h1>
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path
                           d="M9.375 9.37476L9.40917 9.35809C9.51602 9.3047 9.63594 9.28306 9.75472 9.29572C9.8735 9.30838 9.98616 9.35481 10.0794 9.42951C10.1726 9.50422 10.2424 9.60407 10.2806 9.71724C10.3189 9.83042 10.3238 9.95217 10.295 10.0681L9.705 12.4314C9.67595 12.5474 9.68078 12.6693 9.71891 12.7826C9.75704 12.8959 9.82687 12.9959 9.92011 13.0707C10.0134 13.1455 10.1261 13.1921 10.245 13.2047C10.3639 13.2174 10.4839 13.1957 10.5908 13.1423L10.625 13.1248M17.5 9.99976C17.5 10.9847 17.306 11.9599 16.9291 12.8699C16.5522 13.7798 15.9997 14.6066 15.3033 15.3031C14.6069 15.9995 13.7801 16.5519 12.8701 16.9289C11.9602 17.3058 10.9849 17.4998 10 17.4998C9.01509 17.4998 8.03982 17.3058 7.12987 16.9289C6.21993 16.5519 5.39314 15.9995 4.6967 15.3031C4.00026 14.6066 3.44781 13.7798 3.0709 12.8699C2.69399 11.9599 2.5 10.9847 2.5 9.99976C2.5 8.01063 3.29018 6.10298 4.6967 4.69645C6.10322 3.28993 8.01088 2.49976 10 2.49976C11.9891 2.49976 13.8968 3.28993 15.3033 4.69645C16.7098 6.10298 17.5 8.01063 17.5 9.99976ZM10 6.87476H10.0067V6.88142H10V6.87476Z"
@@ -687,7 +774,7 @@ function AddProductPage() {
                         </div>
                       ))}
 
-                      {images?.length === 5 ?
+                      {images?.length === 4 ?
                         ''
                         :
                         <div className="add-product-img-inner">
@@ -709,7 +796,7 @@ function AddProductPage() {
                       </ul>
                     </div>
                   </div>
-                  {errors.images && <div className="error-message text-danger"><small>{errors.images}</small></div>}
+                  {/* {errors.images && <div className="error-message text-danger"><small>{errors.images}</small></div>} */}
 
                 </div>
                 <div className="product-image-section">
@@ -726,7 +813,7 @@ function AddProductPage() {
                   <div className="product-img-body">
                     <div className="uplod-img">
                       {thumbnailPreview &&
-                        <div className="product-thumbnail">
+                        <div className="product-img">
                           <img src={thumbnailPreview} alt="thumbnail" />
                         </div>
                       }
