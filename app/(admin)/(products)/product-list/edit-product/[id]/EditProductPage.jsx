@@ -10,13 +10,13 @@ import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/navigation';
 
-function AddProductPage() {
+function EditProductPage({ productDetails }) {
 
   const router = useRouter();
   const [step, setStep] = useState(1);
 
-  const [productNameEN, setProductNameEN] = useState('');
-  const [productNameBN, setProductNameBN] = useState('');
+  const [productNameEN, setProductNameEN] = useState(productDetails?.product?.name_en);
+  const [productNameBN, setProductNameBN] = useState(productDetails?.product?.name_bn);
   const [shortDescriptionEN, setShortDescriptionEN] = useState('');
   const [shortDescriptionBN, setShortDescriptionBN] = useState('');
   const [isShortDescActive, setIsShortDescActive] = useState(false);
@@ -159,13 +159,59 @@ function AddProductPage() {
     fetchProductData();
   }, []);
 
+  useEffect(() => {
+    if (productDetails?.product) {
+      const { sub_category, sub_sub_category, category } = productDetails.product;
+
+      // Set selected category based on product details
+      const selectedCategory = {
+        value: category.id,
+        label: category.name,
+      };
+      setSelectedCategory(selectedCategory);
+
+      // Set subCategories and subSubCategories based on product details
+      const newSubCategories = category.children.map((subCategory) => ({
+        value: subCategory.id,
+        label: subCategory.name,
+        children: subCategory.children || [],
+      }));
+      setSubCategories(newSubCategories);
+
+      // Set selected subCategories
+      const selectedSubCategories = sub_category.map((subCat) => ({
+        value: subCat.id,
+        label: subCat.name,
+        children: subCat.children || [],
+      }));
+      setSelectedSubCategories(selectedSubCategories);
+
+      // Set subSubCategories based on selected subCategories
+      const newSubSubCategories = selectedSubCategories.flatMap((subCategory) =>
+        subCategory.children.map((subSubCategory) => ({
+          value: subSubCategory.id,
+          label: subSubCategory.name,
+        }))
+      );
+      setSubSubCategories(newSubSubCategories);
+
+      // Set selected subSubCategories
+      const selectedSubSubCategories = sub_sub_category.map((subSubCat) => ({
+        value: subSubCat.id,
+        label: subSubCat.name,
+      }));
+      setSelectedSubSubCategories(selectedSubSubCategories);
+    }
+  }, [productDetails]);
+
+
   const handleCategoryChange = (selectedOption) => {
     setSelectedCategory(selectedOption);
-    if (selectedOption) {
+    if (selectedOption && selectedOption.children) {
       const subCats = selectedOption.children.map((subCategory) => ({
         value: subCategory.id,
         label: subCategory.name,
-        children: subCategory.children,
+        children: subCategory.children || [],
       }));
       setSubCategories(subCats);
       setSubSubCategories([]);
@@ -177,15 +223,15 @@ function AddProductPage() {
     }
   };
 
+
   const handleSubCategoryChange = (selectedOptions) => {
     setSelectedSubCategories(selectedOptions);
-
     if (selectedOptions && selectedOptions.length) {
       const newSubSubCats = selectedOptions.flatMap((subCategory) =>
-        subCategory.children.map((subSubCategory) => ({
+        subCategory.children?.map((subSubCategory) => ({
           value: subSubCategory.id,
           label: subSubCategory.name,
-        }))
+        })) || []
       );
       setSubSubCategories(newSubSubCats);
 
@@ -198,6 +244,7 @@ function AddProductPage() {
       setSelectedSubSubCategories([]);
     }
   };
+
 
   const handleSubSubCategoryChange = (selectedOptions) => {
     setSelectedSubSubCategories(selectedOptions);
@@ -515,7 +562,7 @@ function AddProductPage() {
                               English
                             </button>
                             <input type="text" name="product-name" id="product-name"
-                              placeholder="Enter product name on english" onChange={handleProductNameEN} />
+                              placeholder="Enter product name on english" onChange={handleProductNameEN} value={productNameEN}/>
                           </div>
                           <p className="text">{productNameEN.length}/100</p>
                         </div>
@@ -531,7 +578,7 @@ function AddProductPage() {
                               Bangla
                             </button>
                             <input type="text" name="product-name" id="product-name"
-                              placeholder="Enter product name on bangla" onChange={handleProductNameBN} />
+                              placeholder="Enter product name on bangla" onChange={handleProductNameBN} value={productNameBN}/>
                           </div>
                           <p className="text">{productNameBN.length}/100</p>
                         </div>
@@ -1183,4 +1230,4 @@ function AddProductPage() {
   )
 }
 
-export default AddProductPage
+export default EditProductPage

@@ -1,12 +1,11 @@
 import React from 'react'
 import AllProductPage from './AllProductPage'
-import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 
-async function getProducts(q, page, pageSize) {
+async function getProducts(q, page, filter, pageSize) {
   try {
-    const response = await axiosWithBaseURL.get(
-      `/api/frontend/store-all-products/qsl-qa/?q=${q}&page=${page}&page_size=${pageSize}`
+    const response = await axiosInstance.get(
+      `/seller-panel-api/frontend/product-list/?q=${q}&page=${page}&filter=${filter}&page_size=${pageSize}`
     );
     const products = response.data;
     const noProductsFound = products.length === 0;
@@ -27,9 +26,9 @@ async function getProducts(q, page, pageSize) {
 }
 
 async function page({ searchParams }) {
-  const { q, page } = searchParams;
+  const { q, page, filter } = searchParams;
   const pageSize = 5;
-  const allProducts = await getProducts(q ? q : '', page ? page : 1, pageSize );
+  const allProducts = await getProducts(q ? q : '', page ? page : 1, filter, pageSize);
   const calculateTotalPage = Math.ceil(allProducts.props.products?.count / pageSize);
   return (
     <AllProductPage allProducts={allProducts} pageProps={page}
