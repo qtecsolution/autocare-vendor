@@ -688,10 +688,43 @@ function AddProductPage() {
                       {mainImagePreview &&
                         <div className="product-img">
                           <img src={mainImagePreview} alt="thumbnail" />
+                          <div className="img-close-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={removeMainImage}>
+                              <g filter="url(#filter0_dd_239_17341)">
+                                <circle cx="21" cy="19.9995" r="15" fill="white" />
+                              </g>
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M15.7219 14.7371C15.8354 14.6237 15.9892 14.5601 16.1496 14.5601C16.31 14.5601 16.4639 14.6237 16.5774 14.7371L20.9917 19.1514L25.406 14.7371C25.4614 14.6776 25.5282 14.6299 25.6024 14.5968C25.6767 14.5637 25.7568 14.546 25.8381 14.5445C25.9194 14.5431 26.0001 14.558 26.0754 14.5885C26.1508 14.6189 26.2193 14.6642 26.2767 14.7217C26.3342 14.7792 26.3795 14.8476 26.41 14.923C26.4404 14.9984 26.4554 15.0791 26.4539 15.1604C26.4525 15.2416 26.4347 15.3218 26.4016 15.396C26.3685 15.4703 26.3208 15.5371 26.2614 15.5925L21.8471 20.0068L26.2614 24.4211C26.3208 24.4765 26.3685 24.5433 26.4016 24.6176C26.4347 24.6918 26.4525 24.772 26.4539 24.8532C26.4554 24.9345 26.4404 25.0152 26.41 25.0906C26.3795 25.1659 26.3342 25.2344 26.2767 25.2919C26.2193 25.3494 26.1508 25.3947 26.0754 25.4251C26.0001 25.4555 25.9194 25.4705 25.8381 25.4691C25.7568 25.4676 25.6767 25.4498 25.6024 25.4168C25.5282 25.3837 25.4614 25.336 25.406 25.2765L20.9917 20.8622L16.5774 25.2765C16.4626 25.3834 16.3109 25.4416 16.1541 25.4389C15.9973 25.4361 15.8477 25.3726 15.7368 25.2617C15.6259 25.1508 15.5623 25.0012 15.5596 24.8444C15.5568 24.6876 15.615 24.5358 15.7219 24.4211L20.1362 20.0068L15.7219 15.5925C15.6086 15.479 15.5449 15.3252 15.5449 15.1648C15.5449 15.0044 15.6086 14.8506 15.7219 14.7371Z"
+                                fill="#525468" />
+                              <defs>
+                                <filter id="filter0_dd_239_17341" x="0.545455" y="0.908603" width="40.9091" height="40.9091"
+                                  filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                  <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                  <feMorphology radius="1.36364" operator="dilate" in="SourceAlpha"
+                                    result="effect1_dropShadow_239_17341" />
+                                  <feOffset dy="1.36364" />
+                                  <feGaussianBlur stdDeviation="2.04545" />
+                                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+                                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_239_17341" />
+                                  <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                  <feOffset dy="1.36364" />
+                                  <feGaussianBlur stdDeviation="1.36364" />
+                                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+                                  <feBlend mode="normal" in2="effect1_dropShadow_239_17341"
+                                    result="effect2_dropShadow_239_17341" />
+                                  <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_239_17341"
+                                    result="shape" />
+                                </filter>
+                              </defs>
+                            </svg>
+                          </div>
                         </div>
                       }
 
-                      {mainImage ? <span className='text-danger pointer' onClick={removeMainImage}>Remove</span>
+                      {mainImage ? ''
                         :
                         <div className="add-product-img-inner">
                           <label for="product-main-img" className="add-product-img">
@@ -815,10 +848,43 @@ function AddProductPage() {
                       {thumbnailPreview &&
                         <div className="product-img">
                           <img src={thumbnailPreview} alt="thumbnail" />
+                          <div className="img-close-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={removeThumbnailImage}>
+                              <g filter="url(#filter0_dd_239_17341)">
+                                <circle cx="21" cy="19.9995" r="15" fill="white" />
+                              </g>
+                              <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M15.7219 14.7371C15.8354 14.6237 15.9892 14.5601 16.1496 14.5601C16.31 14.5601 16.4639 14.6237 16.5774 14.7371L20.9917 19.1514L25.406 14.7371C25.4614 14.6776 25.5282 14.6299 25.6024 14.5968C25.6767 14.5637 25.7568 14.546 25.8381 14.5445C25.9194 14.5431 26.0001 14.558 26.0754 14.5885C26.1508 14.6189 26.2193 14.6642 26.2767 14.7217C26.3342 14.7792 26.3795 14.8476 26.41 14.923C26.4404 14.9984 26.4554 15.0791 26.4539 15.1604C26.4525 15.2416 26.4347 15.3218 26.4016 15.396C26.3685 15.4703 26.3208 15.5371 26.2614 15.5925L21.8471 20.0068L26.2614 24.4211C26.3208 24.4765 26.3685 24.5433 26.4016 24.6176C26.4347 24.6918 26.4525 24.772 26.4539 24.8532C26.4554 24.9345 26.4404 25.0152 26.41 25.0906C26.3795 25.1659 26.3342 25.2344 26.2767 25.2919C26.2193 25.3494 26.1508 25.3947 26.0754 25.4251C26.0001 25.4555 25.9194 25.4705 25.8381 25.4691C25.7568 25.4676 25.6767 25.4498 25.6024 25.4168C25.5282 25.3837 25.4614 25.336 25.406 25.2765L20.9917 20.8622L16.5774 25.2765C16.4626 25.3834 16.3109 25.4416 16.1541 25.4389C15.9973 25.4361 15.8477 25.3726 15.7368 25.2617C15.6259 25.1508 15.5623 25.0012 15.5596 24.8444C15.5568 24.6876 15.615 24.5358 15.7219 24.4211L20.1362 20.0068L15.7219 15.5925C15.6086 15.479 15.5449 15.3252 15.5449 15.1648C15.5449 15.0044 15.6086 14.8506 15.7219 14.7371Z"
+                                fill="#525468" />
+                              <defs>
+                                <filter id="filter0_dd_239_17341" x="0.545455" y="0.908603" width="40.9091" height="40.9091"
+                                  filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                  <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                  <feMorphology radius="1.36364" operator="dilate" in="SourceAlpha"
+                                    result="effect1_dropShadow_239_17341" />
+                                  <feOffset dy="1.36364" />
+                                  <feGaussianBlur stdDeviation="2.04545" />
+                                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+                                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_239_17341" />
+                                  <feColorMatrix in="SourceAlpha" type="matrix"
+                                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                  <feOffset dy="1.36364" />
+                                  <feGaussianBlur stdDeviation="1.36364" />
+                                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+                                  <feBlend mode="normal" in2="effect1_dropShadow_239_17341"
+                                    result="effect2_dropShadow_239_17341" />
+                                  <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_239_17341"
+                                    result="shape" />
+                                </filter>
+                              </defs>
+                            </svg>
+                          </div>
                         </div>
                       }
 
-                      {thumbnail ? <span className='text-danger pointer' onClick={removeThumbnailImage}>Remove</span>
+                      {thumbnail ? ''
                         :
                         <div className="add-product-img-inner">
                           <label for="thumbnail-img" className="add-product-img">

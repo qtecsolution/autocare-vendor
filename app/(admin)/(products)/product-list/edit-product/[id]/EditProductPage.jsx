@@ -26,7 +26,7 @@ function EditProductPage({ productDetails }) {
     name: '',
     category: '',
     brand: '',
-    main_image: '',
+    // main_image: '',
     // images: '',
     price: '',
     stock: '',
@@ -93,10 +93,10 @@ function EditProductPage({ productDetails }) {
   const [isPartNumberActive, setIsPartNumberActive] = useState(productDetails?.product?.is_part_number_active);
   const [isManufacturerActive, setIsManufacturerActive] = useState(productDetails?.product?.is_manufacturer_active);
   const [isWarrantyActive, setIsWarrantyActive] = useState(productDetails?.product?.is_warranty_active);
-  const [mainDescEN, setMainDescEN] = useState('');
-  const [mainDescBN, setMainDescBN] = useState('');
-  const [specificationEN, setSpecificationEN] = useState('');
-  const [specificationBN, setSpecificationBN] = useState('');
+  const [mainDescEN, setMainDescEN] = useState(productDetails?.product?.description_en);
+  const [mainDescBN, setMainDescBN] = useState(productDetails?.product?.description_bn);
+  const [specificationEN, setSpecificationEN] = useState(productDetails?.product?.specification_en);
+  const [specificationBN, setSpecificationBN] = useState(productDetails?.product?.specification_bn);
 
   const [images, setImages] = useState([]);
   const [viewImages, setViewImages] = useState([]);
@@ -106,13 +106,13 @@ function EditProductPage({ productDetails }) {
   const [mainImagePreview, setMainImagePreview] = useState(null);
 
   const [youtubeLink, setYoutubeLink] = useState(productDetails?.product?.youtube_link);
-  const [metaDesc, setMetaDesc] = useState('');
-  const [metaKeywords, setMetaKeywords] = useState('');
-  const [stock, setStock] = useState(null);
-  const [skuName, setSkuName] = useState('');
-  const [price, setPrice] = useState(null);
-  const [discountPrice, setDiscountPrice] = useState(null);
-  const [productWeight, setProductWeight] = useState(null);
+  const [metaDesc, setMetaDesc] = useState(productDetails?.product?.meta_description);
+  const [metaKeywords, setMetaKeywords] = useState(productDetails?.product?.meta_keywords);
+  const [stock, setStock] = useState(productDetails?.product?.stock);
+  const [skuName, setSkuName] = useState(productDetails?.product?.sku);
+  const [price, setPrice] = useState(productDetails?.product?.price);
+  const [discountPrice, setDiscountPrice] = useState(productDetails?.product?.discount_price);
+  const [productWeight, setProductWeight] = useState(productDetails?.product?.weight);
   const [selectedWeightUnit, setSelectedWeightUnit] = useState(null);
 
   const handleThumbnailImage = (e) => {
@@ -307,13 +307,49 @@ function EditProductPage({ productDetails }) {
       };
       setSelectedManufacturer(manufacturer);
     }
-  }, [productDetails]);
 
+    const newVehicleType = productDetails.product?.vehicle_type?.map((vehicleType) => ({
+      value: vehicleType.id,
+      label: vehicleType.name,
+    }));
+    setSelectedVehicleTypes(newVehicleType);
+
+    const newBrand = productDetails.product?.brand?.map((brand) => ({
+      value: brand.id,
+      label: brand.name,
+    }));
+    setSelectedCompatibleBrands(newBrand);
+
+    const newCarModel = productDetails.product?.car_model?.map((model) => ({
+      value: model.id,
+      label: model.name,
+    }));
+    setSelectedCarModels(newCarModel);
+
+    const newCarModelYear = productDetails.product?.car_model_year?.map((model_year) => ({
+      value: model_year.id,
+      label: model_year.year,
+    }));
+    setSelectedCarModelYears(newCarModelYear);
+
+    const newTags = productDetails.product?.tags?.map((tag) => ({
+      value: tag.id,
+      label: tag.name,
+    }));
+    setSelectedTags(newTags);
+
+  }, [productDetails]);
 
   const weightUnits = [
     { value: 'kg', label: 'Kilogram' },
     { value: 'gm', label: 'Gram' }
   ]
+  useEffect(() => {
+    if (productDetails?.product?.weight_unit) {
+      const unit = weightUnits.find(unit => unit.value === productDetails?.product?.weight_unit);
+      setSelectedWeightUnit(unit);
+    }
+  }, [productDetails?.product?.weight_unit]);
   const handleWeightUnitChange = (selectedOption) => {
     setSelectedWeightUnit(selectedOption);
   };
@@ -435,7 +471,7 @@ function EditProductPage({ productDetails }) {
     if (!productNameEN) newErrors.name = 'Name is required';
     if (!selectedCategory) newErrors.category = 'Category is required';
     if (selectedCompatibleBrands.length === 0) newErrors.brand = 'Brand is required';
-    if (!mainImage) newErrors.main_image = 'Product main image is required';
+    // if (!mainImage) newErrors.main_image = 'Product main image is required';
     // if (images.length === 0) newErrors.images = 'At least one product image is required';
     if (!price || isNaN(price)) newErrors.price = 'Valid price is required';
     if (!stock || isNaN(stock)) newErrors.stock = 'Valid stock number is required';
@@ -482,6 +518,9 @@ function EditProductPage({ productDetails }) {
       formData.append('isPartNumberActive', isPartNumberActive);
       formData.append('warranty', warranty);
       formData.append('isWarrantyActive', isWarrantyActive);
+      if (oldImageIdForRemove) {
+        formData.append('removeImagesIds', oldImageIdForRemove);
+      }
       if (mainImage) {
         formData.append('productMainImage', mainImage);
       }
@@ -522,7 +561,7 @@ function EditProductPage({ productDetails }) {
       formData.append('tagIds', JSON.stringify(tagIds));
 
       try {
-        const response = await axiosInstance.post('/seller-panel-api/frontend/create-product/', formData, {
+        const response = await axiosInstance.put(`/seller-panel-api/frontend/update-product/${productDetails?.product?.id}/`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           }
@@ -585,7 +624,7 @@ function EditProductPage({ productDetails }) {
         console.error('Error:', error);
         toast.custom((t) => (
           <AlertToast
-            message={error.response.data.message}
+            message={error.response.data.message || 'Something Wrong !'}
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
@@ -605,7 +644,7 @@ function EditProductPage({ productDetails }) {
           <section className="edit-garage-header">
             <div className="edit-garage-header-inner">
               <div className="header-text">
-                <h1 className="title">Add Product</h1>
+                <h1 className="title">Update Product</h1>
                 <p className="details">Make Changes and publish for review</p>
               </div>
             </div>
@@ -824,7 +863,7 @@ function EditProductPage({ productDetails }) {
                       </ul>
                     </div>
                   </div>
-                  {errors.main_image && <div className="error-message text-danger"><small>{errors.main_image}</small></div>}
+                  {/* {errors.main_image && <div className="error-message text-danger"><small>{errors.main_image}</small></div>} */}
 
                 </div>
                 <div className="product-image-section">
@@ -1416,7 +1455,7 @@ function EditProductPage({ productDetails }) {
             </a> */}
 
               <button className="confirm-btn active" onClick={handleSubmit}>
-                Save
+                Update
               </button>
             </div>
           </div>
