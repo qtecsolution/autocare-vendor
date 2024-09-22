@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         <Script src="/assets/js/main.js"></Script>
 
         <Script src="/assets/js/sidebar.js"></Script>
-        <Script src="/assets/js/nice-select2/nice-select2.js"></Script>
+        {/* <Script src="/assets/js/nice-select2/nice-select2.js"></Script> */}
         {/* <!-- quill js --> */}
         {/* <Script src="/assets/js/quill-rich-text-editor/quill.js"></Script>
         <Script src="/assets/js/quill-rich-text-editor/custom.js"></Script> */}

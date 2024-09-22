@@ -1483,9 +1483,9 @@ function EditProductPage({ productDetails }) {
                     Manage Products
                   </Link>
 
-                  <button onClick={() => setStep(1)} class="add-btn">
+                  <Link href="/add-product" class="add-btn">
                     Add New Product
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
