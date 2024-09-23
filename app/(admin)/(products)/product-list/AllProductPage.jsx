@@ -247,7 +247,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                             {product?.stock}
                                                         </p>
 
-                                                        <div class="d-flex align-items-center gap-2">
+                                                        {/* <div class="d-flex align-items-center gap-2">
                                                             <button class="edit-btn">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"
                                                                     fill="none">
@@ -264,7 +264,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                                         stroke="#A7AAB9" stroke-linecap="round" stroke-linejoin="round" />
                                                                 </svg>
                                                             </button>
-                                                        </div>
+                                                        </div> */}
                                                     </div>
                                                 </td>
 
@@ -296,6 +296,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                         </button>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                             <li><Link href={"/product-list/edit-product/" + product?.id} class="dropdown-item">Edit</Link></li>
+                                                            <li><Link href={"/product-list/generate-variant/" + product?.id} class="dropdown-item">Variant Generate</Link></li>
                                                         </ul>
                                                     </div>
                                                 </td>
