@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import GlobalSearch from '@/components/admin/GlobalSearch'
 import CustomQuillEditor from '@/components/admin/CustomQuill';
@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import { useRouter } from 'next/navigation';
+import Select from 'react-select';
+import axiosInstance from '@/lib/axiosInstance';
 
 function AddServicePage() {
 
@@ -20,10 +22,59 @@ function AddServicePage() {
     const [selectedVehicleTypes, setSelectedVehicleTypes] = useState([]);
     const [vehicleEngine, setVehicleEngine] = useState([]);
     const [selectedVehicleEngine, setSelectedVehicleEngine] = useState([]);
-    const [brands, setBrands] = useState([]);
-    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [compatibleBrands, setCompatibleBrands] = useState([]);
+    const [selectedCompatibleBrands, setSelectedCompatibleBrands] = useState([]);
     const [images, setImages] = useState([]);
     const [viewImages, setViewImages] = useState([]);
+
+    useEffect(() => {
+        const fetchServiceData = async () => {
+            try {
+                const response = await axiosInstance.get('/seller-panel-api/frontend/service-all-data/');
+                setCategories(response.data.categories);
+                setCompatibleBrands(response.data.brands);
+                setVehicleTypes(response.data.vehicle_types);
+                setVehicleEngine(response.data.vehicle_engines);
+                setServicingTypes(response.data.servicing_types);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+        fetchServiceData();
+    }, []);
+
+    const handleCategoryChange = (selectedOption) => {
+        setSelectedCategory(selectedOption);
+        if (selectedOption) {
+            const subCats = selectedOption.children.map((subCategory) => ({
+                value: subCategory.id,
+                label: subCategory.name,
+                children: subCategory.children,
+            }));
+            setSubCategories(subCats);
+            setSelectedSubCategories([]);
+        } else {
+            setSubCategories([]);
+        }
+    };
+
+    const handleSubCategoryChange = (selectedOptions) => {
+        setSelectedSubCategories(selectedOptions);
+    };
+
+    const handleBrandChange = (selectedOptions) => {
+        setSelectedCompatibleBrands(selectedOptions);
+    };
+    const handleVehicleTypeChange = (selectedOptions) => {
+        setSelectedVehicleTypes(selectedOptions);
+    };
+    const handleVehicleEngineChange = (selectedOptions) => {
+        setSelectedVehicleEngine(selectedOptions);
+    };
+    const handleServicingTypesChange = (selectedOptions) => {
+        setSelectedServicingTypes(selectedOptions);
+    };
+
 
 
     const handleImageUpload = (e) => {
@@ -67,7 +118,6 @@ function AddServicePage() {
             };
         });
     };
-
 
     const handleImageRemove = (index) => {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
@@ -113,57 +163,95 @@ function AddServicePage() {
                                 <div className="category-select">
                                     <div className="box">
                                         <label className="category-select-label">Select Category <span>*</span></label>
-                                        <select className="wide selectize">
-                                            <option data-display="Select">Steering Columns</option>
-                                            <option value="1">Steering Columns</option>
-                                            <option value="2">Steering Columns</option>
-                                            <option value="4">Steering Columns</option>
-                                        </select>
+                                        <Select
+                                            name="category"
+                                            options={categories.map((category) => ({
+                                                value: category.id,
+                                                label: category.name,
+                                                children: category.children,
+                                            }))}
+                                            placeholder="Select Category"
+                                            onChange={handleCategoryChange}
+                                            value={selectedCategory}
+                                        />
                                     </div>
 
                                     <div className="box">
                                         <label className="category-select-label">Sub - Category <span>*</span></label>
-                                        <select className="wide selectize">
-                                            <option data-display="Select">Steering Columns</option>
-                                            <option value="1">Steering Columns</option>
-                                            <option value="2">Steering Columns</option>
-                                            <option value="4">Steering Columns</option>
-                                        </select>
+                                        <Select
+                                            isMulti
+                                            name="subcategory"
+                                            options={subCategories}
+                                            placeholder="Select Sub Category"
+                                            onChange={handleSubCategoryChange}
+                                            value={selectedSubCategories}
+                                            isDisabled={!subCategories.length} // Disable if no subcategories
+                                        />
                                     </div>
                                 </div>
                             </form>
                         </div>
 
                         <div className="add-product-body">
-                            <form className="d-flex flex-column gap-4">
-                                <div className="tag-container">
-                                    <label for="tag-input-2">Servicing Type <span>*</span></label>
-                                    <div className="tags-input" id="tags-input-2">
-                                        <input type="text" id="tag-input-2" />
-                                    </div>
-                                </div>
+                            <div className="box">
+                                <label className="category-select-label">Servicing Type <span>*</span></label>
+                                <Select
+                                    isMulti
+                                    name="servicing_type"
+                                    options={servicingTypes.map((service_type) => ({
+                                        value: service_type.id,
+                                        label: service_type.name,
+                                    }))}
+                                    placeholder="Select Servicing Type"
+                                    onChange={handleServicingTypesChange}
+                                    value={selectedServicingTypes}
+                                />
+                            </div>
 
-                                <div className="tag-container">
-                                    <label for="tag-input-2">Vehicle Type <span>*</span></label>
-                                    <div className="tags-input" id="tags-input-2">
-                                        <input type="text" id="tag-input-2" />
-                                    </div>
-                                </div>
+                            <div className="box">
+                                <label className="category-select-label">Vehicle Type <span>*</span></label>
+                                <Select
+                                    isMulti
+                                    name="vehicle_type"
+                                    options={vehicleTypes.map((vehicle_type) => ({
+                                        value: vehicle_type.id,
+                                        label: vehicle_type.name,
+                                    }))}
+                                    placeholder="Select Vehicle Type"
+                                    onChange={handleVehicleTypeChange}
+                                    value={selectedVehicleTypes}
+                                />
+                            </div>
 
-                                <div className="tag-container">
-                                    <label for="tag-input-3">Vehicle Engine <span>*</span></label>
-                                    <div className="tags-input" id="tags-input-3">
-                                        <input type="text" id="tag-input-3" />
-                                    </div>
-                                </div>
+                            <div className="box">
+                                <label className="category-select-label">Vehicle Engine <span>*</span></label>
+                                <Select
+                                    isMulti
+                                    name="vehicle_engine"
+                                    options={vehicleEngine.map((vehicle_engine) => ({
+                                        value: vehicle_engine.id,
+                                        label: vehicle_engine.name,
+                                    }))}
+                                    placeholder="Select Vehicle Engine"
+                                    onChange={handleVehicleEngineChange}
+                                    value={selectedVehicleEngine}
+                                />
+                            </div>
 
-                                <div className="tag-container">
-                                    <label for="tag-input-4">Brand <span>*</span></label>
-                                    <div className="tags-input" id="tags-input-4">
-                                        <input type="text" id="tag-input-4" />
-                                    </div>
-                                </div>
-                            </form>
+                            <div className="box">
+                                <label className="category-select-label">Brand <span>*</span></label>
+                                <Select
+                                    isMulti
+                                    name="brand"
+                                    options={compatibleBrands.map((brand) => ({
+                                        value: brand.id,
+                                        label: brand.name,
+                                    }))}
+                                    placeholder="Select Brand"
+                                    onChange={handleBrandChange}
+                                    value={selectedCompatibleBrands}
+                                />
+                            </div>
                         </div>
 
                         <div className="product-image-section">
