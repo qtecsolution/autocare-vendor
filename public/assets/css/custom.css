@@ -65,3 +65,7 @@
     height: 130px;
     border-radius: 0.875rem;
 }
+.show_disable_button{
+    opacity: 0.5;
+    cursor: not-allowed;
+}

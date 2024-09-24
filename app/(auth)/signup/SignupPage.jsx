@@ -242,6 +242,28 @@ function SignupPage() {
             }
         }
     }
+
+    function check1stStepButton() {
+        if (phoneNumber.length < 11 || phoneNumber.length > 11) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function check3rdStepButton() {
+        if (fullName.length < 1 || password.length < 4 || repeatPassword.length < 4) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function check4thStepButton() {
+        if (!email) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     return (
         <>
             {step === 5 ? <Header2 /> : <Header />}
@@ -294,15 +316,15 @@ function SignupPage() {
 
                                                 <form className="form-inner">
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="phone-number">Phone Number</label>
+                                                        <label className="input-label" for="phone-number">Phone Number <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
-                                                            <input type="number" name="" id="phone-number" placeholder="Enter number" min={0}
+                                                            <input type="number" name="" id="phone-number" placeholder="Enter Number" min={0}
                                                                 onChange={(e) => setPhoneNumber(e.target.value)}
                                                             />
                                                         </div>
                                                     </div>
 
-                                                    <button className="login-btn" onClick={verifyPhoneNumber}>
+                                                    <button className={`login-btn ${check1stStepButton() ? 'show_disable_button' : ''}`} onClick={verifyPhoneNumber} disabled={check1stStepButton()}>
                                                         Verify
                                                     </button>
                                                 </form>
@@ -337,7 +359,7 @@ function SignupPage() {
                                                             ))}
                                                     </div>
 
-                                                    <button className="login-btn" onClick={verifyOTP}>
+                                                    <button className={`login-btn ${otp.length < 6 ? 'show_disable_button' : ''}`} onClick={verifyOTP} disabled={otp.length < 6 ? true : false}>
                                                         Verify
                                                     </button>
                                                 </form>
@@ -395,7 +417,7 @@ function SignupPage() {
                                                         </div>
                                                     </div>
 
-                                                    <button className="login-btn" onClick={createProfileStep1}>
+                                                    <button className={`login-btn ${check3rdStepButton() ? 'show_disable_button' : ''}`} onClick={createProfileStep1} disabled={check3rdStepButton()}>
                                                         Next
                                                     </button>
                                                 </form>
@@ -455,7 +477,7 @@ function SignupPage() {
                                                     </div>
 
                                                     <div className="inner-input">
-                                                        <label className="input-label" htmlFor="email">Email Address</label>
+                                                        <label className="input-label" htmlFor="email">Email Address <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input
                                                                 type="email"
@@ -468,7 +490,7 @@ function SignupPage() {
                                                         </div>
                                                     </div>
 
-                                                    <button className="login-btn" onClick={createProfileStep2}>
+                                                    <button className={`login-btn ${check4thStepButton() ? 'show_disable_button' : ''}`} onClick={createProfileStep2} disabled={check4thStepButton()}>
                                                         Finish
                                                     </button>
                                                 </form>
