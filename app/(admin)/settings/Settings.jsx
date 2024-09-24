@@ -275,7 +275,7 @@ export default function Settings() {
                           <label for="Email" className="input-label">
                             Email Address <span className="text-danger">*</span>
                           </label>
-                          <p className="add-another">Verify Email</p>
+                          {/* <p className="add-another">Verify Email</p> */}
                         </div>
 
                         <input
