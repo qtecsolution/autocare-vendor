@@ -62,7 +62,9 @@ export default function Settings() {
         setShowSecPhoneInput(user.secondary_phone_number ? true : false);
         setSelectedDivision(user.store.division.id);
         setSelectedDistrict(user.store.thana.id);
-        setSelectedCity(user.store.city.id);
+        setSelectedCity(user.store.city.id);;
+        setThumbnailPreview(user.store.logo);
+        setMainImagePreview(user.store.banner_image);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
       } finally {
@@ -233,10 +235,10 @@ export default function Settings() {
         formData.append('cityId', selectedDistrict?.value);
         formData.append('thanaId', selectedCity?.value);
         if (mainImage) {
-          formData.append('logo', mainImage);
+          formData.append('logo', thumbnail);
         }
         if (thumbnail) {
-          formData.append('bannerImage', thumbnail);
+          formData.append('bannerImage', mainImage);
         }
         const response = await axiosInstance.put(
           '/seller-panel-api/update-business/',
@@ -302,17 +304,16 @@ export default function Settings() {
       img.src = URL.createObjectURL(file);
       img.onload = () => {
         const { width, height } = img;
-        setMainImage(file);
-        // if (width === height) {
-        //   setMainImage(file);
-        // } else {
-        //   toast.custom(t => (
-        //     <AlertToast
-        //       message="Thumbnail must have a 1:1 aspect ratio."
-        //       dismiss={() => toast.dismiss(t.id)}
-        //     />
-        //   ));
-        // }
+        if (true) {
+          setMainImage(file);
+        } else {
+          toast.custom(t => (
+            <AlertToast
+              message="Thumbnail must have a 1:1 aspect ratio."
+              dismiss={() => toast.dismiss(t.id)}
+            />
+          ));
+        }
       };
     }
   };
@@ -645,7 +646,8 @@ export default function Settings() {
                           <input
                             class="input-field"
                             type="text"
-                            name="" required
+                            name=""
+                            required
                             value={storeData.location}
                             onChange={e =>
                               setStore({
@@ -684,7 +686,7 @@ export default function Settings() {
 
                         <div>
                           <label className="label-inner category-select-label">
-                            Thana
+                            Thana <span className="text-danger">*</span>
                           </label>
                           <Select
                             value={selectedCity}
