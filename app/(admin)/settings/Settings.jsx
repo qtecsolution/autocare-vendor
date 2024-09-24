@@ -13,7 +13,7 @@ export default function Settings() {
     fullName: '',
     email: '',
     phone: '',
-    secondaryPhoneNumber: '',
+    phone2: '',
     dob: '',
   });
   const [store, setStore] = useState({
@@ -35,7 +35,7 @@ export default function Settings() {
           fullName: user.full_name || '',
           email: user.email || '',
           phone: user.phone_number || '',
-          secondaryPhoneNumber: user.secondary_phone_number || '',
+          phone2: user.secondary_phone_number || '',
           dob: user.birth_date || '',
         });
         setStore({
@@ -46,7 +46,7 @@ export default function Settings() {
           banner: user.store.banner || '',
           business_type: user.business_type.name || '',
         });
-        setShowSecPhoneInput(user.secondaryPhoneNumber ? true : false);
+        setShowSecPhoneInput(user.phone2 ? true : false);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
       } finally {
@@ -58,25 +58,53 @@ export default function Settings() {
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  //user data update
+  
+  const isValidateFields = () => {
+    if (!user.fullName.trim()) {
+      return false;
+    }
+    if (!user.email.trim()) {
+      return false;
+    }
+    if (!user.phone.trim()) {
+      return false;
+    }
+    if (!user.dob.trim()) {
+      return false;
+    }
+    return true;
+  };
+
+  // User data update
   const handleUserUpdate = async () => {
+    // Call the isValidateFields function
+    if (!isValidateFields()) {
+      toast.custom(t => (
+        <AlertToast
+          message="Please Enter All Required Fields"
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      return;
+    }
     if (window.confirm('Are you sure you want to update your profile?')) {
       try {
         const formData = new FormData();
         formData.append('fullName', user.fullName);
-        formData.append('email', user.email);;
-        formData.append('secondaryPhoneNumber', user.secondaryPhoneNumber);
+        formData.append('email', user.email);
+        formData.append('phone', user.phone2);
+        formData.append('secondaryPhoneNumber', user.phone2);
         formData.append('dateOfBirth', user.dob);
         const response = await axiosInstance.put(
           '/seller-panel-api/seller-profile/',
           formData
         );
-         toast.custom(t => (
-           <SuccessToast
-             message="Seller Profile Updated Successfully"
-             dismiss={() => toast.dismiss(t.id)}
-           />
-         ));
+        toast.custom(t => (
+          <SuccessToast
+            message="Seller Profile Updated Successfully"
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
       } catch (error) {
         console.error('Error updating profile:', error);
         toast.custom(t => (
@@ -175,13 +203,14 @@ export default function Settings() {
                       <div className="input-inner">
                         <div className="label-inner">
                           <label for="userName" className="input-label">
-                            User Name
+                            User Name <span className="text-danger">*</span>
                           </label>
                         </div>
 
                         <input
                           className="input-field"
                           type="text"
+                          required
                           name=""
                           value={user.fullName}
                           onChange={e =>
@@ -198,14 +227,13 @@ export default function Settings() {
                       <div className="input-inner">
                         <div className="label-inner">
                           <label for="number" className="input-label">
-                            Mobile Number
+                            Mobile Number <span className="text-danger">*</span>
                           </label>
                           <p
                             className="add-another"
                             onClick={() => setShowSecPhoneInput(true)}
                           >
-                            {' '}
-                            Add Secondary Phone
+                            Add another
                           </p>
                         </div>
 
@@ -213,6 +241,7 @@ export default function Settings() {
                           className="input-field number"
                           disabled
                           type="number"
+                          required
                           name=""
                           id="number"
                           value={user.phone}
@@ -227,14 +256,13 @@ export default function Settings() {
                         {showSecPhoneInput && (
                           <input
                             className="input-field number"
-                            type="number"
-                            name=""
+                            type="text"
                             id="number"
-                            value={user.secondary_phone_number}
+                            value={user.phone2}
                             onChange={e =>
                               setUser({
                                 ...user,
-                                secondary_phone_number: e.target.value,
+                                phone2: e.target.value,
                               })
                             }
                             placeholder="Enter seconadary phone"
@@ -245,7 +273,7 @@ export default function Settings() {
                       <div className="input-inner">
                         <div className="label-inner">
                           <label for="Email" className="input-label">
-                            Email Address
+                            Email Address <span className="text-danger">*</span>
                           </label>
                           <p className="add-another">Verify Email</p>
                         </div>
@@ -253,6 +281,7 @@ export default function Settings() {
                         <input
                           className="input-field"
                           type="email"
+                          required
                           name=""
                           id="Email"
                           value={user.email}
@@ -269,13 +298,14 @@ export default function Settings() {
                       <div className="input-inner">
                         <div className="label-inner">
                           <label for="start-date" className="input-label">
-                            Date of Birth
+                            Date of Birth <span className="text-danger">*</span>
                           </label>
                         </div>
 
                         <input
                           className="input-field"
                           type="date"
+                          required
                           id="start-date"
                           value={user.dob}
                           onChange={e =>
