@@ -1,163 +1,333 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import GlobalSearch from '@/components/admin/GlobalSearch'
+import CustomQuillEditor from '@/components/admin/CustomQuill';
+import toast from 'react-hot-toast';
+import AlertToast from '@/components/toast/AlertToast';
+import SuccessToast from '@/components/toast/Success';
+import { useRouter } from 'next/navigation';
 
 function AddServicePage() {
+
+    const [categories, setCategories] = useState([]);
+    const [subCategories, setSubCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+    const [servicingTypes, setServicingTypes] = useState([]);
+    const [selectedServicingTypes, setSelectedServicingTypes] = useState([]);
+    const [vehicleTypes, setVehicleTypes] = useState([]);
+    const [selectedVehicleTypes, setSelectedVehicleTypes] = useState([]);
+    const [vehicleEngine, setVehicleEngine] = useState([]);
+    const [selectedVehicleEngine, setSelectedVehicleEngine] = useState([]);
+    const [brands, setBrands] = useState([]);
+    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [images, setImages] = useState([]);
+    const [viewImages, setViewImages] = useState([]);
+
+
+    const handleImageUpload = (e) => {
+        const files = Array.from(e.target.files);
+        if (images.length + files.length > 4) {
+            toast.custom((t) => (
+                <AlertToast
+                    message="You can upload a maximum of 4 images!"
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
+            return;
+        }
+
+        // To track valid images
+        const validFiles = [];
+        const newViewImages = [];
+
+        files.forEach((file) => {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = () => {
+                const { width, height } = img;
+                if (width === height) {
+                    validFiles.push(file);
+                    newViewImages.push(img.src);
+
+                    // Check if all files are processed before updating state
+                    if (validFiles.length === files.length) {
+                        setImages((prevImages) => [...prevImages, ...validFiles]);
+                        setViewImages((prevImages) => [...prevImages, ...newViewImages]);
+                    }
+                } else {
+                    toast.custom((t) => (
+                        <AlertToast
+                            message="Image must have a 1:1 aspect ratio."
+                            dismiss={() => toast.dismiss(t.id)}
+                        />
+                    ));
+                }
+            };
+        });
+    };
+
+
+    const handleImageRemove = (index) => {
+        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+        setViewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    };
+
     return (
         <div id="content">
-            <div class="inner-content">
+            <div className="inner-content">
                 <GlobalSearch />
             </div>
-            <div class="d-flex flex-column h-100">
-                <div class="flex-grow-1">
-                    <div class="page-header">
-                        <div class="d-flex flex-column gap-1">
-                            <h1 class="page-title">
+            <div className="d-flex flex-column h-100">
+                <div className="flex-grow-1">
+                    <div className="page-header">
+                        <div className="d-flex flex-column gap-1">
+                            <h1 className="page-title">
                                 Add Service
                             </h1>
-                            <p class="page-text">
+                            <p className="page-text">
                                 Seamlessly Add and Manage Your Services
                             </p>
                         </div>
                     </div>
 
-                    <div class="add-product-content">
-                        <div class="add-product-header">
-                            <div class="add-product-header-inner">
-                                <div class="add-product-header-item">
-                                    <div class="number active">
-                                        1
+                    <div className="add-product-content">
+                        <div className="add-product-body">
+                            <form className="d-flex flex-column gap-4">
+                                <div className="d-flex flex-column gap-2">
+                                    <div className="input-field-name">
+                                        <label for="product-name"> Service Name <span>*</span></label>
                                     </div>
-
-                                    <h4 class="text active">
-                                        Basic Info
-                                    </h4>
-                                </div>
-
-                                <div class="add-product-header-item">
-                                    <div class="number">
-                                        2
-                                    </div>
-
-                                    <h4 class="text">
-                                        Description
-                                    </h4>
-                                </div>
-
-                                <div class="add-product-header-item">
-                                    <div class="number">
-                                        3
-                                    </div>
-
-                                    <h4 class="text">
-                                        Price, Stock & Variants
-                                    </h4>
-                                </div>
-
-                                <div class="add-product-header-item">
-                                    <div class="number">
-                                        4
-                                    </div>
-
-                                    <h4 class="text">
-                                        Shipping & Warranty
-                                    </h4>
-                                </div>
-                            </div>
-
-                            <div class="inner-bar-chart">
-                                <div class="bar-chart">
-
-                                    {/* <div class="bar" style={{width: '100%'}}>
-                <span style={{width: '20%'}}></span> */}
-                                    <div class="bar">
-                                        <span></span>
-                                    </div>
-                                </div>
-                                <p class="text">10%</p>
-                            </div>
-                        </div>
-
-                        <div class="add-product-body">
-                            <form class="d-flex flex-column gap-4">
-                                <div class="d-flex flex-column gap-2">
-                                    <div class="input-field-name">
-                                        <label for="product-name">Product Name <span>*</span></label>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-9">
-                                            <div class="input-field">
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <div className="input-field">
                                                 <input type="text" name="product-name" id="product-name"
                                                     placeholder="Ex. Sony a6400 mirrorless camera" />
-                                                <p class="text">82/100</p>
+                                                <p className="text">82/100</p>
                                             </div>
-                                        </div>
-                                        <div class="col-3 align-self-center">
-                                            <a class="languages-btn" href="#">
-                                                Translate to other Languages
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="category-select">
-                                    <div class="box">
-                                        <label class="category-select-label">Select Category <span>*</span></label>
-                                        <select class="wide selectize">
-                                            <option data-display="Select">Nothing</option>
-                                            <option value="1">Some option</option>
-                                            <option value="2">Another option</option>
-                                            <option value="4">Potato</option>
+                                <div className="category-select">
+                                    <div className="box">
+                                        <label className="category-select-label">Select Category <span>*</span></label>
+                                        <select className="wide selectize">
+                                            <option data-display="Select">Steering Columns</option>
+                                            <option value="1">Steering Columns</option>
+                                            <option value="2">Steering Columns</option>
+                                            <option value="4">Steering Columns</option>
                                         </select>
                                     </div>
 
-                                    <div class="category-suggestions">
-                                        <h5 class="category-suggestions-title">Category Suggestions</h5>
-
-                                        {/* <!-- Checkboxes --> */}
-                                        <div class="d-flex flex-column gap-2">
-                                            <div class="form-checkbox">
-                                                <input class="checkbox" type="checkbox" id="checkbox1" />
-                                                <label for="checkbox1" tabindex="1">Cameras&gt;Mirrorless</label>
-                                            </div>
-                                            <div class="form-checkbox">
-                                                <input class="checkbox" type="checkbox" id="checkbox2" />
-                                                <label for="checkbox2" tabindex="2">Cameras&gt;DSLR&gt;Body Only</label>
-                                            </div>
-
-                                            <div class="form-checkbox">
-                                                <input class="checkbox" type="checkbox" id="checkbox3" />
-                                                <label for="checkbox3" tabindex="3">Cameras&gt;DSLR&gt;Sets</label>
-                                            </div>
-
-                                            <div class="form-checkbox">
-                                                <input class="checkbox" type="checkbox" id="checkbox4" />
-                                                <label for="checkbox4" tabindex="4">Cameras&gt;Video & Action Camcorder&gt;360 Cameras</label>
-                                            </div>
-
-                                            <div class="form-checkbox">
-                                                <input class="checkbox" type="checkbox" id="checkbox5" />
-                                                <label for="checkbox5" tabindex="5"> Cameras&gt;oint & Shoot&gt;Underwater Digital Cameras </label>
-                                            </div>
-                                        </div>
-
+                                    <div className="box">
+                                        <label className="category-select-label">Sub - Category <span>*</span></label>
+                                        <select className="wide selectize">
+                                            <option data-display="Select">Steering Columns</option>
+                                            <option value="1">Steering Columns</option>
+                                            <option value="2">Steering Columns</option>
+                                            <option value="4">Steering Columns</option>
+                                        </select>
                                     </div>
                                 </div>
                             </form>
                         </div>
+
+                        <div className="add-product-body">
+                            <form className="d-flex flex-column gap-4">
+                                <div className="tag-container">
+                                    <label for="tag-input-2">Servicing Type <span>*</span></label>
+                                    <div className="tags-input" id="tags-input-2">
+                                        <input type="text" id="tag-input-2" />
+                                    </div>
+                                </div>
+
+                                <div className="tag-container">
+                                    <label for="tag-input-2">Vehicle Type <span>*</span></label>
+                                    <div className="tags-input" id="tags-input-2">
+                                        <input type="text" id="tag-input-2" />
+                                    </div>
+                                </div>
+
+                                <div className="tag-container">
+                                    <label for="tag-input-3">Vehicle Engine <span>*</span></label>
+                                    <div className="tags-input" id="tags-input-3">
+                                        <input type="text" id="tag-input-3" />
+                                    </div>
+                                </div>
+
+                                <div className="tag-container">
+                                    <label for="tag-input-4">Brand <span>*</span></label>
+                                    <div className="tags-input" id="tags-input-4">
+                                        <input type="text" id="tag-input-4" />
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div className="product-image-section">
+                            <div className="product-img-head">
+                                <div className="d-flex align-items-center gap-1">
+                                    <h1 className="title">Product Additional Image <span>*</span> </h1>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path
+                                            d="M9.375 9.37476L9.40917 9.35809C9.51602 9.3047 9.63594 9.28306 9.75472 9.29572C9.8735 9.30838 9.98616 9.35481 10.0794 9.42951C10.1726 9.50422 10.2424 9.60407 10.2806 9.71724C10.3189 9.83042 10.3238 9.95217 10.295 10.0681L9.705 12.4314C9.67595 12.5474 9.68078 12.6693 9.71891 12.7826C9.75704 12.8959 9.82687 12.9959 9.92011 13.0707C10.0134 13.1455 10.1261 13.1921 10.245 13.2047C10.3639 13.2174 10.4839 13.1957 10.5908 13.1423L10.625 13.1248M17.5 9.99976C17.5 10.9847 17.306 11.9599 16.9291 12.8699C16.5522 13.7798 15.9997 14.6066 15.3033 15.3031C14.6069 15.9995 13.7801 16.5519 12.8701 16.9289C11.9602 17.3058 10.9849 17.4998 10 17.4998C9.01509 17.4998 8.03982 17.3058 7.12987 16.9289C6.21993 16.5519 5.39314 15.9995 4.6967 15.3031C4.00026 14.6066 3.44781 13.7798 3.0709 12.8699C2.69399 11.9599 2.5 10.9847 2.5 9.99976C2.5 8.01063 3.29018 6.10298 4.6967 4.69645C6.10322 3.28993 8.01088 2.49976 10 2.49976C11.9891 2.49976 13.8968 3.28993 15.3033 4.69645C16.7098 6.10298 17.5 8.01063 17.5 9.99976ZM10 6.87476H10.0067V6.88142H10V6.87476Z"
+                                            stroke="#0F766D" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+
+                                <h1 className="example-text">
+                                    See Example
+                                </h1>
+                            </div>
+
+                            <div className="product-img-body">
+                                <div className="uplod-img">
+                                    {viewImages.map((image, index) => (
+                                        <div key={index} className="product-img">
+                                            <img src={image}
+                                                alt={`Review ${index}`} />
+                                            <div className="img-close-btn">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={() => handleImageRemove(index)}>
+                                                    <g filter="url(#filter0_dd_239_17341)">
+                                                        <circle cx="21" cy="19.9995" r="15" fill="white" />
+                                                    </g>
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M15.7219 14.7371C15.8354 14.6237 15.9892 14.5601 16.1496 14.5601C16.31 14.5601 16.4639 14.6237 16.5774 14.7371L20.9917 19.1514L25.406 14.7371C25.4614 14.6776 25.5282 14.6299 25.6024 14.5968C25.6767 14.5637 25.7568 14.546 25.8381 14.5445C25.9194 14.5431 26.0001 14.558 26.0754 14.5885C26.1508 14.6189 26.2193 14.6642 26.2767 14.7217C26.3342 14.7792 26.3795 14.8476 26.41 14.923C26.4404 14.9984 26.4554 15.0791 26.4539 15.1604C26.4525 15.2416 26.4347 15.3218 26.4016 15.396C26.3685 15.4703 26.3208 15.5371 26.2614 15.5925L21.8471 20.0068L26.2614 24.4211C26.3208 24.4765 26.3685 24.5433 26.4016 24.6176C26.4347 24.6918 26.4525 24.772 26.4539 24.8532C26.4554 24.9345 26.4404 25.0152 26.41 25.0906C26.3795 25.1659 26.3342 25.2344 26.2767 25.2919C26.2193 25.3494 26.1508 25.3947 26.0754 25.4251C26.0001 25.4555 25.9194 25.4705 25.8381 25.4691C25.7568 25.4676 25.6767 25.4498 25.6024 25.4168C25.5282 25.3837 25.4614 25.336 25.406 25.2765L20.9917 20.8622L16.5774 25.2765C16.4626 25.3834 16.3109 25.4416 16.1541 25.4389C15.9973 25.4361 15.8477 25.3726 15.7368 25.2617C15.6259 25.1508 15.5623 25.0012 15.5596 24.8444C15.5568 24.6876 15.615 24.5358 15.7219 24.4211L20.1362 20.0068L15.7219 15.5925C15.6086 15.479 15.5449 15.3252 15.5449 15.1648C15.5449 15.0044 15.6086 14.8506 15.7219 14.7371Z"
+                                                        fill="#525468" />
+                                                    <defs>
+                                                        <filter id="filter0_dd_239_17341" x="0.545455" y="0.908603" width="40.9091" height="40.9091"
+                                                            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                                            <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                                                            <feColorMatrix in="SourceAlpha" type="matrix"
+                                                                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                                            <feMorphology radius="1.36364" operator="dilate" in="SourceAlpha"
+                                                                result="effect1_dropShadow_239_17341" />
+                                                            <feOffset dy="1.36364" />
+                                                            <feGaussianBlur stdDeviation="2.04545" />
+                                                            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+                                                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_239_17341" />
+                                                            <feColorMatrix in="SourceAlpha" type="matrix"
+                                                                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                                                            <feOffset dy="1.36364" />
+                                                            <feGaussianBlur stdDeviation="1.36364" />
+                                                            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0" />
+                                                            <feBlend mode="normal" in2="effect1_dropShadow_239_17341"
+                                                                result="effect2_dropShadow_239_17341" />
+                                                            <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_239_17341"
+                                                                result="shape" />
+                                                        </filter>
+                                                    </defs>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {images?.length === 4 ?
+                                        ''
+                                        :
+                                        <div className="add-product-img-inner">
+                                            <label for="add-product-img" className="add-product-img">
+                                                <input className="add-product-img-input" type="file" name="" id="add-product-img" accept='.png,.jpg,.jpeg' multiple onChange={handleImageUpload} />
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                                    <path d="M15 5.62451V24.3745M24.375 14.9995H5.625" stroke="#0F766D" stroke-width="1.875"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </label>
+                                        </div>
+                                    }
+                                </div>
+                                <div className="">
+                                    <ul className="add-product-img-list">
+                                        <li>Image Ratio: 1:1 </li>
+                                        <li>Max file size: 1MB.</li>
+                                        <li>Format: png, jpg</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {/* {errors.images && <div className="error-message text-danger"><small>{errors.images}</small></div>} */}
+
+                        </div>
+
                     </div>
+
+                    <div className="main-description-section">
+                        <div className="main-description-content">
+
+                            <div className="main-description">
+                                <label for="" className="main-description-label">
+                                    Main Description
+                                </label>
+                                <div className="editor-container">
+                                    <CustomQuillEditor editorId="editor1" toolbarId="toolbar1" placeholder="Write here for ..."
+                                    // content={specificationBN}
+                                    // onContentChange={setSpecificationBN}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="main-description-section">
+                        <div className="main-description-content">
+
+                            <div className="main-description">
+                                <label for="" className="main-description-label">
+                                    Compatibility
+                                </label>
+                                <div className="editor-container">
+                                    <CustomQuillEditor editorId="editor2" toolbarId="toolbar2" placeholder="Write here for ..."
+                                    // content={specificationBN}
+                                    // onContentChange={setSpecificationBN}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="price-section">
+                        <div className="inner-price-section">
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <div className="inner-input">
+                                        <label className="label" for="">Price Start Form <span>*</span>
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path
+                                                        d="M9.375 9.375L9.40917 9.35833C9.51602 9.30495 9.63594 9.2833 9.75472 9.29596C9.8735 9.30862 9.98616 9.35505 10.0794 9.42976C10.1726 9.50446 10.2424 9.60432 10.2806 9.71749C10.3189 9.83066 10.3238 9.95242 10.295 10.0683L9.705 12.4317C9.67595 12.5476 9.68078 12.6695 9.71891 12.7828C9.75704 12.8961 9.82687 12.9961 9.92011 13.071C10.0134 13.1458 10.1261 13.1923 10.245 13.205C10.3639 13.2177 10.4839 13.196 10.5908 13.1425L10.625 13.125M17.5 10C17.5 10.9849 17.306 11.9602 16.9291 12.8701C16.5522 13.7801 15.9997 14.6069 15.3033 15.3033C14.6069 15.9997 13.7801 16.5522 12.8701 16.9291C11.9602 17.306 10.9849 17.5 10 17.5C9.01509 17.5 8.03982 17.306 7.12987 16.9291C6.21993 16.5522 5.39314 15.9997 4.6967 15.3033C4.00026 14.6069 3.44781 13.7801 3.0709 12.8701C2.69399 11.9602 2.5 10.9849 2.5 10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10ZM10 6.875H10.0067V6.88167H10V6.875Z"
+                                                        stroke="#0D9488" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </span>
+                                        </label>
+                                        <input className="input" type="text" name="" id="" placeholder="৳" />
+                                    </div>
+                                </div>
+
+                                <div className="col-sm-6">
+                                    <div className="inner-input">
+                                        <label className="label" for="">Maximum Price
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path
+                                                        d="M9.375 9.375L9.40917 9.35833C9.51602 9.30495 9.63594 9.2833 9.75472 9.29596C9.8735 9.30862 9.98616 9.35505 10.0794 9.42976C10.1726 9.50446 10.2424 9.60432 10.2806 9.71749C10.3189 9.83066 10.3238 9.95242 10.295 10.0683L9.705 12.4317C9.67595 12.5476 9.68078 12.6695 9.71891 12.7828C9.75704 12.8961 9.82687 12.9961 9.92011 13.071C10.0134 13.1458 10.1261 13.1923 10.245 13.205C10.3639 13.2177 10.4839 13.196 10.5908 13.1425L10.625 13.125M17.5 10C17.5 10.9849 17.306 11.9602 16.9291 12.8701C16.5522 13.7801 15.9997 14.6069 15.3033 15.3033C14.6069 15.9997 13.7801 16.5522 12.8701 16.9291C11.9602 17.306 10.9849 17.5 10 17.5C9.01509 17.5 8.03982 17.306 7.12987 16.9291C6.21993 16.5522 5.39314 15.9997 4.6967 15.3033C4.00026 14.6069 3.44781 13.7801 3.0709 12.8701C2.69399 11.9602 2.5 10.9849 2.5 10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10ZM10 6.875H10.0067V6.88167H10V6.875Z"
+                                                        stroke="#0D9488" stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </span>
+                                        </label>
+                                        <input className="input" type="text" name="" id="" placeholder="৳" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-                <div class="add-product-footer">
-                    <div class="d-flex align-items-center gap-3">
-                        <Link href="#" class="save-draft-btn active">
-                            Save Draft
-                        </Link>
-
-                        <Link href="/add-service-2" class="confirm-btn active">
-                            Confirm
-                        </Link>
-                    </div>
+                <div className="add-product-footer justify-content-center">
+                    <a href="./add-services2.html" className="confirm-btn active px-5">
+                        Save and Publish
+                    </a>
                 </div>
             </div>
         </div>

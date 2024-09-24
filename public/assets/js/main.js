@@ -1,27 +1,27 @@
-// nice select-2
-document.addEventListener("DOMContentLoaded", function (e) {
-  // default
-  var els = document.querySelectorAll(".selectize");
-  els.forEach(function (select) {
-    NiceSelect.bind(select);
-  });
+// // nice select-2
+// document.addEventListener("DOMContentLoaded", function (e) {
+//   // default
+//   var els = document.querySelectorAll(".selectize");
+//   els.forEach(function (select) {
+//     NiceSelect.bind(select);
+//   });
 
-  // seachable
-  var options = { searchable: true };
-  NiceSelect.bind(document.getElementById("seachable-select"), options);
+//   // seachable
+//   var options = { searchable: true };
+//   NiceSelect.bind(document.getElementById("seachable-select"), options);
 
-  //translated-select
-  var options = {
-    searchable: true,
-    placeholder: "select",
-    searchtext: "zoek",
-    selectedtext: "geselecteerd",
-  };
-  document.getElementById("translated-select")._niceSelect = NiceSelect.bind(
-    document.getElementById("translated-select"),
-    options
-  );
-});
+//   //translated-select
+//   var options = {
+//     searchable: true,
+//     placeholder: "select",
+//     searchtext: "zoek",
+//     selectedtext: "geselecteerd",
+//   };
+//   document.getElementById("translated-select")._niceSelect = NiceSelect.bind(
+//     document.getElementById("translated-select"),
+//     options
+//   );
+// });
 
 // live support team js
 var Tawk_API = Tawk_API || {},

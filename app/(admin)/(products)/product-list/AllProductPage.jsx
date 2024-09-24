@@ -13,27 +13,29 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
     const totalPages = calculatedTotalPages;
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [filter, setFilter] = useState('');
     const router = useRouter();
     const pathname = usePathname();
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedStatus, setSelectedStatus] = useState(null);
-    const [selectedNew, setSelectedNew] = useState(null);
 
-    const categories = [
-        { value: 'cat1', label: 'Category 1' },
-        { value: 'cat2', label: 'Category 2' },
-        { value: 'cat3', label: 'Category 3' },
-    ];
-    const statuses = [
-        { value: 'st1', label: 'Status 1' },
-        { value: 'st2', label: 'Status 2' },
-        { value: 'st3', label: 'Status 3' },
-    ];
-    const newest = [
-        { value: 'new1', label: 'New 1' },
-        { value: 'new2', label: 'New 2' },
-        { value: 'new3', label: 'New 3' },
-    ];
+    // const [selectedCategory, setSelectedCategory] = useState(null);
+    // const [selectedStatus, setSelectedStatus] = useState(null);
+    // const [selectedNew, setSelectedNew] = useState(null);
+
+    // const categories = [
+    //     { value: 'cat1', label: 'Category 1' },
+    //     { value: 'cat2', label: 'Category 2' },
+    //     { value: 'cat3', label: 'Category 3' },
+    // ];
+    // const statuses = [
+    //     { value: 'st1', label: 'Status 1' },
+    //     { value: 'st2', label: 'Status 2' },
+    //     { value: 'st3', label: 'Status 3' },
+    // ];
+    // const newest = [
+    //     { value: 'new1', label: 'New 1' },
+    //     { value: 'new2', label: 'New 2' },
+    //     { value: 'new3', label: 'New 3' },
+    // ];
 
     const handleSearchQuery = (e) => {
         const value = e.target.value;
@@ -43,10 +45,10 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
     const handlePagination = (page) => {
         setCurrentPage(page);
 
-        // Only add query parameters if they exist
         const queryParams = new URLSearchParams();
         if (searchQuery) queryParams.set('q', searchQuery);
         if (page > 1) queryParams.set('page', page);
+        if (filter) queryParams.set('filter', filter);
 
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
@@ -56,10 +58,11 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
         const queryParams = new URLSearchParams();
         if (searchQuery) queryParams.set('q', searchQuery);
         if (currentPage > 1) queryParams.set('page', searchQuery ? 1 : currentPage);
+        if (filter) queryParams.set('filter', filter);
 
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
-    }, [searchQuery, currentPage]);
+    }, [searchQuery, currentPage, filter]);
 
     return (
         <main id="content">
@@ -87,7 +90,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                 </svg>
                                 <span>Import</span>
                             </a>
-                            <Link href="/product-add" className="add-product-btn">
+                            <Link href="/add-product" className="add-product-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                     <path d="M9.99984 4.1665V15.8332M4.1665 9.99984H15.8332" stroke="white" stroke-width="1.67"
                                         stroke-linecap="round" stroke-linejoin="round" />
@@ -98,32 +101,19 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                     </div>
 
                     <div className="d-flex align-items-center gap-3 all-buttons-inner">
-                        <button className="manage-products-btn active">
-                            All <span>0</span>
+                        <button className={`manage-products-btn ${filter === '' ? 'active' : ''}`}
+                            onClick={() => setFilter('')}>
+                            All <span>{allProducts?.props?.products?.results?.allProductsCount}</span>
                         </button>
 
-                        <button className="manage-products-btn">
-                            Active <span>0</span>
+                        <button className={`manage-products-btn ${filter === 'active' ? 'active' : ''}`}
+                            onClick={() => setFilter('active')}>
+                            Active <span>{allProducts?.props?.products?.results?.activeProductsCount}</span>
                         </button>
 
-                        <button className="manage-products-btn">
-                            Inactive <span>0</span>
-                        </button>
-
-                        <button className="manage-products-btn">
-                            Draft <span>0</span>
-                        </button>
-
-                        <button className="manage-products-btn">
-                            Pending <span>0</span>
-                        </button>
-
-                        <button className="manage-products-btn">
-                            Rejected <span>0</span>
-                        </button>
-
-                        <button className="manage-products-btn">
-                            Deleted <span>0</span>
+                        <button className={`manage-products-btn ${filter === 'inactive' ? 'active' : ''}`}
+                            onClick={() => setFilter('inactive')}>
+                            Inactive <span>{allProducts?.props?.products?.results?.inactiveProductsCount}</span>
                         </button>
                     </div>
                 </section>
@@ -150,7 +140,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                     onChange={handleSearchQuery}
                                 />
                             </form>
-
+                            {/* 
                             <div className="d-flex gap-3 align-items-center">
                                 <div className="box">
                                     <Select
@@ -181,7 +171,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                         placeholder="Newest"
                                     />
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="manage-all-product-section-inner-body">
@@ -190,7 +180,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                     <thead class="thead-light">
                                         <tr>
                                             <th scope="col">
-                                                <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" />
+                                                {/* <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" /> */}
                                                 <label for="table-header-checkbox" tabindex="4">Product</label>
                                             </th>
                                             <th scope="col">Price</th>
@@ -206,16 +196,16 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                             <tr key={product?.id}>
                                                 <td class="product-info-inner">
                                                     <div class="product-info">
-                                                        <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox1" />
+                                                        {/* <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox1" /> */}
                                                         <label class="d-flex align-items-center flex-shrink-0" for="table-body-checkbox1"
                                                             tabindex="4">
-                                                            <img class="product-image" src="./assets/images/products2.png" alt="Product Image" />
+                                                            <img class="product-image" src={product?.image ? product.image : ''} alt="Product Image" />
                                                         </label>
 
                                                         <div class="product-details d-flex flex-column gap-2 flex-shrink-0">
-                                                            <p class="title">Purolator Oil Filter 133500I99 - Fits Toyota Qualis</p>
+                                                            <p class="title">{product?.name.length > 20 ? product.name.slice(0, 20) + "..." : product.name}</p>
 
-                                                            <div class="d-flex align-items-center gap-3">
+                                                            {/* <div class="d-flex align-items-center gap-3">
                                                                 <div class="d-flex align-items-center gap-2 buy-product">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
                                                                         fill="none">
@@ -238,7 +228,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                                     </svg>
                                                                     <p>3256</p>
                                                                 </div>
-                                                            </div>
+                                                            </div> */}
                                                         </div>
                                                     </div>
                                                 </td>
@@ -246,7 +236,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                 <td>
                                                     <div>
                                                         <p class="pice-text">
-                                                            5,000 Tk
+                                                            {product?.discount_price ? product.discount_price : product?.price} Tk
                                                         </p>
                                                     </div>
                                                 </td>
@@ -254,10 +244,10 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                 <td>
                                                     <div class="d-flex align-items-center gap-4">
                                                         <p class="pice-text">
-                                                            658
+                                                            {product?.stock}
                                                         </p>
 
-                                                        <div class="d-flex align-items-center gap-2">
+                                                        {/* <div class="d-flex align-items-center gap-2">
                                                             <button class="edit-btn">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"
                                                                     fill="none">
@@ -274,7 +264,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                                         stroke="#A7AAB9" stroke-linecap="round" stroke-linejoin="round" />
                                                                 </svg>
                                                             </button>
-                                                        </div>
+                                                        </div> */}
                                                     </div>
                                                 </td>
 
@@ -291,16 +281,24 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                 </td>
 
                                                 <td class="text-center">
-                                                    <span class="status inactive">Inactive</span>
+                                                    <span className={`status ${product?.is_active ? 'active' : 'inactive'}`}>{product?.is_active ? 'Active' : 'Inactive'}</span>
                                                 </td>
-                                                <td class="text-center">
-                                                    <figure class="action-btn">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
-                                                            <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
-                                                            <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
-                                                            <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
-                                                        </svg>
-                                                    </figure>
+                                                <td className="text-center">
+                                                    <div class="dropdown">
+                                                        <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <figure className="action-btn">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                                    <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                                    <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                                    <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                                </svg>
+                                                            </figure>
+                                                        </button>
+                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                            <li><Link href={"/product-list/edit-product/" + product?.id} class="dropdown-item">Edit</Link></li>
+                                                            <li><Link href={"/product-list/generate-variant/" + product?.id} class="dropdown-item">Variant Generate</Link></li>
+                                                        </ul>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
