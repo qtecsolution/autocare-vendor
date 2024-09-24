@@ -1,0 +1,710 @@
+'use client';
+import AlertToast from '@/components/toast/AlertToast';
+import SuccessToast from '@/components/toast/Success';
+import axiosInstance from '@/lib/axiosInstance';
+import { BUSINESS_TYPE } from '@/lib/businessType';
+import { getAuthUser } from '@/utils/auth';
+import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
+import Select from 'react-select';
+
+export default function Settings() {
+  const [user, setUser] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    secondaryPhoneNumber: '',
+    dob: '',
+  });
+  const [store, setStore] = useState({
+    name: '',
+    location: '',
+    city: '',
+    logo: '',
+    banner: '',
+    BusinesstypeId: '',
+  });
+  const [loading, setLoading] = useState(true);
+  const [showSecPhoneInput, setShowSecPhoneInput] = useState(false);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = await getAuthUser();
+        console.log('user:', user);
+        setUser({
+          fullName: user.full_name || '',
+          email: user.email || '',
+          phone: user.phone_number || '',
+          secondaryPhoneNumber: user.secondary_phone_number || '',
+          dob: user.birth_date || '',
+        });
+        setStore({
+          name: user.store.name || '',
+          location: user.store.location || '',
+          city: user.store.city.name || '',
+          logo: user.store.logo || '',
+          banner: user.store.banner || '',
+          business_type: user.business_type.name || '',
+        });
+        setShowSecPhoneInput(user.secondaryPhoneNumber ? true : false);
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  //user data update
+  const handleUserUpdate = async () => {
+    if (window.confirm('Are you sure you want to update your profile?')) {
+      try {
+        const formData = new FormData();
+        formData.append('fullName', user.fullName);
+        formData.append('email', user.email);;
+        formData.append('secondaryPhoneNumber', user.secondaryPhoneNumber);
+        formData.append('dateOfBirth', user.dob);
+        const response = await axiosInstance.put(
+          '/seller-panel-api/seller-profile/',
+          formData
+        );
+         toast.custom(t => (
+           <SuccessToast
+             message="Seller Profile Updated Successfully"
+             dismiss={() => toast.dismiss(t.id)}
+           />
+         ));
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        toast.custom(t => (
+          <AlertToast
+            message="Failed to update profile. Please try again."
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+      }
+    }
+  };
+  return (
+    <section className="settings-body">
+      <div className="settings-body-inner">
+        <nav>
+          <div className="nav nav-tabs" id="nav-tab" role="tablist">
+            <button
+              className="basic-info active"
+              id="basic-info-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#basic-info"
+              type="button"
+              role="tab"
+              aria-controls="basic-info"
+              aria-selected="true"
+            >
+              Profile
+            </button>
+
+            <button
+              className="basic-info"
+              id="description-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#description"
+              type="button"
+              role="tab"
+              aria-controls="description"
+              aria-selected="false"
+            >
+              Business
+            </button>
+
+            <button
+              className="basic-info"
+              id="price-stock-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#price-stock"
+              type="button"
+              role="tab"
+              aria-controls="price-stock"
+              aria-selected="false"
+            >
+              Security
+            </button>
+
+            <button
+              className="basic-info"
+              id="vehicle-information-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#vehicle-information"
+              type="button"
+              role="tab"
+              aria-controls="vehicle-information"
+              aria-selected="false"
+            >
+              User Management
+            </button>
+
+            <button
+              className="basic-info"
+              id="shipping-warranty-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#shipping-warranty"
+              type="button"
+              role="tab"
+              aria-controls="shipping-warranty"
+              aria-selected="false"
+            >
+              Notifications
+            </button>
+          </div>
+        </nav>
+
+        <div className="tab-content" id="nav-tabContent">
+          <div
+            className="tab-pane fade active show"
+            id="basic-info"
+            role="tabpanel"
+            aria-labelledby="basic-info-tab"
+          >
+            <div className="profile-section">
+              <div className="profile-section-inner">
+                <div className="row g-4">
+                  <div className="col-lg-6">
+                    <div className="d-flex flex-column gap-3">
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="userName" className="input-label">
+                            User Name
+                          </label>
+                        </div>
+
+                        <input
+                          className="input-field"
+                          type="text"
+                          name=""
+                          value={user.fullName}
+                          onChange={e =>
+                            setUser({
+                              ...user,
+                              fullName: e.target.value,
+                            })
+                          }
+                          id="userName"
+                          placeholder="Enter your name"
+                        />
+                      </div>
+
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="number" className="input-label">
+                            Mobile Number
+                          </label>
+                          <p
+                            className="add-another"
+                            onClick={() => setShowSecPhoneInput(true)}
+                          >
+                            {' '}
+                            Add Secondary Phone
+                          </p>
+                        </div>
+
+                        <input
+                          className="input-field number"
+                          disabled
+                          type="number"
+                          name=""
+                          id="number"
+                          value={user.phone}
+                          onChange={e =>
+                            setUser({
+                              ...user,
+                              phone: e.target.value,
+                            })
+                          }
+                          placeholder="Enter your phone"
+                        />
+                        {showSecPhoneInput && (
+                          <input
+                            className="input-field number"
+                            type="number"
+                            name=""
+                            id="number"
+                            value={user.secondary_phone_number}
+                            onChange={e =>
+                              setUser({
+                                ...user,
+                                secondary_phone_number: e.target.value,
+                              })
+                            }
+                            placeholder="Enter seconadary phone"
+                          />
+                        )}
+                      </div>
+
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="Email" className="input-label">
+                            Email Address
+                          </label>
+                          <p className="add-another">Verify Email</p>
+                        </div>
+
+                        <input
+                          className="input-field"
+                          type="email"
+                          name=""
+                          id="Email"
+                          value={user.email}
+                          onChange={e =>
+                            setUser({
+                              ...user,
+                              email: e.target.value,
+                            })
+                          }
+                          placeholder="Enter your email"
+                        />
+                      </div>
+
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="start-date" className="input-label">
+                            Date of Birth
+                          </label>
+                        </div>
+
+                        <input
+                          className="input-field"
+                          type="date"
+                          id="start-date"
+                          value={user.dob}
+                          onChange={e =>
+                            setUser({
+                              ...user,
+                              dob: e.target.value,
+                            })
+                          }
+                          placeholder="Enter your birth date"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="d-flex justify-content-end">
+                      <button
+                        className="new-campaign-btn d-inline-flex"
+                        onClick={handleUserUpdate}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                        >
+                          <path
+                            d="M9.16602 1.66675H7.49935C3.33268 1.66675 1.66602 3.33341 1.66602 7.50008V12.5001C1.66602 16.6667 3.33268 18.3334 7.49935 18.3334H12.4993C16.666 18.3334 18.3327 16.6667 18.3327 12.5001V10.8334"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M13.3675 2.51663L6.80088 9.0833C6.55088 9.3333 6.30088 9.82497 6.25088 10.1833L5.89254 12.6916C5.75921 13.6 6.40088 14.2333 7.30921 14.1083L9.81754 13.75C10.1675 13.7 10.6592 13.45 10.9175 13.2L17.4842 6.6333C18.6175 5.49997 19.1509 4.1833 17.4842 2.51663C15.8175 0.849966 14.5009 1.3833 13.3675 2.51663Z"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-miterlimit="10"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M12.4258 3.45825C12.9841 5.44992 14.5424 7.00825 16.5424 7.57492"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-miterlimit="10"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        <span>Update Profile</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pb-5"></div>
+                <div className="pb-5"></div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="tab-pane fade"
+            id="description"
+            role="tabpanel"
+            aria-labelledby="description-tab"
+          >
+            <div className="d-flex flex-column gap-4">
+              <div className="profile-section">
+                <div className="profile-section-inner">
+                  <div className="row g-4">
+                    <div className="col-lg-6">
+                      <div className="d-flex flex-column gap-3">
+                        <div className="input-inner">
+                          <div className="label-inner">
+                            <label for="accountType" className="input-label">
+                              Account Type
+                            </label>
+                            {/* <p className="add-another">Apply for garage</p> */}
+                          </div>
+                          <Select
+                            name="accountType"
+                            options={BUSINESS_TYPE.map(type => ({
+                              value: type.id,
+                              label: type.label,
+                            }))}
+                            placeholder="Select Business Type"
+                            onChange={e =>
+                              setStore({
+                                ...store,
+                                BusinesstypeId: Number(e.target.value),
+                              })
+                            }
+                            value={store.BusinesstypeId}
+                          />
+                        </div>
+
+                        <div className="input-inner">
+                          <div className="label-inner">
+                            <label for="storeName" className="input-label">
+                              Store Name
+                            </label>
+                            {/* <p className="add-another">Request for change</p> */}
+                          </div>
+
+                          <input
+                            className="input-field"
+                            type="text"
+                            name=""
+                            id="storeName"
+                            value={store.name}
+                            onChange={e =>
+                              setStore({
+                                ...user,
+                                name: e.target.value,
+                              })
+                            }
+                            placeholder="Enter your store name"
+                          />
+                        </div>
+
+                        <div className="input-inner">
+                          <div className="label-inner">
+                            <label for="Location" className="input-label">
+                              Location
+                            </label>
+                          </div>
+
+                          <input
+                            className="input-field"
+                            type="text"
+                            name=""
+                            id="Location"
+                            value={store.location}
+                            onChange={e =>
+                              setStore({
+                                ...user,
+                                location: e.target.value,
+                              })
+                            }
+                            placeholder="Enter your store location"
+                          />
+                        </div>
+
+                        <div className="input-inner">
+                          <div className="label-inner">
+                            <label for="City" className="input-label">
+                              City
+                            </label>
+                          </div>
+
+                          <input
+                            className="input-field"
+                            type="text"
+                            name=""
+                            id="City"
+                            value={store.city}
+                            onChange={e =>
+                              setStore({
+                                ...user,
+                                city: e.target.value,
+                              })
+                            }
+                            placeholder="Enter your store City"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="d-flex justify-content-end">
+                        <button className="new-campaign-btn d-inline-flex">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                          >
+                            <path
+                              d="M9.16602 1.66675H7.49935C3.33268 1.66675 1.66602 3.33341 1.66602 7.50008V12.5001C1.66602 16.6667 3.33268 18.3334 7.49935 18.3334H12.4993C16.666 18.3334 18.3327 16.6667 18.3327 12.5001V10.8334"
+                              stroke="white"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M13.3675 2.51663L6.80088 9.0833C6.55088 9.3333 6.30088 9.82497 6.25088 10.1833L5.89254 12.6916C5.75921 13.6 6.40088 14.2333 7.30921 14.1083L9.81754 13.75C10.1675 13.7 10.6592 13.45 10.9175 13.2L17.4842 6.6333C18.6175 5.49997 19.1509 4.1833 17.4842 2.51663C15.8175 0.849966 14.5009 1.3833 13.3675 2.51663Z"
+                              stroke="white"
+                              stroke-width="1.5"
+                              stroke-miterlimit="10"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M12.4258 3.45825C12.9841 5.44992 14.5424 7.00825 16.5424 7.57492"
+                              stroke="white"
+                              stroke-width="1.5"
+                              stroke-miterlimit="10"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                          <span>Edit Business</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="profile-section">
+                <div className="profile-section-inner">
+                  <div className="row g-4">
+                    <div className="col-12">
+                      <div className="business-logo">
+                        <p className="text">Business Logo</p>
+
+                        <label
+                          for="business-logo"
+                          className="business-logo-label"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="34"
+                            height="34"
+                            viewBox="0 0 34 34"
+                            fill="none"
+                          >
+                            <path
+                              d="M16.9991 23.3755V13.813M16.9991 13.813L21.2491 18.063M16.9991 13.813L12.7491 18.063M9.56162 27.6255C8.04498 27.6271 6.57744 27.088 5.42254 26.105C4.26764 25.1219 3.50105 23.7593 3.26044 22.2619C3.01983 20.7645 3.32096 19.2303 4.10975 17.9349C4.89854 16.6395 6.12331 15.6678 7.56412 15.1943C7.19395 13.2976 7.57653 11.3313 8.63085 9.71177C9.68517 8.09226 11.3284 6.9467 13.2127 6.51767C15.0969 6.08863 17.0742 6.40983 18.7257 7.41323C20.3772 8.41663 21.5734 10.0234 22.0609 11.8934C22.8145 11.6483 23.6218 11.6188 24.3913 11.8083C25.1609 11.9977 25.8621 12.3986 26.4159 12.9656C26.9696 13.5326 27.3538 14.2431 27.525 15.017C27.6962 15.7908 27.6476 16.5971 27.3847 17.3448C28.5445 17.7877 29.5126 18.6227 30.1211 19.7048C30.7296 20.787 30.9401 22.048 30.7162 23.2691C30.4922 24.4902 29.8479 25.5944 28.8949 26.3901C27.942 27.1858 26.7406 27.6229 25.4991 27.6255H9.56162Z"
+                              stroke="#0F766D"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                          <input type="file" name="" id="business-logo" />
+                        </label>
+                      </div>
+                    </div>
+                    <div className="col-12">
+                      <div className="cover-photo">
+                        <p className="text">Cover Photo</p>
+
+                        <label for="cover-photo" className="cover-photo-label">
+                          <div className="d-flex flex-column justify-content-center align-items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="34"
+                              height="34"
+                              viewBox="0 0 34 34"
+                              fill="none"
+                            >
+                              <path
+                                d="M16.9991 23.3755V13.813M16.9991 13.813L21.2491 18.063M16.9991 13.813L12.7491 18.063M9.56162 27.6255C8.04498 27.6271 6.57744 27.088 5.42254 26.105C4.26764 25.1219 3.50105 23.7593 3.26044 22.2619C3.01983 20.7645 3.32096 19.2303 4.10975 17.9349C4.89854 16.6395 6.12331 15.6678 7.56412 15.1943C7.19395 13.2976 7.57653 11.3313 8.63085 9.71177C9.68517 8.09226 11.3284 6.9467 13.2127 6.51767C15.0969 6.08863 17.0742 6.40983 18.7257 7.41323C20.3772 8.41663 21.5734 10.0234 22.0609 11.8934C22.8145 11.6483 23.6218 11.6188 24.3913 11.8083C25.1609 11.9977 25.8621 12.3986 26.4159 12.9656C26.9696 13.5326 27.3538 14.2431 27.525 15.017C27.6962 15.7908 27.6476 16.5971 27.3847 17.3448C28.5445 17.7877 29.5126 18.6227 30.1211 19.7048C30.7296 20.787 30.9401 22.048 30.7162 23.2691C30.4922 24.4902 29.8479 25.5944 28.8949 26.3901C27.942 27.1858 26.7406 27.6229 25.4991 27.6255H9.56162Z"
+                                stroke="#0F766D"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                            <p className="text">
+                              Drag & drop your Image here or <span>Browse</span>
+                            </p>
+                          </div>
+                          <input type="file" name="" id="cover-photo" />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="tab-pane fade"
+            id="price-stock"
+            role="tabpanel"
+            aria-labelledby="price-stock-tab"
+          >
+            <div className="profile-section">
+              <div className="profile-section-inner">
+                <div className="row g-4">
+                  <div className="col-lg-6">
+                    <div className="d-flex flex-column gap-3">
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="password" className="input-label">
+                            Current Password
+                          </label>
+                        </div>
+
+                        <div className="password-field">
+                          <input
+                            className=""
+                            type="password"
+                            name=""
+                            id="password"
+                            placeholder="*************"
+                          />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                          >
+                            <path
+                              d="M2.65306 5.482C2.02937 6.21812 1.56494 7.07547 1.28906 8C2.1504 10.892 4.82906 13 7.99973 13C8.66173 13 9.30173 12.908 9.9084 12.7367M4.15173 4.152C5.29349 3.39857 6.63178 2.99792 7.99973 3C11.1704 3 13.8484 5.108 14.7097 7.99867C14.2377 9.57823 13.2244 10.9411 11.8477 11.848M4.15173 4.152L1.99973 2M4.15173 4.152L6.58506 6.58533M11.8477 11.848L13.9997 14M11.8477 11.848L9.4144 9.41467C9.60013 9.22893 9.74746 9.00844 9.84798 8.76577C9.9485 8.52309 10.0002 8.263 10.0002 8.00033C10.0002 7.73767 9.9485 7.47757 9.84798 7.2349C9.74746 6.99223 9.60013 6.77173 9.4144 6.586C9.22866 6.40027 9.00817 6.25294 8.76549 6.15242C8.52282 6.0519 8.26273 6.00016 8.00006 6.00016C7.7374 6.00016 7.4773 6.0519 7.23463 6.15242C6.99196 6.25294 6.77146 6.40027 6.58573 6.586M9.41373 9.414L6.5864 6.58667"
+                              stroke="#60637A"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="NewPassword" className="input-label">
+                            New Password
+                          </label>
+                        </div>
+
+                        <input
+                          className="input-field number"
+                          disabled
+                          type="password"
+                          name=""
+                          id="NewPassword"
+                        />
+                      </div>
+
+                      <div className="input-inner">
+                        <div className="label-inner">
+                          <label for="RepeatPassword" className="input-label">
+                            Repeat Password
+                          </label>
+                        </div>
+
+                        <input
+                          className="input-field number"
+                          disabled
+                          type="password"
+                          name=""
+                          id="RepeatPassword"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="d-flex justify-content-end">
+                      <a
+                        href="verify.html"
+                        className="new-campaign-btn d-inline-flex"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                        >
+                          <path
+                            d="M9.16602 1.66675H7.49935C3.33268 1.66675 1.66602 3.33341 1.66602 7.50008V12.5001C1.66602 16.6667 3.33268 18.3334 7.49935 18.3334H12.4993C16.666 18.3334 18.3327 16.6667 18.3327 12.5001V10.8334"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M13.3675 2.51663L6.80088 9.0833C6.55088 9.3333 6.30088 9.82497 6.25088 10.1833L5.89254 12.6916C5.75921 13.6 6.40088 14.2333 7.30921 14.1083L9.81754 13.75C10.1675 13.7 10.6592 13.45 10.9175 13.2L17.4842 6.6333C18.6175 5.49997 19.1509 4.1833 17.4842 2.51663C15.8175 0.849966 14.5009 1.3833 13.3675 2.51663Z"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-miterlimit="10"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M12.4258 3.45825C12.9841 5.44992 14.5424 7.00825 16.5424 7.57492"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-miterlimit="10"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        <span>Edit Password</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="tab-pane fade"
+            id="vehicle-information"
+            role="tabpanel"
+            aria-labelledby="vehicle-information-tab"
+          >
+            <div className="user-management">
+              <div className="user-management-inner">
+                <h1 className="text-danger">
+                  User Management is under development
+                </h1>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="tab-pane fade"
+            id="shipping-warranty"
+            role="tabpanel"
+            aria-labelledby="shipping-warranty-tab"
+          >
+            <div className="notifications-section">
+              <div className="notifications-section-inner">
+                <h1 className="text-danger">
+                  Notifications is under development
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

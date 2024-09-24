@@ -264,20 +264,43 @@ export default function SideBar() {
   return (
     <nav id="sidebar" className={sidebarActive ? '' : 'active'}>
       <div className="custom-menu">
-        <button type="button" id="sidebarCollapse" className="toggle-button" onClick={() => sidebarSetActive(sidebarActive ? false : true)}>
-          {sidebarActive ?
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd"
+        <button
+          type="button"
+          id="sidebarCollapse"
+          className="toggle-button"
+          onClick={() => sidebarSetActive(sidebarActive ? false : true)}
+        >
+          {sidebarActive ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
                 d="M11.7798 5.22007C11.9203 5.3607 11.9992 5.55132 11.9992 5.75007C11.9992 5.94882 11.9203 6.13945 11.7798 6.28007L8.05983 10.0001L11.7798 13.7201C11.8535 13.7887 11.9126 13.8715 11.9536 13.9635C11.9946 14.0555 12.0166 14.1548 12.0184 14.2556C12.0202 14.3563 12.0017 14.4563 11.964 14.5497C11.9262 14.6431 11.8701 14.7279 11.7989 14.7991C11.7276 14.8703 11.6428 14.9265 11.5494 14.9642C11.456 15.0019 11.356 15.0204 11.2553 15.0187C11.1546 15.0169 11.0553 14.9948 10.9633 14.9539C10.8713 14.9129 10.7885 14.8538 10.7198 14.7801L6.46983 10.5301C6.32938 10.3894 6.25049 10.1988 6.25049 10.0001C6.25049 9.80132 6.32938 9.6107 6.46983 9.47007L10.7198 5.22007C10.8605 5.07962 11.0511 5.00073 11.2498 5.00073C11.4486 5.00073 11.6392 5.07962 11.7798 5.22007Z"
-                fill="#0D9488" />
+                fill="#0D9488"
+              />
             </svg>
-            :
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd"
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
                 d="M8.22007 14.7798C8.07945 14.6393 8.00056 14.4487 8.00056 14.25C8.00056 14.0513 8.07945 13.8607 8.22007 13.7201L11.9401 10L8.22007 6.27993C8.14638 6.21126 8.08726 6.12849 8.0463 6.03649C8.00534 5.9445 7.98336 5.84519 7.98152 5.74445C7.97968 5.64371 7.99822 5.54373 8.03597 5.45034C8.07371 5.35694 8.12983 5.27217 8.20107 5.20093C8.27231 5.12969 8.35708 5.07357 8.45048 5.03583C8.54388 4.99808 8.64387 4.97954 8.74461 4.98138C8.84535 4.98321 8.94464 5.00524 9.03664 5.0462C9.12864 5.08716 9.21142 5.14627 9.28007 5.22007L13.5301 9.47007C13.6705 9.6107 13.7494 9.80132 13.7494 10C13.7494 10.1988 13.6705 10.3894 13.5301 10.5301L9.28007 14.7799C9.13944 14.9204 8.94882 14.9993 8.75007 14.9993C8.55132 14.9993 8.3607 14.9204 8.22007 14.7798Z"
-                fill="#0D9488" />
+                fill="#0D9488"
+              />
             </svg>
-          }
+          )}
         </button>
       </div>
 
@@ -290,40 +313,67 @@ export default function SideBar() {
           </Link>
 
           <form className="search-input">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+            >
               <path
                 d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z"
-                stroke="#667085" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
+                stroke="#667085"
+                stroke-width="1.66667"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
 
-            <input type="text"
+            <input
+              type="text"
               placeholder="Search"
               value={searchText}
-              onChange={handleSearchChange} />
+              onChange={handleSearchChange}
+            />
           </form>
         </div>
 
         <ul className="list-unstyled menu-list">
-          {filteredMenuItems.map((item) => (
+          {filteredMenuItems.map(item => (
             <li key={item.path} className="menu-list-item">
               {item.submenu ? (
                 <>
-                  <a className={`menu-list-link ${isLinkActive([item.path, ...item.submenu.map(sub => sub.path)])}`} data-toggle="collapse" href={item.path} aria-expanded="false">
+                  <a
+                    className={`menu-list-link ${isLinkActive([
+                      item.path,
+                      ...item.submenu.map(sub => sub.path),
+                    ])}`}
+                    data-toggle="collapse"
+                    href={item.path}
+                    aria-expanded="false"
+                  >
                     <span className="icontitle">
-                      <span className="icon">
-                        {item.icon}
-                      </span>
+                      <span className="icon">{item.icon}</span>
                       <span className="linktitle">{item.name}</span>
                     </span>
-                    <span className="arrowicon">
-                      {item.icon2}
-                    </span>
+                    <span className="arrowicon">{item.icon2}</span>
                   </a>
-                  <div className={`collapse ${isShowMenu([item.path, ...item.submenu.map(sub => sub.path)])}`} id={item.path.replace("#", "")}>
+                  <div
+                    className={`collapse ${isShowMenu([
+                      item.path,
+                      ...item.submenu.map(sub => sub.path),
+                    ])}`}
+                    id={item.path.replace('#', '')}
+                  >
                     <ul className="submenu list-unstyled mt-2">
                       {item.submenu.map(subitem => (
                         <li key={subitem.path} className="sumenu-item">
-                          <Link href={subitem.path} className={`submenu-link ${isLinkActive([`${subitem.path}`])}`}>
+                          <Link
+                            href={subitem.path}
+                            className={`submenu-link ${isLinkActive([
+                              `${subitem.path}`,
+                            ])}`}
+                          >
                             <span className="text"> {subitem.name}</span>
                           </Link>
                         </li>
@@ -332,11 +382,12 @@ export default function SideBar() {
                   </div>
                 </>
               ) : (
-                <Link href={item.path} className={`menu-list-link ${isLinkActive([`${item.path}`])}`}>
+                <Link
+                  href={item.path}
+                  className={`menu-list-link ${isLinkActive([`${item.path}`])}`}
+                >
                   <span className="icontitle">
-                    <span className="icon">
-                      {item.icon}
-                    </span>
+                    <span className="icon">{item.icon}</span>
                     <span className="linktitle">{item.name}</span>
                   </span>
                 </Link>
@@ -351,10 +402,19 @@ export default function SideBar() {
               <a href="#" className="menu-list-link">
                 <span className="icontitle">
                   <span className="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path fill-rule="evenodd" clip-rule="evenodd"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
                         d="M19.4495 8.44917L16.3885 11.0012C16.5381 11.6601 16.5381 12.3442 16.3885 13.0032L19.4495 15.5532C19.9768 14.4435 20.2504 13.2303 20.2504 12.0017C20.2504 10.7731 19.9768 9.55987 19.4495 8.45017V8.44917ZM15.5525 19.4512L13.0005 16.3892C12.3415 16.5388 11.6574 16.5388 10.9985 16.3892L8.44847 19.4502C9.55817 19.9775 10.7714 20.251 12 20.251C13.2286 20.251 14.4418 19.9775 15.5515 19.4502L15.5525 19.4512ZM4.55047 15.5532L7.61247 13.0012C7.46283 12.3422 7.46283 11.6581 7.61247 10.9992L4.55147 8.45117C4.02417 9.56087 3.75059 10.7741 3.75059 12.0027C3.75059 13.2313 4.02417 14.4445 4.55147 15.5542L4.55047 15.5532ZM8.44847 4.55117L11.0005 7.61317C11.6594 7.46352 12.3435 7.46352 13.0025 7.61317L15.5525 4.55217C14.4428 4.02487 13.2296 3.75129 12.001 3.75129C10.7724 3.75129 9.55917 4.02487 8.44947 4.55217L8.44847 4.55117ZM17.1055 3.69117C17.7553 4.09135 18.3561 4.56625 18.8955 5.10617C19.4349 5.64499 19.9095 6.24506 20.3095 6.89417C21.2518 8.43038 21.7506 10.1974 21.7506 11.9997C21.7506 13.8019 21.2518 15.569 20.3095 17.1052C19.9093 17.755 19.4344 18.3558 18.8945 18.8952C18.3556 19.4346 17.7556 19.9092 17.1065 20.3092C15.5701 21.2517 13.8029 21.7506 12.0005 21.7506C10.1981 21.7506 8.4308 21.2517 6.89447 20.3092C6.24532 19.9089 5.64524 19.434 5.10647 18.8942C4.56668 18.3554 4.09178 17.7553 3.69147 17.1062C2.74891 15.5698 2.25 13.8026 2.25 12.0002C2.25 10.1977 2.74891 8.43049 3.69147 6.89417C4.09177 6.245 4.56666 5.64492 5.10647 5.10617C5.64523 4.56636 6.24531 4.09146 6.89447 3.69117C8.43069 2.7488 10.1977 2.25 12 2.25C13.8022 2.25 15.5693 2.7488 17.1055 3.69117ZM14.1215 9.88117C13.8084 9.56694 13.4292 9.32644 13.0115 9.17717C12.3576 8.94442 11.6434 8.94442 10.9895 9.17717C10.5718 9.32644 10.1926 9.56694 9.87947 9.88117C9.55347 10.2062 9.31947 10.5862 9.17547 10.9912C8.94273 11.6451 8.94273 12.3593 9.17547 13.0132C9.31947 13.4182 9.55347 13.7982 9.87947 14.1232C10.2045 14.4492 10.5845 14.6832 10.9895 14.8272C11.6415 15.0602 12.3595 15.0602 13.0115 14.8272C13.4292 14.6779 13.8084 14.4374 14.1215 14.1232C14.4475 13.7982 14.6815 13.4182 14.8255 13.0132C15.0581 12.3592 15.0581 11.6451 14.8255 10.9912C14.6762 10.5735 14.4357 10.1943 14.1215 9.88117Z"
-                        fill="#6B7280" />
+                        fill="#6B7280"
+                      />
                     </svg>
                   </span>
 
@@ -364,26 +424,44 @@ export default function SideBar() {
             </li>
 
             <li className="menu-list-item">
-              <a href="#" className="menu-list-link">
+              <Link href="/settings" className="menu-list-link">
                 <span className="icontitle">
                   <span className="icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path fill-rule="evenodd" clip-rule="evenodd"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
                         d="M9.40803 2.16475C9.46239 1.89282 9.60924 1.6481 9.82364 1.47222C10.038 1.29633 10.3067 1.20012 10.584 1.19995H13.416C13.6933 1.20012 13.962 1.29633 14.1764 1.47222C14.3908 1.6481 14.5377 1.89282 14.592 2.16475L14.9892 4.14715C15.8274 4.46657 16.6089 4.91831 17.304 5.48515L19.2216 4.83715C19.4843 4.74838 19.7696 4.7533 20.0291 4.85109C20.2885 4.94887 20.5061 5.13349 20.6448 5.37355L22.0608 7.82635C22.1996 8.06646 22.2509 8.34723 22.2061 8.62091C22.1613 8.8946 22.023 9.14429 21.8148 9.32755L20.2944 10.6632C20.4362 11.5487 20.4362 12.4512 20.2944 13.3368L21.8148 14.6724C22.0229 14.8554 22.1612 15.1048 22.2063 15.3782C22.2513 15.6516 22.2004 15.9322 22.062 16.1724L20.646 18.6264C20.5073 18.8667 20.2895 19.0515 20.0298 19.1493C19.77 19.2471 19.4845 19.2518 19.2216 19.1628L17.304 18.5148C16.6089 19.0816 15.8274 19.5333 14.9892 19.8528L14.5932 21.8352C14.5389 22.1071 14.392 22.3518 14.1776 22.5277C13.9632 22.7036 13.6945 22.7998 13.4172 22.8H10.584C10.3067 22.7998 10.038 22.7036 9.82364 22.5277C9.60924 22.3518 9.46239 22.1071 9.40803 21.8352L9.01083 19.8528C8.17268 19.5333 7.39117 19.0816 6.69603 18.5148L4.77843 19.1628C4.51576 19.2515 4.23045 19.2466 3.971 19.1488C3.71155 19.051 3.49397 18.8664 3.35523 18.6264L1.93923 16.1736C1.80045 15.9334 1.74912 15.6527 1.79397 15.379C1.83881 15.1053 1.97707 14.8556 2.18523 14.6724L3.70563 13.3356C3.56405 12.4504 3.56405 11.5483 3.70563 10.6632L2.18523 9.32755C1.97717 9.14452 1.83887 8.89511 1.79381 8.62169C1.74874 8.34826 1.7997 8.06767 1.93803 7.82755L3.35403 5.37355C3.49281 5.13323 3.7106 4.94843 3.97031 4.85063C4.23002 4.75283 4.5156 4.74806 4.77843 4.83715L6.69603 5.48515C7.39152 4.91818 8.17345 4.46644 9.01203 4.14715L9.40803 2.16475ZM12 15.6C12.9548 15.6 13.8705 15.2207 14.5456 14.5455C15.2207 13.8704 15.6 12.9547 15.6 12C15.6 11.0452 15.2207 10.1295 14.5456 9.45437C13.8705 8.77924 12.9548 8.39995 12 8.39995C11.0453 8.39995 10.1296 8.77924 9.45445 9.45437C8.77932 10.1295 8.40003 11.0452 8.40003 12C8.40003 12.9547 8.77932 13.8704 9.45445 14.5455C10.1296 15.2207 11.0453 15.6 12 15.6Z"
-                        fill="#6B7280" />
+                        fill="#6B7280"
+                      />
                     </svg>
                   </span>
 
                   <span className="linktitle">Settings</span>
                 </span>
-              </a>
+              </Link>
             </li>
           </ul>
 
           <div className="user-info">
             <div className="d-flex gap-3">
               <figure className="user-image">
-                <Image src={sellerInfo?.image ? sellerInfo.image : "/assets/images/user.png"} width={40} height={40} alt="user" />
+                <Image
+                  src={
+                    sellerInfo?.image
+                      ? sellerInfo.image
+                      : '/assets/images/user.png'
+                  }
+                  width={40}
+                  height={40}
+                  alt="user"
+                />
               </figure>
               <div className="">
                 <h2 className="user-name">{sellerInfo?.full_name}</h2>
@@ -392,15 +470,25 @@ export default function SideBar() {
             </div>
 
             <button className="logout-icon" onClick={logout}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+              >
                 <path
                   d="M7.5 17.5H4.16667C3.72464 17.5 3.30072 17.3244 2.98816 17.0118C2.67559 16.6993 2.5 16.2754 2.5 15.8333V4.16667C2.5 3.72464 2.67559 3.30072 2.98816 2.98816C3.30072 2.67559 3.72464 2.5 4.16667 2.5H7.5M13.3333 14.1667L17.5 10M17.5 10L13.3333 5.83333M17.5 10H7.5"
-                  stroke="#667085" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
+                  stroke="#667085"
+                  stroke-width="1.67"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
             </button>
           </div>
         </div>
       </div>
     </nav>
-  )
+  );
 }
