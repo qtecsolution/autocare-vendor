@@ -297,10 +297,10 @@ export default function Settings() {
         formData.append('divisionId', selectedDivision?.value);
         formData.append('cityId', selectedDistrict?.value);
         formData.append('thanaId', selectedCity?.value);
-        if (mainImage) {
+        if (thumbnail) {
           formData.append('logo', thumbnail);
         }
-        if (thumbnail) {
+        if (mainImage) {
           formData.append('bannerImage', mainImage);
         }
         const response = await axiosInstance.put(
