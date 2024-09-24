@@ -48,7 +48,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
         const queryParams = new URLSearchParams();
         if (searchQuery) queryParams.set('q', searchQuery);
         if (page > 1) queryParams.set('page', page);
-        if (filter) queryParams.set('filter', filter);
+        if (filter) queryParams.set('filter_by', filter);
 
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
@@ -58,7 +58,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
         const queryParams = new URLSearchParams();
         if (searchQuery) queryParams.set('q', searchQuery);
         if (currentPage > 1) queryParams.set('page', searchQuery ? 1 : currentPage);
-        if (filter) queryParams.set('filter', filter);
+        if (filter) queryParams.set('filter_by', filter);
 
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
@@ -121,7 +121,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                 <section className="manage-all-product-section">
                     <div className="manage-all-product-section-inner">
                         <div className="manage-all-product-section-inner-header">
-                            <form className="all-products-form">
+                            <div className="all-products-form">
                                 <label for="search-svg">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                         <path
@@ -139,7 +139,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                     value={searchQuery}
                                     onChange={handleSearchQuery}
                                 />
-                            </form>
+                            </div>
                             {/* 
                             <div className="d-flex gap-3 align-items-center">
                                 <div className="box">
@@ -312,7 +312,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                 <section className="pagination-section">
                     <div className="pagination-section-inner">
                         <div className="left">
-                            <p className="text">Showing 1 to 10 of 23 entries</p>
+                            {/* <p className="text">Showing 1 to 10 of 23 entries</p> */}
                         </div>
                         <div className="right">
                             <Pagination

@@ -10,10 +10,10 @@ import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import axiosInstance from '@/lib/axiosInstance';
 
-function AddServicePage() {
+function EditServicePage({ serviceDetails }) {
     const router = useRouter();
     const [step, setStep] = useState(1);
-    const [serviceName, setServiceName] = useState('');
+    const [serviceName, setServiceName] = useState(serviceDetails?.name);
     const [categories, setCategories] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -70,6 +70,36 @@ function AddServicePage() {
         fetchServiceData();
     }, []);
 
+    useEffect(() => {
+        if (serviceDetails) {
+            const category = serviceDetails.category;
+            const sub_category = serviceDetails.sub_category;
+
+            // Set selected category based on product details
+            const selectedCategory = {
+                value: category.id,
+                label: category.name,
+            };
+            setSelectedCategory(selectedCategory);
+
+            // Set subCategories and subSubCategories based on product details
+            const newSubCategories = category.children.map((subCategory) => ({
+                value: subCategory.id,
+                label: subCategory.name,
+                children: subCategory.children || [],
+            }));
+            setSubCategories(newSubCategories);
+
+            // Set selected subCategories
+            const selectedSubCategories = sub_category.map((subCat) => ({
+                value: subCat.id,
+                label: subCat.name,
+                children: subCat.children || [],
+            }));
+            setSelectedSubCategories(selectedSubCategories);
+        }
+    }, [serviceDetails]);
+
     const handleIsActive = () => {
         setIsActive(!isActive)
     };
@@ -77,21 +107,21 @@ function AddServicePage() {
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
         if (selectedOption) {
-          const subCats = selectedOption.children.map((subCategory) => ({
-            value: subCategory.id,
-            label: subCategory.name,
-            children: subCategory.children,
-          }));
-          setSubCategories(subCats);
-          setSelectedSubCategories([]);
+            const subCats = selectedOption.children.map((subCategory) => ({
+                value: subCategory.id,
+                label: subCategory.name,
+                children: subCategory.children,
+            }));
+            setSubCategories(subCats);
+            setSelectedSubCategories([]);
         } else {
-          setSubCategories([]);
+            setSubCategories([]);
         }
-      };
-    
-      const handleSubCategoryChange = (selectedOptions) => {
+    };
+
+    const handleSubCategoryChange = (selectedOptions) => {
         setSelectedSubCategories(selectedOptions);
-      };
+    };
 
     const handleBrandChange = (selectedOptions) => {
         setSelectedCompatibleBrands(selectedOptions);
@@ -172,7 +202,7 @@ function AddServicePage() {
             formData.append('categoryId', selectedCategory?.value);
 
             const subCategoryIds = selectedSubCategories.map(cat => cat.value);
-            formData.append('subCategoryIds', JSON.stringify(subCategoryIds));            
+            formData.append('subCategoriesIds', JSON.stringify(subCategoryIds));
 
             const servicingTypeIds = selectedServicingTypes.map(item => item.value);
             formData.append('servicingTypeIds', JSON.stringify(servicingTypeIds));
@@ -200,7 +230,6 @@ function AddServicePage() {
 
             formData.append('description', mainDesc);
             formData.append('compatability', compatibility);
-            formData.append('isActive', isActive);
 
             try {
                 const response = await axiosInstance.post('/seller-panel-api/frontend/service/create/', formData, {
@@ -274,53 +303,54 @@ function AddServicePage() {
 
                             <div className="add-product-content">
                                 <div className="add-product-body">
-
-                                    <div className="d-flex flex-column gap-2">
-                                        <div className="input-field-name">
-                                            <label for="product-name"> Service Name <span>*</span></label>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-12">
-                                                <div className="input-field">
-                                                    <input type="text" name="product-name" id="product-name"
-                                                        placeholder="Ex. Sony a6400 mirrorless camera" value={serviceName} onChange={handleServiceName} />
-                                                    <p className="text">{serviceName.length}/{text_max_len}</p>
+                                    <form className="d-flex flex-column gap-4">
+                                        <div className="d-flex flex-column gap-2">
+                                            <div className="input-field-name">
+                                                <label for="product-name"> Service Name <span>*</span></label>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-12">
+                                                    <div className="input-field">
+                                                        <input type="text" name="product-name" id="product-name"
+                                                            placeholder="Ex. Sony a6400 mirrorless camera" value={serviceName} onChange={handleServiceName} />
+                                                        <p className="text">{serviceName.length}/{text_max_len}</p>
+                                                    </div>
+                                                    {errors.name && <div className="error-message text-danger"><small>{errors.name}</small></div>}
                                                 </div>
-                                                {errors.name && <div className="error-message text-danger"><small>{errors.name}</small></div>}
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div className="category-select">
-                                        <div className="box">
-                                            <label className="category-select-label">Select Category <span>*</span></label>
-                                            <Select
-                                                name="category"
-                                                options={categories.map((category) => ({
-                                                    value: category.id,
-                                                    label: category.name,
-                                                    children: category.children,
-                                                }))}
-                                                placeholder="Select Category"
-                                                onChange={handleCategoryChange}
-                                                value={selectedCategory}
-                                            />
-                                            {errors.category && <div className="error-message text-danger"><small>{errors.category}</small></div>}
-                                        </div>
+                                        <div className="category-select">
+                                            <div className="box">
+                                                <label className="category-select-label">Select Category <span>*</span></label>
+                                                <Select
+                                                    name="category"
+                                                    options={categories.map((category) => ({
+                                                        value: category.id,
+                                                        label: category.name,
+                                                        children: category.children,
+                                                    }))}
+                                                    placeholder="Select Category"
+                                                    onChange={handleCategoryChange}
+                                                    value={selectedCategory}
+                                                />
+                                                {errors.category && <div className="error-message text-danger"><small>{errors.category}</small></div>}
+                                            </div>
 
-                                        <div className="box">
-                                            <label className="category-select-label">Sub - Category</label>
-                                            <Select
-                                                isMulti
-                                                name="subcategory"
-                                                options={subCategories}
-                                                placeholder="Select Sub Category"
-                                                onChange={handleSubCategoryChange}
-                                                value={selectedSubCategories}
-                                                isDisabled={!subCategories.length} // Disable if no subcategories
-                                            />
+                                            <div className="box">
+                                                <label className="category-select-label">Sub - Category</label>
+                                                <Select
+                                                    isMulti
+                                                    name="subcategory"
+                                                    options={subCategories}
+                                                    placeholder="Select Sub Category"
+                                                    onChange={handleSubCategoryChange}
+                                                    value={selectedSubCategories}
+                                                    isDisabled={!subCategories.length} // Disable if no subcategories
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
 
                                 <div className="add-product-body">
@@ -512,12 +542,12 @@ function AddServicePage() {
                                             <div className="inner-input">
                                                 <label className="label" for="">Price Start Form <span>*</span>
                                                     {/* <span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                    <path
-                                                        d="M9.375 9.375L9.40917 9.35833C9.51602 9.30495 9.63594 9.2833 9.75472 9.29596C9.8735 9.30862 9.98616 9.35505 10.0794 9.42976C10.1726 9.50446 10.2424 9.60432 10.2806 9.71749C10.3189 9.83066 10.3238 9.95242 10.295 10.0683L9.705 12.4317C9.67595 12.5476 9.68078 12.6695 9.71891 12.7828C9.75704 12.8961 9.82687 12.9961 9.92011 13.071C10.0134 13.1458 10.1261 13.1923 10.245 13.205C10.3639 13.2177 10.4839 13.196 10.5908 13.1425L10.625 13.125M17.5 10C17.5 10.9849 17.306 11.9602 16.9291 12.8701C16.5522 13.7801 15.9997 14.6069 15.3033 15.3033C14.6069 15.9997 13.7801 16.5522 12.8701 16.9291C11.9602 17.306 10.9849 17.5 10 17.5C9.01509 17.5 8.03982 17.306 7.12987 16.9291C6.21993 16.5522 5.39314 15.9997 4.6967 15.3033C4.00026 14.6069 3.44781 13.7801 3.0709 12.8701C2.69399 11.9602 2.5 10.9849 2.5 10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10ZM10 6.875H10.0067V6.88167H10V6.875Z"
-                                                        stroke="#0D9488" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                            </span> */}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path
+                                                    d="M9.375 9.375L9.40917 9.35833C9.51602 9.30495 9.63594 9.2833 9.75472 9.29596C9.8735 9.30862 9.98616 9.35505 10.0794 9.42976C10.1726 9.50446 10.2424 9.60432 10.2806 9.71749C10.3189 9.83066 10.3238 9.95242 10.295 10.0683L9.705 12.4317C9.67595 12.5476 9.68078 12.6695 9.71891 12.7828C9.75704 12.8961 9.82687 12.9961 9.92011 13.071C10.0134 13.1458 10.1261 13.1923 10.245 13.205C10.3639 13.2177 10.4839 13.196 10.5908 13.1425L10.625 13.125M17.5 10C17.5 10.9849 17.306 11.9602 16.9291 12.8701C16.5522 13.7801 15.9997 14.6069 15.3033 15.3033C14.6069 15.9997 13.7801 16.5522 12.8701 16.9291C11.9602 17.306 10.9849 17.5 10 17.5C9.01509 17.5 8.03982 17.306 7.12987 16.9291C6.21993 16.5522 5.39314 15.9997 4.6967 15.3033C4.00026 14.6069 3.44781 13.7801 3.0709 12.8701C2.69399 11.9602 2.5 10.9849 2.5 10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10ZM10 6.875H10.0067V6.88167H10V6.875Z"
+                                                    stroke="#0D9488" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </span> */}
                                                 </label>
                                                 <input className="input" type="number" min={0} name="" id="" placeholder="৳" value={price} onChange={(e) => setPrice(e.target.value)} />
                                                 {errors.price && <div className="error-message text-danger"><small>{errors.price}</small></div>}
@@ -528,12 +558,12 @@ function AddServicePage() {
                                             <div className="inner-input">
                                                 <label className="label" for="">Maximum Price
                                                     {/* <span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                    <path
-                                                        d="M9.375 9.375L9.40917 9.35833C9.51602 9.30495 9.63594 9.2833 9.75472 9.29596C9.8735 9.30862 9.98616 9.35505 10.0794 9.42976C10.1726 9.50446 10.2424 9.60432 10.2806 9.71749C10.3189 9.83066 10.3238 9.95242 10.295 10.0683L9.705 12.4317C9.67595 12.5476 9.68078 12.6695 9.71891 12.7828C9.75704 12.8961 9.82687 12.9961 9.92011 13.071C10.0134 13.1458 10.1261 13.1923 10.245 13.205C10.3639 13.2177 10.4839 13.196 10.5908 13.1425L10.625 13.125M17.5 10C17.5 10.9849 17.306 11.9602 16.9291 12.8701C16.5522 13.7801 15.9997 14.6069 15.3033 15.3033C14.6069 15.9997 13.7801 16.5522 12.8701 16.9291C11.9602 17.306 10.9849 17.5 10 17.5C9.01509 17.5 8.03982 17.306 7.12987 16.9291C6.21993 16.5522 5.39314 15.9997 4.6967 15.3033C4.00026 14.6069 3.44781 13.7801 3.0709 12.8701C2.69399 11.9602 2.5 10.9849 2.5 10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10ZM10 6.875H10.0067V6.88167H10V6.875Z"
-                                                        stroke="#0D9488" stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                            </span> */}
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path
+                                                    d="M9.375 9.375L9.40917 9.35833C9.51602 9.30495 9.63594 9.2833 9.75472 9.29596C9.8735 9.30862 9.98616 9.35505 10.0794 9.42976C10.1726 9.50446 10.2424 9.60432 10.2806 9.71749C10.3189 9.83066 10.3238 9.95242 10.295 10.0683L9.705 12.4317C9.67595 12.5476 9.68078 12.6695 9.71891 12.7828C9.75704 12.8961 9.82687 12.9961 9.92011 13.071C10.0134 13.1458 10.1261 13.1923 10.245 13.205C10.3639 13.2177 10.4839 13.196 10.5908 13.1425L10.625 13.125M17.5 10C17.5 10.9849 17.306 11.9602 16.9291 12.8701C16.5522 13.7801 15.9997 14.6069 15.3033 15.3033C14.6069 15.9997 13.7801 16.5522 12.8701 16.9291C11.9602 17.306 10.9849 17.5 10 17.5C9.01509 17.5 8.03982 17.306 7.12987 16.9291C6.21993 16.5522 5.39314 15.9997 4.6967 15.3033C4.00026 14.6069 3.44781 13.7801 3.0709 12.8701C2.69399 11.9602 2.5 10.9849 2.5 10C2.5 8.01088 3.29018 6.10322 4.6967 4.6967C6.10322 3.29018 8.01088 2.5 10 2.5C11.9891 2.5 13.8968 3.29018 15.3033 4.6967C16.7098 6.10322 17.5 8.01088 17.5 10ZM10 6.875H10.0067V6.88167H10V6.875Z"
+                                                    stroke="#0D9488" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </span> */}
                                                 </label>
                                                 <input className="input" type="number" min={0} name="" id="" placeholder="৳" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
                                             </div>
@@ -599,8 +629,7 @@ function AddServicePage() {
                 </div>
             }
         </>
-
     )
 }
 
-export default AddServicePage
+export default EditServicePage
