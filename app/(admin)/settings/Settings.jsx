@@ -7,14 +7,22 @@ import { getAuthUser } from '@/utils/auth';
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Select from 'react-select';
+import { useRouter } from 'next/navigation';
 
 export default function Settings() {
+  
+  const router = useRouter();
   const [user, setUser] = useState({
     fullName: '',
     email: '',
     phone: '',
     phone2: '',
     dob: '',
+  });
+  const [security, setSecurity] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
   const [storeData, setStore] = useState({
     businessTypeId: '',
@@ -136,6 +144,61 @@ export default function Settings() {
     setSelectedCity(null);
   };
 
+  const handleThumbnailImage = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const { width, height } = img;
+        if (width === height) {
+          // Valid 1:1 ratio, update thumbnail
+          setThumbnail(file);
+        } else {
+          // Show an error message if the image ratio is not 1:1
+          toast.custom(t => (
+            <AlertToast
+              message="Thumbnail must have a 1:1 aspect ratio."
+              dismiss={() => toast.dismiss(t.id)}
+            />
+          ));
+        }
+      };
+    }
+  };
+
+  const removeThumbnailImage = e => {
+    e.preventDefault();
+    setThumbnail(null);
+    setThumbnailPreview(null);
+  };
+
+  const handleMainImage = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const { width, height } = img;
+        if (true) {
+          setMainImage(file);
+        } else {
+          toast.custom(t => (
+            <AlertToast
+              message="Thumbnail must have a 1:1 aspect ratio."
+              dismiss={() => toast.dismiss(t.id)}
+            />
+          ));
+        }
+      };
+    }
+  };
+  const removeMainImage = e => {
+    e.preventDefault();
+    setMainImage(null);
+    setMainImagePreview(null);
+  };
+  
   const isValidateFields = () => {
     if (!user.fullName.trim()) {
       return false;
@@ -267,62 +330,32 @@ export default function Settings() {
       }
     }
   };
-
-  const handleThumbnailImage = e => {
-    const file = e.target.files[0];
-    if (file) {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        const { width, height } = img;
-        if (width === height) {
-          // Valid 1:1 ratio, update thumbnail
-          setThumbnail(file);
-        } else {
-          // Show an error message if the image ratio is not 1:1
-          toast.custom(t => (
-            <AlertToast
-              message="Thumbnail must have a 1:1 aspect ratio."
-              dismiss={() => toast.dismiss(t.id)}
-            />
-          ));
-        }
-      };
+  // update password 
+  const handlePasswordUpdate = async () => {
+  if (security.newPassword.trim()!==security.confirmPassword.trim()) {
+    toast.custom(t => (
+      <AlertToast
+        message="Confrim Password Does Not matched!"
+        dismiss={() => toast.dismiss(t.id)}
+      />
+    ));
+    return;
+  }
+  if (window.confirm('Are you sure you want to update your bussiness?')) {
+    try {
+      const formData = new FormData();
+      formData.append('currentPassword', security.currentPassword);
+      formData.append('newPassword', security.newPassword);
+      const response = await axiosInstance.put(
+        '/seller-panel-api/request-for-change-password/',
+        formData
+      );
+      
+    } catch (error) {
+      console.error('Error updating profile:', error);
     }
-  };
-
-  const removeThumbnailImage = e => {
-    e.preventDefault();
-    setThumbnail(null);
-    setThumbnailPreview(null);
-  };
-
-  const handleMainImage = e => {
-    const file = e.target.files[0];
-    if (file) {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        const { width, height } = img;
-        if (true) {
-          setMainImage(file);
-        } else {
-          toast.custom(t => (
-            <AlertToast
-              message="Thumbnail must have a 1:1 aspect ratio."
-              dismiss={() => toast.dismiss(t.id)}
-            />
-          ));
-        }
-      };
-    }
-  };
-  const removeMainImage = e => {
-    e.preventDefault();
-    setMainImage(null);
-    setMainImagePreview(null);
-  };
-
+  }
+  }
   return (
     <section className="settings-body">
       <div className="settings-body-inner">
@@ -1082,7 +1115,14 @@ export default function Settings() {
                             type="password"
                             name=""
                             id="password"
-                            placeholder="*************"
+                            value={security.currentPassword}
+                            onChange={e =>
+                              setSecurity({
+                                ...security,
+                                currentPassword: e.target.value,
+                              })
+                            }
+                            placeholder="Enter Current Password"
                           />
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -1110,10 +1150,17 @@ export default function Settings() {
 
                         <input
                           className="input-field number"
-                          disabled
                           type="password"
                           name=""
                           id="NewPassword"
+                          placeholder="Enter New Password"
+                          value={security.newPassword}
+                          onChange={e =>
+                            setSecurity({
+                              ...security,
+                              newPassword: e.target.value,
+                            })
+                          }
                         />
                       </div>
 
@@ -1126,18 +1173,25 @@ export default function Settings() {
 
                         <input
                           className="input-field number"
-                          disabled
                           type="password"
                           name=""
                           id="RepeatPassword"
+                          placeholder="Enter Password again"
+                          value={security.confirmPassword}
+                          onChange={e =>
+                            setSecurity({
+                              ...security,
+                              confirmPassword: e.target.value,
+                            })
+                          }
                         />
                       </div>
                     </div>
                   </div>
                   <div className="col-lg-6">
                     <div className="d-flex justify-content-end">
-                      <a
-                        href="verify.html"
+                      <button
+                        onClick={handlePasswordUpdate}
                         className="new-campaign-btn d-inline-flex"
                       >
                         <svg
@@ -1171,8 +1225,8 @@ export default function Settings() {
                             stroke-linejoin="round"
                           />
                         </svg>
-                        <span>Edit Password</span>
-                      </a>
+                        <span>Update Password</span>
+                      </button>
                     </div>
                   </div>
                 </div>
