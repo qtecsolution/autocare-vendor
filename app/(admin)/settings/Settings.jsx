@@ -26,6 +26,17 @@ export default function Settings() {
   });
   const [loading, setLoading] = useState(true);
   const [showSecPhoneInput, setShowSecPhoneInput] = useState(false);
+  const [location, setLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+  const [divisions, setDivisions] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedDivision, setSelectedDivision] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -44,7 +55,7 @@ export default function Settings() {
           city: user.store.city.name || '',
           logo: user.store.logo || '',
           banner: user.store.banner || '',
-          business_type: user.business_type.name || '',
+          BusinesstypeId: user.business_type.id || '',
         });
         setShowSecPhoneInput(user.phone2 ? true : false);
       } catch (error) {
@@ -53,12 +64,116 @@ export default function Settings() {
         setLoading(false);
       }
     };
+    const fetchPlaces = async () => {
+      try {
+        const response = await axiosInstance.get(
+          '/seller-panel-api/setup-business/'
+        );
+        const places = response.data.places;
+        const divisionOptions = places.map(place => ({
+          value: place.id,
+          label: place.name,
+          cities: place.cities,
+        }));
 
+        setDivisions(divisionOptions);
+      } catch (error) {
+        console.error('Error fetching places:', error);
+      }
+    };
+    fetchPlaces();
     fetchUserData();
   }, []);
 
   if (loading) return <div>Loading...</div>;
-  
+
+  const getLocation = e => {
+    e.preventDefault();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        error => {
+          // Handle different error codes
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              toast.custom(t => (
+                <AlertToast
+                  message="User denied the request for Geolocation."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+            case error.POSITION_UNAVAILABLE:
+              toast.custom(t => (
+                <AlertToast
+                  message="Location information is unavailable."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+            case error.TIMEOUT:
+              toast.custom(t => (
+                <AlertToast
+                  message="The request to get user location timed out."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+            default:
+              toast.custom(t => (
+                <AlertToast
+                  message="An unknown error occurred."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+          }
+        }
+      );
+    } else {
+      toast.custom(t => (
+        <AlertToast
+          message="Geolocation is not supported by this browser."
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+    }
+  };
+
+  const handleDivisionChange = selectedOption => {
+    setSelectedDivision(selectedOption);
+    const divisionCities = selectedOption.cities;
+
+    const districtOptions = divisionCities.map(city => ({
+      value: city.id,
+      label: city.name,
+      thanas: city.thanas, // Store thanas to filter cities later
+    }));
+
+    setDistricts(districtOptions);
+    setCities([]); // Reset cities when a new division is selected
+    setSelectedDistrict(null); // Reset district selection
+    setSelectedCity(null); // Reset city selection
+  };
+
+  const handleDistrictChange = selectedOption => {
+    setSelectedDistrict(selectedOption);
+
+    // Map cities based on the selected district
+    const cityOptions = selectedOption.thanas.map(thana => ({
+      value: thana.id,
+      label: thana.name,
+    }));
+
+    setCities(cityOptions);
+    setSelectedCity(null);
+  };
+
   const isValidateFields = () => {
     if (!user.fullName.trim()) {
       return false;
@@ -102,6 +217,60 @@ export default function Settings() {
         toast.custom(t => (
           <SuccessToast
             message="Seller Profile Updated Successfully"
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        toast.custom(t => (
+          <AlertToast
+            message="Failed to update profile. Please try again."
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+      }
+    }
+  };
+  const isValidateBussinessFields = () => {
+    return true;
+  };
+
+  // bussiness data update
+  const handleBusinessUpdate = async () => {
+    // Call the isValidateFields function
+    if (!isValidateBussinessFields()) {
+      toast.custom(t => (
+        <AlertToast
+          message="Please Enter All Required Fields"
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      return;
+    }
+    if (window.confirm('Are you sure you want to update your bussiness?')) {
+      try {
+        const formData = new FormData();
+        formData.append('name', 'Miraz Tesla Shop');
+        formData.append('latitude', '23.727272');
+        formData.append('longitude', '90.365241');
+        formData.append('cityId', '1');
+        formData.append('thanaId', '144');
+        formData.append('timeSlot');
+        formData.append('tradeLicence');
+        formData.append('binCertificate');
+        const response = await axiosInstance.post(
+          '/seller-panel-api/setup-business/',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          }
+        );
+        console.log(JSON.stringify(response.data));
+        toast.custom(t => (
+          <SuccessToast
+            message="Business Profile Updated Successfully"
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
@@ -394,13 +563,15 @@ export default function Settings() {
                               label: type.label,
                             }))}
                             placeholder="Select Business Type"
-                            onChange={e =>
+                            onChange={option =>
                               setStore({
                                 ...store,
-                                BusinesstypeId: Number(e.target.value),
+                                BusinesstypeId: Number(option.value),
                               })
                             }
-                            value={store.BusinesstypeId}
+                            value={BUSINESS_TYPE.find(
+                              type => type.id === store.BusinesstypeId
+                            )}
                           />
                         </div>
 
@@ -450,7 +621,6 @@ export default function Settings() {
                             placeholder="Enter your store location"
                           />
                         </div>
-
                         <div className="input-inner">
                           <div className="label-inner">
                             <label for="City" className="input-label">
@@ -473,11 +643,89 @@ export default function Settings() {
                             placeholder="Enter your store City"
                           />
                         </div>
+                        <div className="input-inner">
+                          <label className="label-inner" for="Address">
+                            Location
+                          </label>
+                          <div
+                            className="input-field d-flex d-flex-column"
+                            onClick={getLocation}
+                          >
+                            <input
+                              type="text"
+                              name=""
+                              id="Address"
+                              readOnly
+                              value={
+                                location.latitude && location.longitude
+                                  ? location.latitude + ' ' + location.longitude
+                                  : ''
+                              }
+                            />
+                            <div className="location">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="18"
+                                height="18"
+                                viewBox="0 0 18 18"
+                                fill="none"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  clip-rule="evenodd"
+                                  d="M7.75239 15.1465L7.75479 15.1473C7.91239 15.2161 8.00039 15.2001 8.00039 15.2001C8.00039 15.2001 8.08839 15.2161 8.24679 15.1473L8.24839 15.1465L8.25319 15.1441L8.26759 15.1377C8.34353 15.1024 8.41849 15.0651 8.49239 15.0257C8.64119 14.9489 8.84919 14.8337 9.09799 14.6793C9.59399 14.3721 10.254 13.9065 10.9172 13.2673C12.242 11.9905 13.6004 9.9945 13.6004 7.2001C13.6004 6.4647 13.4555 5.73649 13.1741 5.05707C12.8927 4.37765 12.4802 3.76031 11.9602 3.2403C11.4402 2.72029 10.8228 2.3078 10.1434 2.02637C9.46399 1.74495 8.73579 1.6001 8.00039 1.6001C7.26499 1.6001 6.53679 1.74495 5.85736 2.02637C5.17794 2.3078 4.5606 2.72029 4.04059 3.2403C3.52058 3.76031 3.10809 4.37765 2.82667 5.05707C2.54524 5.73649 2.40039 6.4647 2.40039 7.2001C2.40039 9.9937 3.75879 11.9905 5.08439 13.2673C5.63939 13.8004 6.24887 14.2736 6.90279 14.6793C7.15606 14.8366 7.41662 14.9818 7.68359 15.1145L7.73319 15.1377L7.74759 15.1441L7.75239 15.1465ZM8.00039 9.0001C8.47778 9.0001 8.93562 8.81046 9.27318 8.47289C9.61075 8.13532 9.80039 7.67749 9.80039 7.2001C9.80039 6.72271 9.61075 6.26487 9.27318 5.92731C8.93562 5.58974 8.47778 5.4001 8.00039 5.4001C7.523 5.4001 7.06516 5.58974 6.7276 5.92731C6.39003 6.26487 6.20039 6.72271 6.20039 7.2001C6.20039 7.67749 6.39003 8.13532 6.7276 8.47289C7.06516 8.81046 7.523 9.0001 8.00039 9.0001Z"
+                                  fill="#7B7F95"
+                                />
+                              </svg>
+                            </div>
+                            <p className='mx-auto'>Set on map</p>
+                          </div>
+                        </div>
+                        <div className="input-inner">
+                          <label className="label-inner category-select-label">
+                            Division
+                          </label>
+                          <Select
+                            value={selectedDivision}
+                            onChange={handleDivisionChange}
+                            options={divisions}
+                            placeholder="Select Division"
+                          />
+                        </div>
+
+                        <div className="input-inner">
+                          <label className="label-inner category-select-label">
+                            District
+                          </label>
+                          <Select
+                            value={selectedDistrict}
+                            onChange={handleDistrictChange}
+                            options={districts}
+                            placeholder="Select District"
+                            isDisabled={!selectedDivision} // Disable district until a division is selected
+                          />
+                        </div>
+
+                        <div>
+                          <label className="label-inner category-select-label">
+                            Thana
+                          </label>
+                          <Select
+                            value={selectedCity}
+                            onChange={setSelectedCity}
+                            options={cities}
+                            placeholder="Select Thana"
+                            isDisabled={!selectedDistrict} // Disable city until a district is selected
+                          />
+                        </div>
                       </div>
                     </div>
                     <div className="col-lg-6">
                       <div className="d-flex justify-content-end">
-                        <button className="new-campaign-btn d-inline-flex">
+                        <button
+                          onClick={handleBusinessUpdate}
+                          className="new-campaign-btn d-inline-flex"
+                        >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="20"
@@ -509,7 +757,7 @@ export default function Settings() {
                               stroke-linejoin="round"
                             />
                           </svg>
-                          <span>Edit Business</span>
+                          <span>Update Business</span>
                         </button>
                       </div>
                     </div>
