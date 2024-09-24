@@ -16,20 +16,18 @@ export default function Settings() {
     phone2: '',
     dob: '',
   });
-  const [store, setStore] = useState({
+  const [storeData, setStore] = useState({
+    businessTypeId: '',
     name: '',
     location: '',
-    city: '',
+    divisionId: '',
+    cityId: '',
+    thanaId: '',
     logo: '',
     banner: '',
-    BusinesstypeId: '',
   });
   const [loading, setLoading] = useState(true);
   const [showSecPhoneInput, setShowSecPhoneInput] = useState(false);
-  const [location, setLocation] = useState({
-    latitude: null,
-    longitude: null,
-  });
   const [divisions, setDivisions] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [cities, setCities] = useState([]);
@@ -37,11 +35,15 @@ export default function Settings() {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
 
+  const [thumbnail, setThumbnail] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [mainImage, setMainImage] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState(null);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const user = await getAuthUser();
-        console.log('user:', user);
+        console.log("user:", user);
         setUser({
           fullName: user.full_name || '',
           email: user.email || '',
@@ -51,13 +53,16 @@ export default function Settings() {
         });
         setStore({
           name: user.store.name || '',
-          location: user.store.location || '',
+          location: user.store.address || '',
           city: user.store.city.name || '',
           logo: user.store.logo || '',
           banner: user.store.banner || '',
-          BusinesstypeId: user.business_type.id || '',
+          businessTypeId: user.business_type.id || '',
         });
-        setShowSecPhoneInput(user.phone2 ? true : false);
+        setShowSecPhoneInput(user.secondary_phone_number ? true : false);
+        setSelectedDivision(user.store.division.id);
+        setSelectedDistrict(user.store.thana.id);
+        setSelectedCity(user.store.city.id);
       } catch (error) {
         console.error('Failed to fetch user data:', error);
       } finally {
@@ -84,67 +89,22 @@ export default function Settings() {
     fetchPlaces();
     fetchUserData();
   }, []);
-
-  if (loading) return <div>Loading...</div>;
-
-  const getLocation = e => {
-    e.preventDefault();
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        error => {
-          // Handle different error codes
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              toast.custom(t => (
-                <AlertToast
-                  message="User denied the request for Geolocation."
-                  dismiss={() => toast.dismiss(t.id)}
-                />
-              ));
-              break;
-            case error.POSITION_UNAVAILABLE:
-              toast.custom(t => (
-                <AlertToast
-                  message="Location information is unavailable."
-                  dismiss={() => toast.dismiss(t.id)}
-                />
-              ));
-              break;
-            case error.TIMEOUT:
-              toast.custom(t => (
-                <AlertToast
-                  message="The request to get user location timed out."
-                  dismiss={() => toast.dismiss(t.id)}
-                />
-              ));
-              break;
-            default:
-              toast.custom(t => (
-                <AlertToast
-                  message="An unknown error occurred."
-                  dismiss={() => toast.dismiss(t.id)}
-                />
-              ));
-              break;
-          }
-        }
-      );
-    } else {
-      toast.custom(t => (
-        <AlertToast
-          message="Geolocation is not supported by this browser."
-          dismiss={() => toast.dismiss(t.id)}
-        />
-      ));
+  useEffect(() => {
+    if (thumbnail) {
+      const objectUrl = URL.createObjectURL(thumbnail);
+      setThumbnailPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
     }
-  };
+  }, [thumbnail]);
 
+  useEffect(() => {
+    if (mainImage) {
+      const objectUrl = URL.createObjectURL(mainImage);
+      setMainImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [mainImage]);
+  if (loading) return <div>Loading...</div>;
   const handleDivisionChange = selectedOption => {
     setSelectedDivision(selectedOption);
     const divisionCities = selectedOption.cities;
@@ -214,6 +174,7 @@ export default function Settings() {
           '/seller-panel-api/seller-profile/',
           formData
         );
+        localStorage.setItem('seller', JSON.stringify(response.data.seller));
         toast.custom(t => (
           <SuccessToast
             message="Seller Profile Updated Successfully"
@@ -232,12 +193,27 @@ export default function Settings() {
     }
   };
   const isValidateBussinessFields = () => {
+    if (!storeData.businessTypeId) {
+      return false;
+    }
+    if (!storeData.name.trim()) {
+      return false;
+    }
+    if (!storeData.location.trim()) {
+      return false;
+    }
+    if (!selectedDivision?.value) {
+      return false;
+    }if (!selectedDistrict?.value) {
+      return false;
+    }if (!selectedCity?.value) {
+      return false;
+    }
     return true;
   };
 
   // bussiness data update
   const handleBusinessUpdate = async () => {
-    // Call the isValidateFields function
     if (!isValidateBussinessFields()) {
       toast.custom(t => (
         <AlertToast
@@ -250,16 +226,20 @@ export default function Settings() {
     if (window.confirm('Are you sure you want to update your bussiness?')) {
       try {
         const formData = new FormData();
-        formData.append('name', 'Miraz Tesla Shop');
-        formData.append('latitude', '23.727272');
-        formData.append('longitude', '90.365241');
-        formData.append('cityId', '1');
-        formData.append('thanaId', '144');
-        formData.append('timeSlot');
-        formData.append('tradeLicence');
-        formData.append('binCertificate');
-        const response = await axiosInstance.post(
-          '/seller-panel-api/setup-business/',
+        formData.append('accountType', storeData.businessTypeId);
+        formData.append('storeName', storeData.name);
+        formData.append('location', storeData.location);
+        formData.append('divisionId', selectedDivision?.value);
+        formData.append('cityId', selectedDistrict?.value);
+        formData.append('thanaId', selectedCity?.value);
+        if (mainImage) {
+          formData.append('logo', mainImage);
+        }
+        if (thumbnail) {
+          formData.append('bannerImage', thumbnail);
+        }
+        const response = await axiosInstance.put(
+          '/seller-panel-api/update-business/',
           formData,
           {
             headers: {
@@ -267,7 +247,7 @@ export default function Settings() {
             },
           }
         );
-        console.log(JSON.stringify(response.data));
+        localStorage.setItem('seller', JSON.stringify(response.data.seller));
         toast.custom(t => (
           <SuccessToast
             message="Business Profile Updated Successfully"
@@ -278,13 +258,70 @@ export default function Settings() {
         console.error('Error updating profile:', error);
         toast.custom(t => (
           <AlertToast
-            message="Failed to update profile. Please try again."
+            message="Failed to Business profile. Please try again."
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
       }
     }
   };
+
+  const handleThumbnailImage = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const { width, height } = img;
+        if (width === height) {
+          // Valid 1:1 ratio, update thumbnail
+          setThumbnail(file);
+        } else {
+          // Show an error message if the image ratio is not 1:1
+          toast.custom(t => (
+            <AlertToast
+              message="Thumbnail must have a 1:1 aspect ratio."
+              dismiss={() => toast.dismiss(t.id)}
+            />
+          ));
+        }
+      };
+    }
+  };
+
+  const removeThumbnailImage = e => {
+    e.preventDefault();
+    setThumbnail(null);
+    setThumbnailPreview(null);
+  };
+
+  const handleMainImage = e => {
+    const file = e.target.files[0];
+    if (file) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        const { width, height } = img;
+        setMainImage(file);
+        // if (width === height) {
+        //   setMainImage(file);
+        // } else {
+        //   toast.custom(t => (
+        //     <AlertToast
+        //       message="Thumbnail must have a 1:1 aspect ratio."
+        //       dismiss={() => toast.dismiss(t.id)}
+        //     />
+        //   ));
+        // }
+      };
+    }
+  };
+  const removeMainImage = e => {
+    e.preventDefault();
+    setMainImage(null);
+    setMainImagePreview(null);
+  };
+
   return (
     <section className="settings-body">
       <div className="settings-body-inner">
@@ -552,7 +589,8 @@ export default function Settings() {
                         <div className="input-inner">
                           <div className="label-inner">
                             <label for="accountType" className="input-label">
-                              Account Type
+                              Account Type{' '}
+                              <span className="text-danger">*</span>
                             </label>
                             {/* <p className="add-another">Apply for garage</p> */}
                           </div>
@@ -565,12 +603,12 @@ export default function Settings() {
                             placeholder="Select Business Type"
                             onChange={option =>
                               setStore({
-                                ...store,
-                                BusinesstypeId: Number(option.value),
+                                ...storeData,
+                                businessTypeId: Number(option.value),
                               })
                             }
                             value={BUSINESS_TYPE.find(
-                              type => type.id === store.BusinesstypeId
+                              type => type.id === storeData.businessTypeId
                             )}
                           />
                         </div>
@@ -578,7 +616,7 @@ export default function Settings() {
                         <div className="input-inner">
                           <div className="label-inner">
                             <label for="storeName" className="input-label">
-                              Store Name
+                              Store Name <span className="text-danger">*</span>
                             </label>
                             {/* <p className="add-another">Request for change</p> */}
                           </div>
@@ -588,102 +626,40 @@ export default function Settings() {
                             type="text"
                             name=""
                             id="storeName"
-                            value={store.name}
+                            value={storeData.name}
                             onChange={e =>
                               setStore({
-                                ...user,
+                                ...storeData,
                                 name: e.target.value,
                               })
                             }
                             placeholder="Enter your store name"
                           />
                         </div>
-
-                        <div className="input-inner">
-                          <div className="label-inner">
-                            <label for="Location" className="input-label">
-                              Location
+                        <div class="input-inner">
+                          <div class="label-inner">
+                            <label for="Location" class="input-label">
+                              Location <span className="text-danger">*</span>
                             </label>
                           </div>
-
                           <input
-                            className="input-field"
+                            class="input-field"
                             type="text"
-                            name=""
-                            id="Location"
-                            value={store.location}
+                            name="" required
+                            value={storeData.location}
                             onChange={e =>
                               setStore({
-                                ...user,
+                                ...storeData,
                                 location: e.target.value,
                               })
                             }
-                            placeholder="Enter your store location"
+                            id="Location"
+                            placeholder="Enter Your Location"
                           />
-                        </div>
-                        <div className="input-inner">
-                          <div className="label-inner">
-                            <label for="City" className="input-label">
-                              City
-                            </label>
-                          </div>
-
-                          <input
-                            className="input-field"
-                            type="text"
-                            name=""
-                            id="City"
-                            value={store.city}
-                            onChange={e =>
-                              setStore({
-                                ...user,
-                                city: e.target.value,
-                              })
-                            }
-                            placeholder="Enter your store City"
-                          />
-                        </div>
-                        <div className="input-inner">
-                          <label className="label-inner" for="Address">
-                            Location
-                          </label>
-                          <div
-                            className="input-field d-flex d-flex-column"
-                            onClick={getLocation}
-                          >
-                            <input
-                              type="text"
-                              name=""
-                              id="Address"
-                              readOnly
-                              value={
-                                location.latitude && location.longitude
-                                  ? location.latitude + ' ' + location.longitude
-                                  : ''
-                              }
-                            />
-                            <div className="location">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 18 18"
-                                fill="none"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M7.75239 15.1465L7.75479 15.1473C7.91239 15.2161 8.00039 15.2001 8.00039 15.2001C8.00039 15.2001 8.08839 15.2161 8.24679 15.1473L8.24839 15.1465L8.25319 15.1441L8.26759 15.1377C8.34353 15.1024 8.41849 15.0651 8.49239 15.0257C8.64119 14.9489 8.84919 14.8337 9.09799 14.6793C9.59399 14.3721 10.254 13.9065 10.9172 13.2673C12.242 11.9905 13.6004 9.9945 13.6004 7.2001C13.6004 6.4647 13.4555 5.73649 13.1741 5.05707C12.8927 4.37765 12.4802 3.76031 11.9602 3.2403C11.4402 2.72029 10.8228 2.3078 10.1434 2.02637C9.46399 1.74495 8.73579 1.6001 8.00039 1.6001C7.26499 1.6001 6.53679 1.74495 5.85736 2.02637C5.17794 2.3078 4.5606 2.72029 4.04059 3.2403C3.52058 3.76031 3.10809 4.37765 2.82667 5.05707C2.54524 5.73649 2.40039 6.4647 2.40039 7.2001C2.40039 9.9937 3.75879 11.9905 5.08439 13.2673C5.63939 13.8004 6.24887 14.2736 6.90279 14.6793C7.15606 14.8366 7.41662 14.9818 7.68359 15.1145L7.73319 15.1377L7.74759 15.1441L7.75239 15.1465ZM8.00039 9.0001C8.47778 9.0001 8.93562 8.81046 9.27318 8.47289C9.61075 8.13532 9.80039 7.67749 9.80039 7.2001C9.80039 6.72271 9.61075 6.26487 9.27318 5.92731C8.93562 5.58974 8.47778 5.4001 8.00039 5.4001C7.523 5.4001 7.06516 5.58974 6.7276 5.92731C6.39003 6.26487 6.20039 6.72271 6.20039 7.2001C6.20039 7.67749 6.39003 8.13532 6.7276 8.47289C7.06516 8.81046 7.523 9.0001 8.00039 9.0001Z"
-                                  fill="#7B7F95"
-                                />
-                              </svg>
-                            </div>
-                            <p className='mx-auto'>Set on map</p>
-                          </div>
                         </div>
                         <div className="input-inner">
                           <label className="label-inner category-select-label">
-                            Division
+                            Division <span className="text-danger">*</span>
                           </label>
                           <Select
                             value={selectedDivision}
@@ -695,14 +671,14 @@ export default function Settings() {
 
                         <div className="input-inner">
                           <label className="label-inner category-select-label">
-                            District
+                            District <span className="text-danger">*</span>
                           </label>
                           <Select
                             value={selectedDistrict}
                             onChange={handleDistrictChange}
                             options={districts}
                             placeholder="Select District"
-                            isDisabled={!selectedDivision} // Disable district until a division is selected
+                            // isDisabled={!selectedDivision}
                           />
                         </div>
 
@@ -715,7 +691,7 @@ export default function Settings() {
                             onChange={setSelectedCity}
                             options={cities}
                             placeholder="Select Thana"
-                            isDisabled={!selectedDistrict} // Disable city until a district is selected
+                            // isDisabled={!selectedDistrict}
                           />
                         </div>
                       </div>
@@ -769,59 +745,309 @@ export default function Settings() {
                 <div className="profile-section-inner">
                   <div className="row g-4">
                     <div className="col-12">
-                      <div className="business-logo">
-                        <p className="text">Business Logo</p>
+                      <div className="product-image-section">
+                        <div className="product-img-head">
+                          <div className="d-flex align-items-center gap-1">
+                            <h1 className="title">Business Logo </h1>
+                          </div>
 
-                        <label
-                          for="business-logo"
-                          className="business-logo-label"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="34"
-                            height="34"
-                            viewBox="0 0 34 34"
-                            fill="none"
-                          >
-                            <path
-                              d="M16.9991 23.3755V13.813M16.9991 13.813L21.2491 18.063M16.9991 13.813L12.7491 18.063M9.56162 27.6255C8.04498 27.6271 6.57744 27.088 5.42254 26.105C4.26764 25.1219 3.50105 23.7593 3.26044 22.2619C3.01983 20.7645 3.32096 19.2303 4.10975 17.9349C4.89854 16.6395 6.12331 15.6678 7.56412 15.1943C7.19395 13.2976 7.57653 11.3313 8.63085 9.71177C9.68517 8.09226 11.3284 6.9467 13.2127 6.51767C15.0969 6.08863 17.0742 6.40983 18.7257 7.41323C20.3772 8.41663 21.5734 10.0234 22.0609 11.8934C22.8145 11.6483 23.6218 11.6188 24.3913 11.8083C25.1609 11.9977 25.8621 12.3986 26.4159 12.9656C26.9696 13.5326 27.3538 14.2431 27.525 15.017C27.6962 15.7908 27.6476 16.5971 27.3847 17.3448C28.5445 17.7877 29.5126 18.6227 30.1211 19.7048C30.7296 20.787 30.9401 22.048 30.7162 23.2691C30.4922 24.4902 29.8479 25.5944 28.8949 26.3901C27.942 27.1858 26.7406 27.6229 25.4991 27.6255H9.56162Z"
-                              stroke="#0F766D"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-                          <input type="file" name="" id="business-logo" />
-                        </label>
+                          <h1 className="example-text">See Example</h1>
+                        </div>
+
+                        <div className="product-img-body">
+                          <div className="uplod-img">
+                            {thumbnailPreview && (
+                              <div className="product-img">
+                                <img src={thumbnailPreview} alt="thumbnail" />
+                                <div className="img-close-btn">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="42"
+                                    height="42"
+                                    viewBox="0 0 42 42"
+                                    fill="none"
+                                    onClick={removeThumbnailImage}
+                                  >
+                                    <g filter="url(#filter0_dd_239_17341)">
+                                      <circle
+                                        cx="21"
+                                        cy="19.9995"
+                                        r="15"
+                                        fill="white"
+                                      />
+                                    </g>
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M15.7219 14.7371C15.8354 14.6237 15.9892 14.5601 16.1496 14.5601C16.31 14.5601 16.4639 14.6237 16.5774 14.7371L20.9917 19.1514L25.406 14.7371C25.4614 14.6776 25.5282 14.6299 25.6024 14.5968C25.6767 14.5637 25.7568 14.546 25.8381 14.5445C25.9194 14.5431 26.0001 14.558 26.0754 14.5885C26.1508 14.6189 26.2193 14.6642 26.2767 14.7217C26.3342 14.7792 26.3795 14.8476 26.41 14.923C26.4404 14.9984 26.4554 15.0791 26.4539 15.1604C26.4525 15.2416 26.4347 15.3218 26.4016 15.396C26.3685 15.4703 26.3208 15.5371 26.2614 15.5925L21.8471 20.0068L26.2614 24.4211C26.3208 24.4765 26.3685 24.5433 26.4016 24.6176C26.4347 24.6918 26.4525 24.772 26.4539 24.8532C26.4554 24.9345 26.4404 25.0152 26.41 25.0906C26.3795 25.1659 26.3342 25.2344 26.2767 25.2919C26.2193 25.3494 26.1508 25.3947 26.0754 25.4251C26.0001 25.4555 25.9194 25.4705 25.8381 25.4691C25.7568 25.4676 25.6767 25.4498 25.6024 25.4168C25.5282 25.3837 25.4614 25.336 25.406 25.2765L20.9917 20.8622L16.5774 25.2765C16.4626 25.3834 16.3109 25.4416 16.1541 25.4389C15.9973 25.4361 15.8477 25.3726 15.7368 25.2617C15.6259 25.1508 15.5623 25.0012 15.5596 24.8444C15.5568 24.6876 15.615 24.5358 15.7219 24.4211L20.1362 20.0068L15.7219 15.5925C15.6086 15.479 15.5449 15.3252 15.5449 15.1648C15.5449 15.0044 15.6086 14.8506 15.7219 14.7371Z"
+                                      fill="#525468"
+                                    />
+                                    <defs>
+                                      <filter
+                                        id="filter0_dd_239_17341"
+                                        x="0.545455"
+                                        y="0.908603"
+                                        width="40.9091"
+                                        height="40.9091"
+                                        filterUnits="userSpaceOnUse"
+                                        color-interpolation-filters="sRGB"
+                                      >
+                                        <feFlood
+                                          flood-opacity="0"
+                                          result="BackgroundImageFix"
+                                        />
+                                        <feColorMatrix
+                                          in="SourceAlpha"
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                                          result="hardAlpha"
+                                        />
+                                        <feMorphology
+                                          radius="1.36364"
+                                          operator="dilate"
+                                          in="SourceAlpha"
+                                          result="effect1_dropShadow_239_17341"
+                                        />
+                                        <feOffset dy="1.36364" />
+                                        <feGaussianBlur stdDeviation="2.04545" />
+                                        <feColorMatrix
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"
+                                        />
+                                        <feBlend
+                                          mode="normal"
+                                          in2="BackgroundImageFix"
+                                          result="effect1_dropShadow_239_17341"
+                                        />
+                                        <feColorMatrix
+                                          in="SourceAlpha"
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                                          result="hardAlpha"
+                                        />
+                                        <feOffset dy="1.36364" />
+                                        <feGaussianBlur stdDeviation="1.36364" />
+                                        <feColorMatrix
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"
+                                        />
+                                        <feBlend
+                                          mode="normal"
+                                          in2="effect1_dropShadow_239_17341"
+                                          result="effect2_dropShadow_239_17341"
+                                        />
+                                        <feBlend
+                                          mode="normal"
+                                          in="SourceGraphic"
+                                          in2="effect2_dropShadow_239_17341"
+                                          result="shape"
+                                        />
+                                      </filter>
+                                    </defs>
+                                  </svg>
+                                </div>
+                              </div>
+                            )}
+
+                            {thumbnail ? (
+                              ''
+                            ) : (
+                              <div className="add-product-img-inner">
+                                <label
+                                  for="thumbnail-img"
+                                  className="add-product-img"
+                                >
+                                  <input
+                                    className="add-product-img-input"
+                                    type="file"
+                                    name=""
+                                    id="thumbnail-img"
+                                    accept=".png,.jpg,.jpeg"
+                                    onChange={handleThumbnailImage}
+                                  />
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="30"
+                                    height="30"
+                                    viewBox="0 0 30 30"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M15 5.62451V24.3745M24.375 14.9995H5.625"
+                                      stroke="#0F766D"
+                                      stroke-width="1.875"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                </label>
+                              </div>
+                            )}
+                          </div>
+                          <div className="">
+                            <ul className="add-product-img-list">
+                              <li>Image Ratio: 1:1 </li>
+                              <li>Max file size: 1MB.</li>
+                              <li>Format: png, jpg</li>
+                            </ul>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="col-12">
-                      <div className="cover-photo">
-                        <p className="text">Cover Photo</p>
-
-                        <label for="cover-photo" className="cover-photo-label">
-                          <div className="d-flex flex-column justify-content-center align-items-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              width="34"
-                              height="34"
-                              viewBox="0 0 34 34"
-                              fill="none"
-                            >
-                              <path
-                                d="M16.9991 23.3755V13.813M16.9991 13.813L21.2491 18.063M16.9991 13.813L12.7491 18.063M9.56162 27.6255C8.04498 27.6271 6.57744 27.088 5.42254 26.105C4.26764 25.1219 3.50105 23.7593 3.26044 22.2619C3.01983 20.7645 3.32096 19.2303 4.10975 17.9349C4.89854 16.6395 6.12331 15.6678 7.56412 15.1943C7.19395 13.2976 7.57653 11.3313 8.63085 9.71177C9.68517 8.09226 11.3284 6.9467 13.2127 6.51767C15.0969 6.08863 17.0742 6.40983 18.7257 7.41323C20.3772 8.41663 21.5734 10.0234 22.0609 11.8934C22.8145 11.6483 23.6218 11.6188 24.3913 11.8083C25.1609 11.9977 25.8621 12.3986 26.4159 12.9656C26.9696 13.5326 27.3538 14.2431 27.525 15.017C27.6962 15.7908 27.6476 16.5971 27.3847 17.3448C28.5445 17.7877 29.5126 18.6227 30.1211 19.7048C30.7296 20.787 30.9401 22.048 30.7162 23.2691C30.4922 24.4902 29.8479 25.5944 28.8949 26.3901C27.942 27.1858 26.7406 27.6229 25.4991 27.6255H9.56162Z"
-                                stroke="#0F766D"
-                                stroke-width="1.5"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-                            </svg>
-                            <p className="text">
-                              Drag & drop your Image here or <span>Browse</span>
-                            </p>
+                      <div className="product-image-section">
+                        <div className="product-img-head">
+                          <div className="d-flex align-items-center gap-1">
+                            <h1 className="title">Cover Photo </h1>
                           </div>
-                          <input type="file" name="" id="cover-photo" />
-                        </label>
+                        </div>
+
+                        <div className="product-img-body">
+                          <div className="uplod-img">
+                            {mainImagePreview && (
+                              <div className="product-img">
+                                <img src={mainImagePreview} alt="thumbnail" />
+                                <div className="img-close-btn">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="42"
+                                    height="42"
+                                    viewBox="0 0 42 42"
+                                    fill="none"
+                                    onClick={removeMainImage}
+                                  >
+                                    <g filter="url(#filter0_dd_239_17341)">
+                                      <circle
+                                        cx="21"
+                                        cy="19.9995"
+                                        r="15"
+                                        fill="white"
+                                      />
+                                    </g>
+                                    <path
+                                      fill-rule="evenodd"
+                                      clip-rule="evenodd"
+                                      d="M15.7219 14.7371C15.8354 14.6237 15.9892 14.5601 16.1496 14.5601C16.31 14.5601 16.4639 14.6237 16.5774 14.7371L20.9917 19.1514L25.406 14.7371C25.4614 14.6776 25.5282 14.6299 25.6024 14.5968C25.6767 14.5637 25.7568 14.546 25.8381 14.5445C25.9194 14.5431 26.0001 14.558 26.0754 14.5885C26.1508 14.6189 26.2193 14.6642 26.2767 14.7217C26.3342 14.7792 26.3795 14.8476 26.41 14.923C26.4404 14.9984 26.4554 15.0791 26.4539 15.1604C26.4525 15.2416 26.4347 15.3218 26.4016 15.396C26.3685 15.4703 26.3208 15.5371 26.2614 15.5925L21.8471 20.0068L26.2614 24.4211C26.3208 24.4765 26.3685 24.5433 26.4016 24.6176C26.4347 24.6918 26.4525 24.772 26.4539 24.8532C26.4554 24.9345 26.4404 25.0152 26.41 25.0906C26.3795 25.1659 26.3342 25.2344 26.2767 25.2919C26.2193 25.3494 26.1508 25.3947 26.0754 25.4251C26.0001 25.4555 25.9194 25.4705 25.8381 25.4691C25.7568 25.4676 25.6767 25.4498 25.6024 25.4168C25.5282 25.3837 25.4614 25.336 25.406 25.2765L20.9917 20.8622L16.5774 25.2765C16.4626 25.3834 16.3109 25.4416 16.1541 25.4389C15.9973 25.4361 15.8477 25.3726 15.7368 25.2617C15.6259 25.1508 15.5623 25.0012 15.5596 24.8444C15.5568 24.6876 15.615 24.5358 15.7219 24.4211L20.1362 20.0068L15.7219 15.5925C15.6086 15.479 15.5449 15.3252 15.5449 15.1648C15.5449 15.0044 15.6086 14.8506 15.7219 14.7371Z"
+                                      fill="#525468"
+                                    />
+                                    <defs>
+                                      <filter
+                                        id="filter0_dd_239_17341"
+                                        x="0.545455"
+                                        y="0.908603"
+                                        width="40.9091"
+                                        height="40.9091"
+                                        filterUnits="userSpaceOnUse"
+                                        color-interpolation-filters="sRGB"
+                                      >
+                                        <feFlood
+                                          flood-opacity="0"
+                                          result="BackgroundImageFix"
+                                        />
+                                        <feColorMatrix
+                                          in="SourceAlpha"
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                                          result="hardAlpha"
+                                        />
+                                        <feMorphology
+                                          radius="1.36364"
+                                          operator="dilate"
+                                          in="SourceAlpha"
+                                          result="effect1_dropShadow_239_17341"
+                                        />
+                                        <feOffset dy="1.36364" />
+                                        <feGaussianBlur stdDeviation="2.04545" />
+                                        <feColorMatrix
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0"
+                                        />
+                                        <feBlend
+                                          mode="normal"
+                                          in2="BackgroundImageFix"
+                                          result="effect1_dropShadow_239_17341"
+                                        />
+                                        <feColorMatrix
+                                          in="SourceAlpha"
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                                          result="hardAlpha"
+                                        />
+                                        <feOffset dy="1.36364" />
+                                        <feGaussianBlur stdDeviation="1.36364" />
+                                        <feColorMatrix
+                                          type="matrix"
+                                          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.3 0"
+                                        />
+                                        <feBlend
+                                          mode="normal"
+                                          in2="effect1_dropShadow_239_17341"
+                                          result="effect2_dropShadow_239_17341"
+                                        />
+                                        <feBlend
+                                          mode="normal"
+                                          in="SourceGraphic"
+                                          in2="effect2_dropShadow_239_17341"
+                                          result="shape"
+                                        />
+                                      </filter>
+                                    </defs>
+                                  </svg>
+                                </div>
+                              </div>
+                            )}
+
+                            {mainImage ? (
+                              ''
+                            ) : (
+                              <div className="add-product-img-inner">
+                                <label
+                                  for="product-main-img"
+                                  className="add-product-img"
+                                  style={{ width: '700px' }}
+                                >
+                                  {' '}
+                                  <div class="d-flex flex-column justify-content-center align-items-center">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="34"
+                                      height="34"
+                                      viewBox="0 0 34 34"
+                                      fill="none"
+                                    >
+                                      <path
+                                        d="M16.9991 23.3755V13.813M16.9991 13.813L21.2491 18.063M16.9991 13.813L12.7491 18.063M9.56162 27.6255C8.04498 27.6271 6.57744 27.088 5.42254 26.105C4.26764 25.1219 3.50105 23.7593 3.26044 22.2619C3.01983 20.7645 3.32096 19.2303 4.10975 17.9349C4.89854 16.6395 6.12331 15.6678 7.56412 15.1943C7.19395 13.2976 7.57653 11.3313 8.63085 9.71177C9.68517 8.09226 11.3284 6.9467 13.2127 6.51767C15.0969 6.08863 17.0742 6.40983 18.7257 7.41323C20.3772 8.41663 21.5734 10.0234 22.0609 11.8934C22.8145 11.6483 23.6218 11.6188 24.3913 11.8083C25.1609 11.9977 25.8621 12.3986 26.4159 12.9656C26.9696 13.5326 27.3538 14.2431 27.525 15.017C27.6962 15.7908 27.6476 16.5971 27.3847 17.3448C28.5445 17.7877 29.5126 18.6227 30.1211 19.7048C30.7296 20.787 30.9401 22.048 30.7162 23.2691C30.4922 24.4902 29.8479 25.5944 28.8949 26.3901C27.942 27.1858 26.7406 27.6229 25.4991 27.6255H9.56162Z"
+                                        stroke="#0F766D"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                      ></path>
+                                    </svg>
+                                    <p class="text">
+                                      Drag &amp; drop your Image here or{' '}
+                                      <span>Browse</span>
+                                    </p>
+                                  </div>
+                                  <input
+                                    className="add-product-img-input"
+                                    type="file"
+                                    name=""
+                                    id="product-main-img"
+                                    accept=".png,.jpg,.jpeg"
+                                    onChange={handleMainImage}
+                                  />
+                                </label>
+                              </div>
+                            )}
+                          </div>
+                          {/* <div className="">
+                            <ul className="add-product-img-list">
+                              <li>Image Ratio: 1:1 </li>
+                              <li>Max file size: 1MB.</li>
+                              <li>Format: png, jpg</li>
+                            </ul>
+                          </div> */}
+                        </div>
                       </div>
                     </div>
                   </div>
