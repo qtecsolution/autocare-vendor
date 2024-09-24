@@ -65,6 +65,14 @@ function LoginPage() {
         setShowPassword(!showPassword);
     };
 
+    function checkButtonDisable() {
+        if (number.length < 11 || password.length < 4 || number.length > 11) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     return (
         <>
             <Header />
@@ -115,7 +123,7 @@ function LoginPage() {
 
                                         <form className="form-inner">
                                             <div className="inner-input">
-                                                <label className="input-label" for="phone-number">Phone Number</label>
+                                                <label className="input-label" for="phone-number">Phone Number <span className='text-danger'>*</span></label>
                                                 <div className="input-field">
                                                     <input type="number"
                                                         value={number}
@@ -127,7 +135,7 @@ function LoginPage() {
                                             </div>
 
                                             <div className="inner-input">
-                                                <label className="input-label" for="Password">Password</label>
+                                                <label className="input-label" for="Password">Password <span className='text-danger'>*</span></label>
                                                 <div className="input-field">
                                                     <input
                                                         type={showPassword ? "text" : "password"}
@@ -147,7 +155,7 @@ function LoginPage() {
                                                 Forgot Password?{" "}
                                                 <Link href="#">Reset</Link>
                                             </p>
-                                            <button onClick={handleSubmit} className="login-btn">
+                                            <button onClick={handleSubmit} className={`login-btn ${checkButtonDisable() ? 'show_disable_button' : ''}`} disabled={checkButtonDisable()}>
                                                 Login
                                             </button>
                                         </form>

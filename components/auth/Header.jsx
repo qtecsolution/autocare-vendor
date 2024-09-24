@@ -29,11 +29,11 @@ export default function Header() {
 
                     <ul className="header-button list-unstyled d-flex align-items-center gap-3">
                         <li>
-                            <Link className={`login-btn ${isLoginActive()}`} href="/login">Login</Link>
+                            <Link className={`login-btn ${isLinkActive('/login')}`} href="/login">Login</Link>
                         </li>
 
                         <li>
-                            <Link className={`signUp-btn ${isLinkActive('/login')}`} href="/signup">Signup</Link>
+                            <Link className={`signUp-btn ${isLinkActive('/signup')}`} href="/signup">Signup</Link>
                         </li>
                     </ul>
                 </div>
