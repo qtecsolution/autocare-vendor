@@ -32,6 +32,7 @@ export default function Settings() {
     name: '',
     location: '',
     divisionId: '',
+    districtId: '',
     cityId: '',
     thanaId: '',
     logo: '',
@@ -67,13 +68,13 @@ export default function Settings() {
           location: user.store.address || '',
           city: user.store.city.name || '',
           logo: user.store.logo || '',
+          divisionId: user.store.division.id || '',
+          districtId: user.store.city.id || '',
+          cityId: user.store.thana.id || '',
           banner: user.store.banner || '',
           businessTypeId: user.business_type.id || '',
         });
         setShowSecPhoneInput(user.secondary_phone_number ? true : false);
-        setSelectedDivision(user.store.division.id);
-        setSelectedDistrict(user.store.thana.id);
-        setSelectedCity(user.store.city.id);
         setThumbnailPreview(user.store.logo);
         setMainImagePreview(user.store.banner_image);
       } catch (error) {
@@ -102,6 +103,41 @@ export default function Settings() {
     fetchPlaces();
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    // Set selected values based on user data
+    const divisionId = storeData?.divisionId;
+    const districtId = storeData?.districtId;
+    const cityId = storeData?.cityId;
+    // Find the selected division based on the divisionId
+    const oldDiv = divisions?.find(division => division.value === divisionId);
+    setSelectedDivision(oldDiv);
+
+    if (selectedDivision) {
+      const divisionDistrict = selectedDivision?.cities;
+      const updatedDistricts = divisionDistrict?.map(district => ({
+        value: district.id,
+        label: district.name,
+        thanas: district.thanas,
+      }));
+      setDistricts(updatedDistricts);
+      const oldDist = updatedDistricts?.find(
+        district => district.value === districtId
+      );
+      setSelectedDistrict(oldDist);
+      if (oldDist) {
+        const districtThana = oldDist?.thanas;
+        const cityOptions = districtThana?.map(thana => ({
+          value: thana.id,
+          label: thana.name,
+        }));
+        setCities(cityOptions);
+        const oldCity = cityOptions?.find(city => city.value === cityId);
+        setSelectedCity(oldCity);
+      }
+    }
+  }, [divisions]);
+
   useEffect(() => {
     if (thumbnail) {
       const objectUrl = URL.createObjectURL(thumbnail);
@@ -765,9 +801,11 @@ export default function Settings() {
                             )}
                           </div>
                           <div className="input-inner">
-                            <label className="label-inner category-select-label">
-                              Division <span className="text-danger">*</span>
-                            </label>
+                            <div class="label-inner">
+                              <label for="" class="input-label">
+                                Division <span className="text-danger">*</span>
+                              </label>
+                            </div>
                             <Select
                               value={selectedDivision}
                               onChange={handleDivisionChange}
@@ -782,9 +820,11 @@ export default function Settings() {
                           </div>
 
                           <div className="input-inner">
-                            <label className="label-inner category-select-label">
-                              District <span className="text-danger">*</span>
-                            </label>
+                            <div class="label-inner">
+                              <label for="" class="input-label">
+                                District <span className="text-danger">*</span>
+                              </label>
+                            </div>
                             <Select
                               value={selectedDistrict}
                               onChange={handleDistrictChange}
@@ -799,10 +839,12 @@ export default function Settings() {
                             )}
                           </div>
 
-                          <div>
-                            <label className="label-inner category-select-label">
-                              Thana <span className="text-danger">*</span>
-                            </label>
+                          <div className="input-inner">
+                            <div class="label-inner">
+                              <label for="" class="input-label">
+                                Thana <span className="text-danger">*</span>
+                              </label>
+                            </div>
                             <Select
                               value={selectedCity}
                               onChange={setSelectedCity}
