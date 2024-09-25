@@ -365,11 +365,17 @@ export default function Settings() {
           '/seller-panel-api/request-for-change-password/',
           formData
         );
-        router.push(
-          `/verify-otp?XYKS1=${encodeURIComponent(
-            security.newPassword
-          )}&XCKS2=${encodeURIComponent(user.phone)}`
-        );
+        toast.custom(t => (
+          <SuccessToast
+            message="An Otp Sent You phone"
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+        // router.push(
+        //   `/verify-otp?XYKS1=${encodeURIComponent(
+        //     security.newPassword
+        //   )}&XCKS2=${encodeURIComponent(user.phone)}`
+        // );
       } catch (error) {
         toast.custom(t => (
           <AlertToast
