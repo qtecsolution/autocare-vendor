@@ -106,7 +106,29 @@ function IdentityVerifyPage() {
 
         }
     }
+    function check2ndButtonDisable() {
+        if (idType === 2) {
+            if (!frontPartFile) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (!frontPartFile || !backPartFile) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    function check3rdButtonDisable() {
 
+        if (!sellerImage) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     return (
         <>
             {step === 1 &&
@@ -186,7 +208,7 @@ function IdentityVerifyPage() {
                                         <div className="d-flex flex-column gap-4">
                                             <div className="d-flex flex-column gap-2">
                                                 <p className="text">
-                                                    Front Part
+                                                    Front Part <span className='text-danger'>*</span>
                                                 </p>
                                                 <label for="frontPart" className="upload-card">
                                                     <figure>
@@ -209,7 +231,7 @@ function IdentityVerifyPage() {
                                                 :
                                                 <div className="d-flex flex-column gap-2">
                                                     <p className="text">
-                                                        Back Part
+                                                        Back Part <span className='text-danger'>*</span>
                                                     </p>
                                                     <label for="backPart" className="upload-card">
                                                         <figure>
@@ -231,7 +253,7 @@ function IdentityVerifyPage() {
                                         </div>
 
 
-                                        <button onClick={complete2ndStep} className="login-btn">
+                                        <button onClick={complete2ndStep} className={`login-btn ${check2ndButtonDisable() ? 'show_disable_button' : ''}`} disabled={check2ndButtonDisable()}>
                                             Continue
                                         </button>
                                     </form>
@@ -249,15 +271,13 @@ function IdentityVerifyPage() {
                                 <div className="login-form">
                                     <div className="d-flex flex-column gap-3">
                                         <h1 className="form-title">
-                                            Upload Photo
+                                            Vendor Profile Image
                                         </h1>
-
                                         <p className="form-details">
                                             Make sure your photos are not blurry and it shows you face clearly.
                                         </p>
                                     </div>
-
-                                    <form className="form-inner">
+                                    <div className="form-inner">
                                         <div className="d-flex flex-column gap-4">
                                             <div className="d-flex flex-column gap-2">
                                                 <label for="uploadPhoto" className="upload-card">
@@ -279,10 +299,10 @@ function IdentityVerifyPage() {
                                         </div>
 
 
-                                        <button onClick={completeFinalStep} className="login-btn">
+                                        <button onClick={completeFinalStep} className={`login-btn ${check3rdButtonDisable() ? 'show_disable_button' : ''}`} disabled={check3rdButtonDisable()}>
                                             Continue
                                         </button>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -322,7 +342,7 @@ function IdentityVerifyPage() {
                                             Dashboard
                                         </Link>
                                         <Link href="/business-setup" className="add-product-btn">
-                                            Setup Business
+                                            Setup Store
                                         </Link>
                                     </div>
                                 </div>
