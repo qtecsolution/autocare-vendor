@@ -10,7 +10,6 @@ import Select from 'react-select';
 import { useRouter } from 'next/navigation';
 
 export default function Settings() {
-  
   const router = useRouter();
   const [user, setUser] = useState({
     fullName: '',
@@ -51,7 +50,7 @@ export default function Settings() {
     const fetchUserData = async () => {
       try {
         const user = await getAuthUser();
-        console.log("user:", user);
+        console.log('user:', user);
         setUser({
           fullName: user.full_name || '',
           email: user.email || '',
@@ -70,7 +69,7 @@ export default function Settings() {
         setShowSecPhoneInput(user.secondary_phone_number ? true : false);
         setSelectedDivision(user.store.division.id);
         setSelectedDistrict(user.store.thana.id);
-        setSelectedCity(user.store.city.id);;
+        setSelectedCity(user.store.city.id);
         setThumbnailPreview(user.store.logo);
         setMainImagePreview(user.store.banner_image);
       } catch (error) {
@@ -198,7 +197,7 @@ export default function Settings() {
     setMainImage(null);
     setMainImagePreview(null);
   };
-  
+
   const isValidateFields = () => {
     if (!user.fullName.trim()) {
       return false;
@@ -269,9 +268,11 @@ export default function Settings() {
     }
     if (!selectedDivision?.value) {
       return false;
-    }if (!selectedDistrict?.value) {
+    }
+    if (!selectedDistrict?.value) {
       return false;
-    }if (!selectedCity?.value) {
+    }
+    if (!selectedCity?.value) {
       return false;
     }
     return true;
@@ -330,32 +331,36 @@ export default function Settings() {
       }
     }
   };
-  // update password 
+  // update password
   const handlePasswordUpdate = async () => {
-  if (security.newPassword.trim()!==security.confirmPassword.trim()) {
-    toast.custom(t => (
-      <AlertToast
-        message="Confrim Password Does Not matched!"
-        dismiss={() => toast.dismiss(t.id)}
-      />
-    ));
-    return;
-  }
-  if (window.confirm('Are you sure you want to update your bussiness?')) {
-    try {
-      const formData = new FormData();
-      formData.append('currentPassword', security.currentPassword);
-      formData.append('newPassword', security.newPassword);
-      const response = await axiosInstance.put(
-        '/seller-panel-api/request-for-change-password/',
-        formData
-      );
-      
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    if (security.newPassword.trim() !== security.confirmPassword.trim()) {
+      toast.custom(t => (
+        <AlertToast
+          message="Confrim Password Does Not matched!"
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      return;
     }
-  }
-  }
+    if (window.confirm('Are you sure want to update your password?')) {
+      try {
+        const formData = new FormData();
+        formData.append('currentPassword', security.currentPassword);
+        formData.append('newPassword', security.newPassword);
+        const response = await axiosInstance.post(
+          '/seller-panel-api/request-for-change-password/',
+          formData
+        );
+        router.push(
+          `/verify-otp?XYKS1=${encodeURIComponent(
+            security.newPassword
+          )}&XCKS2=${encodeURIComponent(user.phone)}`
+        );
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
+    }
+  };
   return (
     <section className="settings-body">
       <div className="settings-body-inner">
