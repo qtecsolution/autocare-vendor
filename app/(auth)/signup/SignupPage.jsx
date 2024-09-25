@@ -184,6 +184,10 @@ function SignupPage() {
     const handleChangeBusinessType = (type) => {
         setBusinessType(type);
     };
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
     const createProfileStep2 = async (event) => {
         event.preventDefault();
 
@@ -198,6 +202,13 @@ function SignupPage() {
             toast.custom((t) => (
                 <AlertToast
                     message={"Email required!"}
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
+        } else if (!validateEmail(email)) {
+            toast.custom((t) => (
+                <AlertToast
+                    message={"Invalid email format!"}
                     dismiss={() => toast.dismiss(t.id)}
                 />
             ));
@@ -378,7 +389,7 @@ function SignupPage() {
 
                                                 <form className="form-inner">
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="full-name">Full Name</label>
+                                                        <label className="input-label" for="full-name">Full Name <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input type="text" name="" id="full-name" placeholder="Type here"
                                                                 value={fullName}
@@ -388,7 +399,7 @@ function SignupPage() {
                                                     </div>
 
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="Password">Password</label>
+                                                        <label className="input-label" for="Password">Password <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input type={showPassword ? "text" : "password"} name="" id="Password" placeholder="Set Password"
                                                                 value={password}
@@ -403,7 +414,7 @@ function SignupPage() {
                                                     </div>
 
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="repeat-password">Repeat Password</label>
+                                                        <label className="input-label" for="repeat-password">Repeat Password <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input type={showRepeatPassword ? "text" : "password"} name="" id="repeat-password" placeholder="Confirm Password"
                                                                 value={repeatPassword}
@@ -434,7 +445,7 @@ function SignupPage() {
                                                     </p>
                                                 </div>
 
-                                                <form className="form-inner">
+                                                <div className="form-inner">
                                                     <div className="login-checkbox-inner">
                                                         <div>
                                                             <input
@@ -480,7 +491,7 @@ function SignupPage() {
                                                         <label className="input-label" htmlFor="email">Email Address <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input
-                                                                type="email"
+                                                                type='email'
                                                                 id="email"
                                                                 placeholder="Type here"
                                                                 value={email}
@@ -493,7 +504,7 @@ function SignupPage() {
                                                     <button className={`login-btn ${check4thStepButton() ? 'show_disable_button' : ''}`} onClick={createProfileStep2} disabled={check4thStepButton()}>
                                                         Finish
                                                     </button>
-                                                </form>
+                                                </div>
                                             </div>}
 
                                     </div>
