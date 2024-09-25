@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 function BusinessSetupPage() {
 
-  const [step, setStep] = useState(4);
+  const [step, setStep] = useState(1);
   const [businessType, setBusinessType] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [location, setLocation] = useState({
