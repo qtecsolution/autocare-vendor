@@ -11,6 +11,9 @@ import { useRouter } from 'next/navigation';
 
 export default function Settings() {
   const router = useRouter();
+  const [errors, setErrors] = useState({});
+
+  const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState({
     fullName: '',
     email: '',
@@ -199,19 +202,27 @@ export default function Settings() {
   };
 
   const isValidateFields = () => {
+    setErrors({});
+    let tempErrors = {};
+
     if (!user.fullName.trim()) {
-      return false;
+      tempErrors.fullName = 'Full Name Required';
     }
+
     if (!user.email.trim()) {
-      return false;
+      tempErrors.email = 'Email is required';
     }
+
     if (!user.phone.trim()) {
-      return false;
+      tempErrors.phone = 'Phone required';
     }
+
     if (!user.dob.trim()) {
-      return false;
+      tempErrors.dob = 'Date of birth required';
     }
-    return true;
+
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
   // User data update
@@ -257,25 +268,29 @@ export default function Settings() {
     }
   };
   const isValidateBussinessFields = () => {
+    setErrors({});
+    let tempErrors = {};
+
     if (!storeData.businessTypeId) {
-      return false;
+      tempErrors.businessTypeId = 'Business Type is required';
     }
     if (!storeData.name.trim()) {
-      return false;
+      tempErrors.storeName = 'Store Name is required';
     }
     if (!storeData.location.trim()) {
-      return false;
+      tempErrors.location = 'Location is required';
     }
     if (!selectedDivision?.value) {
-      return false;
+      tempErrors.division = 'Division is required';
     }
     if (!selectedDistrict?.value) {
-      return false;
+      tempErrors.district = 'District is required';
     }
     if (!selectedCity?.value) {
-      return false;
+      tempErrors.city = 'City is required';
     }
-    return true;
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
   // bussiness data update
@@ -324,7 +339,7 @@ export default function Settings() {
         console.error('Error updating profile:', error);
         toast.custom(t => (
           <AlertToast
-            message="Failed to Business profile. Please try again."
+            message={ error.response.data.message}
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
@@ -333,16 +348,15 @@ export default function Settings() {
   };
   // update password
   const handlePasswordUpdate = async () => {
+    setErrors({});
     if (security.newPassword.trim() !== security.confirmPassword.trim()) {
-      toast.custom(t => (
-        <AlertToast
-          message="Confrim Password Does Not matched!"
-          dismiss={() => toast.dismiss(t.id)}
-        />
-      ));
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        confirmPassword: 'Confirm password does not matched',
+      }));
       return;
     }
-    if (window.confirm('Are you sure want to update your password?')) {
+    if (window.confirm('Are you sure want to update password?')) {
       try {
         const formData = new FormData();
         formData.append('currentPassword', security.currentPassword);
@@ -357,6 +371,12 @@ export default function Settings() {
           )}&XCKS2=${encodeURIComponent(user.phone)}`
         );
       } catch (error) {
+        toast.custom(t => (
+          <AlertToast
+            message={error.response.data.message}
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
         console.error('Error updating profile:', error);
       }
     }
@@ -467,6 +487,9 @@ export default function Settings() {
                           id="userName"
                           placeholder="Enter your name"
                         />
+                        {errors.fullName && (
+                          <span className="text-danger">{errors.fullName}</span>
+                        )}
                       </div>
 
                       <div className="input-inner">
@@ -481,7 +504,6 @@ export default function Settings() {
                             Add another
                           </p>
                         </div>
-
                         <input
                           className="input-field number"
                           disabled
@@ -497,21 +519,31 @@ export default function Settings() {
                             })
                           }
                           placeholder="Enter your phone"
-                        />
+                        />{' '}
+                        {errors.phone && (
+                          <span className="text-danger">{errors.phone}</span>
+                        )}
                         {showSecPhoneInput && (
-                          <input
-                            className="input-field number"
-                            type="text"
-                            id="number"
-                            value={user.phone2}
-                            onChange={e =>
-                              setUser({
-                                ...user,
-                                phone2: e.target.value,
-                              })
-                            }
-                            placeholder="Enter seconadary phone"
-                          />
+                          <>
+                            <input
+                              className="input-field number"
+                              type="text"
+                              id="number"
+                              value={user.phone2}
+                              onChange={e =>
+                                setUser({
+                                  ...user,
+                                  phone2: e.target.value,
+                                })
+                              }
+                              placeholder="Enter seconadary phone"
+                            />
+                            {errors.phone2 && (
+                              <span className="text-danger">
+                                {errors.phone2}
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
 
@@ -538,6 +570,9 @@ export default function Settings() {
                           }
                           placeholder="Enter your email"
                         />
+                        {errors.email && (
+                          <span className="text-danger">{errors.email}</span>
+                        )}
                       </div>
 
                       <div className="input-inner">
@@ -546,7 +581,6 @@ export default function Settings() {
                             Date of Birth <span className="text-danger">*</span>
                           </label>
                         </div>
-
                         <input
                           className="input-field"
                           type="date"
@@ -560,7 +594,10 @@ export default function Settings() {
                             })
                           }
                           placeholder="Enter your birth date"
-                        />
+                        />{' '}
+                        {errors.dob && (
+                          <span className="text-danger">{errors.dob}</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -650,6 +687,11 @@ export default function Settings() {
                               type => type.id === storeData.businessTypeId
                             )}
                           />
+                          {errors.businessTypeId && (
+                            <span className="text-danger">
+                              {errors.businessTypeId}
+                            </span>
+                          )}
                         </div>
 
                         <div className="input-inner">
@@ -674,6 +716,11 @@ export default function Settings() {
                             }
                             placeholder="Enter your store name"
                           />
+                          {errors.storeName && (
+                            <span className="text-danger">
+                              {errors.storeName}
+                            </span>
+                          )}
                         </div>
                         <div class="input-inner">
                           <div class="label-inner">
@@ -696,6 +743,11 @@ export default function Settings() {
                             id="Location"
                             placeholder="Enter Your Location"
                           />
+                          {errors.location && (
+                            <span className="text-danger">
+                              {errors.location}
+                            </span>
+                          )}
                         </div>
                         <div className="input-inner">
                           <label className="label-inner category-select-label">
@@ -707,6 +759,11 @@ export default function Settings() {
                             options={divisions}
                             placeholder="Select Division"
                           />
+                          {errors.division && (
+                            <span className="text-danger">
+                              {errors.division}
+                            </span>
+                          )}
                         </div>
 
                         <div className="input-inner">
@@ -720,6 +777,11 @@ export default function Settings() {
                             placeholder="Select District"
                             // isDisabled={!selectedDivision}
                           />
+                          {errors.district && (
+                            <span className="text-danger">
+                              {errors.district}
+                            </span>
+                          )}
                         </div>
 
                         <div>
@@ -733,6 +795,9 @@ export default function Settings() {
                             placeholder="Select Thana"
                             // isDisabled={!selectedDistrict}
                           />
+                          {errors.city && (
+                            <span className="text-danger">{errors.city}</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1117,7 +1182,7 @@ export default function Settings() {
                         <div className="password-field">
                           <input
                             className=""
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             name=""
                             id="password"
                             value={security.currentPassword}
@@ -1135,6 +1200,7 @@ export default function Settings() {
                             height="16"
                             viewBox="0 0 16 16"
                             fill="none"
+                            onClick={() => setShowPassword(!showPassword)}
                           >
                             <path
                               d="M2.65306 5.482C2.02937 6.21812 1.56494 7.07547 1.28906 8C2.1504 10.892 4.82906 13 7.99973 13C8.66173 13 9.30173 12.908 9.9084 12.7367M4.15173 4.152C5.29349 3.39857 6.63178 2.99792 7.99973 3C11.1704 3 13.8484 5.108 14.7097 7.99867C14.2377 9.57823 13.2244 10.9411 11.8477 11.848M4.15173 4.152L1.99973 2M4.15173 4.152L6.58506 6.58533M11.8477 11.848L13.9997 14M11.8477 11.848L9.4144 9.41467C9.60013 9.22893 9.74746 9.00844 9.84798 8.76577C9.9485 8.52309 10.0002 8.263 10.0002 8.00033C10.0002 7.73767 9.9485 7.47757 9.84798 7.2349C9.74746 6.99223 9.60013 6.77173 9.4144 6.586C9.22866 6.40027 9.00817 6.25294 8.76549 6.15242C8.52282 6.0519 8.26273 6.00016 8.00006 6.00016C7.7374 6.00016 7.4773 6.0519 7.23463 6.15242C6.99196 6.25294 6.77146 6.40027 6.58573 6.586M9.41373 9.414L6.5864 6.58667"
@@ -1175,7 +1241,6 @@ export default function Settings() {
                             Repeat Password
                           </label>
                         </div>
-
                         <input
                           className="input-field number"
                           type="password"
@@ -1189,7 +1254,12 @@ export default function Settings() {
                               confirmPassword: e.target.value,
                             })
                           }
-                        />
+                        />{' '}
+                        {errors.confirmPassword && (
+                          <span className="text-danger">
+                            {errors.confirmPassword}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
