@@ -165,6 +165,8 @@ function LoginPage() {
                         </div>
                     </div>
                 </div>
+                <div className='mb-5'>
+                </div>
             </section>
         </>
     )

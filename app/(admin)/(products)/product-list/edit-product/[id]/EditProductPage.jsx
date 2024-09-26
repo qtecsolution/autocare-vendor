@@ -707,7 +707,7 @@ function EditProductPage({ productDetails }) {
                                 placeholder="Enter product short description on english" onChange={handleShortDescEN}
                                 value={shortDescriptionEN} />
                             </div>
-                            <p className="text">{shortDescriptionEN.length}/100</p>
+                            <p className="text">{shortDescriptionEN?.length}/100</p>
                           </div>
                         </div>
                       </div>
@@ -723,7 +723,7 @@ function EditProductPage({ productDetails }) {
                                 placeholder="Enter product short description on bangla" onChange={handleShortDescBN}
                                 value={shortDescriptionBN} />
                             </div>
-                            <p className="text">{shortDescriptionBN.length}/100</p>
+                            <p className="text">{shortDescriptionBN?.length}/100</p>
                           </div>
                         </div>
                       </div>
