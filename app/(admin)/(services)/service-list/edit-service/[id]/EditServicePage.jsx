@@ -26,18 +26,20 @@ function EditServicePage({ serviceDetails }) {
     const [selectedVehicleEngine, setSelectedVehicleEngine] = useState([]);
     const [compatibleBrands, setCompatibleBrands] = useState([]);
     const [selectedCompatibleBrands, setSelectedCompatibleBrands] = useState([]);
-    const [images, setImages] = useState([]);
-    const [viewImages, setViewImages] = useState([]);
-    const [mainDesc, setMainDesc] = useState('');
-    const [compatibility, setCompatibility] = useState('');
-    const [price, setPrice] = useState(null);
-    const [maxPrice, setMaxPrice] = useState(null);
-    const [isActive, setIsActive] = useState(false);
+    // const [images, setImages] = useState([]);
+    // const [viewImages, setViewImages] = useState([]);
+    const [mainImage, setMainImage] = useState(null)
+    const [mainImagePreview, setMainImagePreview] = useState(null);
+    const [mainDesc, setMainDesc] = useState(serviceDetails?.description);
+    const [compatibility, setCompatibility] = useState(serviceDetails?.compatability);
+    const [price, setPrice] = useState(serviceDetails?.minimum_price);
+    const [maxPrice, setMaxPrice] = useState(serviceDetails?.maximum_price);
+    const [isActive, setIsActive] = useState(serviceDetails?.is_active);
 
     const initialErrors = {
         name: '',
         category: '',
-        images: '',
+        // images: '',
         price: '',
     };
     const [errors, setErrors] = useState(initialErrors);
@@ -47,7 +49,7 @@ function EditServicePage({ serviceDetails }) {
 
         if (!serviceName) newErrors.name = 'Service name is required';
         if (!selectedCategory) newErrors.category = 'Category is required';
-        if (images.length === 0) newErrors.images = 'At least one service image is required';
+        // if (images.length === 0) newErrors.images = 'At least one service image is required';
         if (!price || isNaN(price)) newErrors.price = 'Valid price is required';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -136,51 +138,116 @@ function EditServicePage({ serviceDetails }) {
         setSelectedServicingTypes(selectedOptions);
     };
 
-    const handleImageUpload = (e) => {
-        const files = Array.from(e.target.files);
-        if (images.length + files.length > 4) {
-            toast.custom((t) => (
-                <AlertToast
-                    message="You can upload a maximum of 4 images!"
-                    dismiss={() => toast.dismiss(t.id)}
-                />
-            ));
-            return;
-        }
+    useEffect(() => {
 
-        // To track valid images
-        const validFiles = [];
-        const newViewImages = [];
+        const newVehicleType = serviceDetails?.vehicle_type?.map((vehicleType) => ({
+            value: vehicleType.id,
+            label: vehicleType.name,
+        }));
+        setSelectedVehicleTypes(newVehicleType);
 
-        files.forEach((file) => {
+        const newBrand = serviceDetails?.brand?.map((brand) => ({
+            value: brand.id,
+            label: brand.name,
+        }));
+        setSelectedCompatibleBrands(newBrand);
+
+        const newServicingType = serviceDetails?.servicing_type?.map((servicing_type) => ({
+            value: servicing_type.id,
+            label: servicing_type.name,
+        }));
+        setSelectedServicingTypes(newServicingType);
+
+        const newVehicleEngine = serviceDetails?.vehicle_engine?.map((vehicle_engine) => ({
+            value: vehicle_engine.id,
+            label: vehicle_engine.name,
+        }));
+        setSelectedVehicleEngine(newVehicleEngine);
+
+    }, [serviceDetails]);
+
+    // const handleImageUpload = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     if (images.length + files.length > 4) {
+    //         toast.custom((t) => (
+    //             <AlertToast
+    //                 message="You can upload a maximum of 4 images!"
+    //                 dismiss={() => toast.dismiss(t.id)}
+    //             />
+    //         ));
+    //         return;
+    //     }
+
+    //     // To track valid images
+    //     const validFiles = [];
+    //     const newViewImages = [];
+
+    //     files.forEach((file) => {
+    //         const img = new Image();
+    //         img.src = URL.createObjectURL(file);
+    //         img.onload = () => {
+    //             const { width, height } = img;
+    //             if (width === height) {
+    //                 validFiles.push(file);
+    //                 newViewImages.push(img.src);
+
+    //                 // Check if all files are processed before updating state
+    //                 if (validFiles.length === files.length) {
+    //                     setImages((prevImages) => [...prevImages, ...validFiles]);
+    //                     setViewImages((prevImages) => [...prevImages, ...newViewImages]);
+    //                 }
+    //             } else {
+    //                 toast.custom((t) => (
+    //                     <AlertToast
+    //                         message="Image must have a 1:1 aspect ratio."
+    //                         dismiss={() => toast.dismiss(t.id)}
+    //                     />
+    //                 ));
+    //             }
+    //         };
+    //     });
+    // };
+
+    // const handleImageRemove = (index) => {
+    //     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    //     setViewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    // };
+
+    const handleMainImage = (e) => {
+        const file = e.target.files[0];
+        if (file) {
             const img = new Image();
             img.src = URL.createObjectURL(file);
             img.onload = () => {
                 const { width, height } = img;
                 if (width === height) {
-                    validFiles.push(file);
-                    newViewImages.push(img.src);
-
-                    // Check if all files are processed before updating state
-                    if (validFiles.length === files.length) {
-                        setImages((prevImages) => [...prevImages, ...validFiles]);
-                        setViewImages((prevImages) => [...prevImages, ...newViewImages]);
-                    }
+                    // Valid 1:1 ratio, update thumbnail
+                    setMainImage(file);
                 } else {
+                    // Show an error message if the image ratio is not 1:1
                     toast.custom((t) => (
                         <AlertToast
-                            message="Image must have a 1:1 aspect ratio."
+                            message="Thumbnail must have a 1:1 aspect ratio."
                             dismiss={() => toast.dismiss(t.id)}
                         />
                     ));
                 }
             };
-        });
+        }
     };
 
-    const handleImageRemove = (index) => {
-        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-        setViewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    useEffect(() => {
+        if (mainImage) {
+            const objectUrl = URL.createObjectURL(mainImage);
+            setMainImagePreview(objectUrl);
+            return () => URL.revokeObjectURL(objectUrl);
+        }
+    }, [mainImage]);
+
+    const removeMainImage = (e) => {
+        e.preventDefault();
+        setMainImage(null);
+        setMainImagePreview(null);
     };
     const text_max_len = 100;
     const handleServiceName = (e) => {
@@ -216,10 +283,8 @@ function EditServicePage({ serviceDetails }) {
             const compatibleBrandIds = selectedCompatibleBrands.map(item => item.value);
             formData.append('brandIds', JSON.stringify(compatibleBrandIds));
 
-            if (images) {
-                images.forEach((image) => {
-                    formData.append("image", image);
-                });
+            if (mainImage) {
+                formData.append('image', mainImage);
             }
 
             formData.append('startFrom', price);
@@ -230,9 +295,10 @@ function EditServicePage({ serviceDetails }) {
 
             formData.append('description', mainDesc);
             formData.append('compatability', compatibility);
+            formData.append('isActive', isActive);
 
             try {
-                const response = await axiosInstance.post('/seller-panel-api/frontend/service/create/', formData, {
+                const response = await axiosInstance.put(`/seller-panel-api/frontend/service/${serviceDetails?.id}/update/`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
@@ -256,8 +322,10 @@ function EditServicePage({ serviceDetails }) {
                 setSelectedVehicleTypes([]);
                 setSelectedServicingTypes([]);
                 setSelectedVehicleEngine([]);
-                setImages([]);
-                setViewImages([]);
+                // setImages([]);
+                // setViewImages([]);
+                setMainImage(null)
+                setMainImagePreview(null);
                 setMainDesc('');
                 setCompatibility('');
                 setPrice(null);
@@ -293,7 +361,7 @@ function EditServicePage({ serviceDetails }) {
                             <div className="page-header">
                                 <div className="d-flex flex-column gap-1">
                                     <h1 className="page-title">
-                                        Add Service
+                                        Edit Service
                                     </h1>
                                     <p className="page-text">
                                         Seamlessly Add and Manage Your Services
@@ -433,12 +501,16 @@ function EditServicePage({ serviceDetails }) {
 
                                     <div className="product-img-body">
                                         <div className="uplod-img">
-                                            {viewImages.map((image, index) => (
-                                                <div key={index} className="product-img">
-                                                    <img src={image}
-                                                        alt={`Review ${index}`} />
+                                            {!mainImagePreview && serviceDetails?.image &&
+                                                <div className="product-img">
+                                                    <img src={serviceDetails?.image} alt="thumbnail" />
+                                                </div>
+                                            }
+                                            {mainImagePreview &&
+                                                <div className="product-img">
+                                                    <img src={mainImagePreview} alt="thumbnail" />
                                                     <div className="img-close-btn">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={() => handleImageRemove(index)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={removeMainImage}>
                                                             <g filter="url(#filter0_dd_239_17341)">
                                                                 <circle cx="21" cy="19.9995" r="15" fill="white" />
                                                             </g>
@@ -471,14 +543,13 @@ function EditServicePage({ serviceDetails }) {
                                                         </svg>
                                                     </div>
                                                 </div>
-                                            ))}
+                                            }
 
-                                            {images?.length === 4 ?
-                                                ''
+                                            {mainImage ? ''
                                                 :
                                                 <div className="add-product-img-inner">
-                                                    <label for="add-product-img" className="add-product-img">
-                                                        <input className="add-product-img-input" type="file" name="" id="add-product-img" accept='.png,.jpg,.jpeg' multiple onChange={handleImageUpload} />
+                                                    <label for="product-main-img" className="add-product-img">
+                                                        <input className="add-product-img-input" type="file" name="" id="product-main-img" accept='.png,.jpg,.jpeg' onChange={handleMainImage} />
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
                                                             <path d="M15 5.62451V24.3745M24.375 14.9995H5.625" stroke="#0F766D" stroke-width="1.875"
                                                                 stroke-linecap="round" stroke-linejoin="round" />
@@ -486,6 +557,7 @@ function EditServicePage({ serviceDetails }) {
                                                     </label>
                                                 </div>
                                             }
+
                                         </div>
                                         <div className="">
                                             <ul className="add-product-img-list">
@@ -495,8 +567,6 @@ function EditServicePage({ serviceDetails }) {
                                             </ul>
                                         </div>
                                     </div>
-                                    {errors.images && <div className="error-message text-danger"><small>{errors.images}</small></div>}
-
                                 </div>
 
                             </div>
@@ -591,7 +661,7 @@ function EditServicePage({ serviceDetails }) {
 
                         <div className="add-product-footer justify-content-center">
                             <button onClick={handleSubmit} className="confirm-btn active px-5">
-                                Save and Publish
+                                Update and Publish
                             </button>
                         </div>
                     </div>

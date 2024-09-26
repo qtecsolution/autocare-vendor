@@ -196,7 +196,7 @@ function IdentityVerifyPage() {
                                 <div className="login-form">
                                     <div className="d-flex flex-column gap-3">
                                         <h1 className="form-title">
-                                            Upload ID
+                                            Upload Documents
                                         </h1>
 
                                         <p className="form-details">

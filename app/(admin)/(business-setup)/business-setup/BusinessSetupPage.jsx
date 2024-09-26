@@ -559,14 +559,31 @@ function BusinessSetupPage() {
 
                   <div className="d-flex flex-column flex-sm-row gap-2 align-items-center mt-4">
                     <Link href="/" className="dashboard-btn">
-                      Manage Business
+                      Dashboard
                     </Link>
-                    <Link href="/add-product" className="add-product-btn">
-                      Add Product
-                    </Link>
-                    <Link href="/add-service" className="add-product-btn">
-                      Add Service
-                    </Link>
+                    {businessType === 3 &&
+                      <> <Link href="/add-product" className="add-product-btn">
+                        Add Product
+                      </Link>
+                        <Link href="/add-service" className="add-product-btn">
+                          Add Service
+                        </Link>
+                      </>
+                    }
+                    {businessType === 1 &&
+                      <>
+                        <Link href="/add-product" className="add-product-btn">
+                          Add Product
+                        </Link>
+                      </>
+                    }
+                    {businessType === 2 &&
+                      <>
+                        <Link href="/add-service" className="add-product-btn">
+                          Add Service
+                        </Link>
+                      </>
+                    }
                   </div>
                 </div>
               </div>

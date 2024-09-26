@@ -138,6 +138,41 @@ function SignupPage() {
         }
     }
 
+    const resendOTP = async (event) => {
+        event.preventDefault();
+        const phoneNumberRegex = /^\d{11,}$/;
+        if (!phoneNumberRegex.test(phoneNumber)) {
+            toast.custom((t) => (
+                <AlertToast
+                    message={"Please enter a valid phone number (minimum 11 digits)"}
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
+        } else {
+            try {
+                const response = await axiosWithBaseURL.post('/seller-panel-api/resend-otp/', {
+                    phoneNumber: phoneNumber
+                });
+
+                if (response.status === 200) {
+                    toast.custom((t) => (
+                        <SuccessToast
+                            message="OTP Re-Send on Your Phone Number"
+                            dismiss={() => toast.dismiss(t.id)}
+                        />
+                    ));
+                }
+            } catch (error) {
+                toast.custom((t) => (
+                    <AlertToast
+                        message={error.response.data.message}
+                        dismiss={() => toast.dismiss(t.id)}
+                    />
+                ));
+            }
+        }
+    }
+
     const createProfileStep1 = async (event) => {
         event.preventDefault();
 
@@ -184,6 +219,10 @@ function SignupPage() {
     const handleChangeBusinessType = (type) => {
         setBusinessType(type);
     };
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
     const createProfileStep2 = async (event) => {
         event.preventDefault();
 
@@ -198,6 +237,13 @@ function SignupPage() {
             toast.custom((t) => (
                 <AlertToast
                     message={"Email required!"}
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
+        } else if (!validateEmail(email)) {
+            toast.custom((t) => (
+                <AlertToast
+                    message={"Invalid email format!"}
                     dismiss={() => toast.dismiss(t.id)}
                 />
             ));
@@ -333,7 +379,7 @@ function SignupPage() {
                                             <div className="login-form">
                                                 <div className="d-flex flex-column gap-3">
                                                     <h1 className="form-title">
-                                                        Registration
+                                                        Verify OTP
                                                     </h1>
 
                                                     <p className="form-details">
@@ -341,7 +387,7 @@ function SignupPage() {
                                                         Enter the 6-digit code send to <span>{phoneNumber}</span>
                                                     </p>
                                                 </div>
-                                                <form className="form-inner">
+                                                <div className="form-inner">
                                                     <div className="otp-inputs" onPaste={handlePaste}>
                                                         {Array(6)
                                                             .fill('')
@@ -362,7 +408,10 @@ function SignupPage() {
                                                     <button className={`login-btn ${otp.length < 6 ? 'show_disable_button' : ''}`} onClick={verifyOTP} disabled={otp.length < 6 ? true : false}>
                                                         Verify
                                                     </button>
-                                                </form>
+                                                    <div>
+                                                        <span onClick={resendOTP} style={{ color: 'blue', cursor: 'pointer' }}>Resend OTP</span>
+                                                    </div>
+                                                </div>
                                             </div>}
                                         {step === 3 &&
                                             <div className="login-form">
@@ -378,7 +427,7 @@ function SignupPage() {
 
                                                 <form className="form-inner">
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="full-name">Full Name</label>
+                                                        <label className="input-label" for="full-name">Full Name <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input type="text" name="" id="full-name" placeholder="Type here"
                                                                 value={fullName}
@@ -388,7 +437,7 @@ function SignupPage() {
                                                     </div>
 
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="Password">Password</label>
+                                                        <label className="input-label" for="Password">Password <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input type={showPassword ? "text" : "password"} name="" id="Password" placeholder="Set Password"
                                                                 value={password}
@@ -403,7 +452,7 @@ function SignupPage() {
                                                     </div>
 
                                                     <div className="inner-input">
-                                                        <label className="input-label" for="repeat-password">Repeat Password</label>
+                                                        <label className="input-label" for="repeat-password">Repeat Password <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input type={showRepeatPassword ? "text" : "password"} name="" id="repeat-password" placeholder="Confirm Password"
                                                                 value={repeatPassword}
@@ -434,7 +483,7 @@ function SignupPage() {
                                                     </p>
                                                 </div>
 
-                                                <form className="form-inner">
+                                                <div className="form-inner">
                                                     <div className="login-checkbox-inner">
                                                         <div>
                                                             <input
@@ -480,7 +529,7 @@ function SignupPage() {
                                                         <label className="input-label" htmlFor="email">Email Address <span className='text-danger'>*</span></label>
                                                         <div className="input-field">
                                                             <input
-                                                                type="email"
+                                                                type='email'
                                                                 id="email"
                                                                 placeholder="Type here"
                                                                 value={email}
@@ -493,7 +542,7 @@ function SignupPage() {
                                                     <button className={`login-btn ${check4thStepButton() ? 'show_disable_button' : ''}`} onClick={createProfileStep2} disabled={check4thStepButton()}>
                                                         Finish
                                                     </button>
-                                                </form>
+                                                </div>
                                             </div>}
 
                                     </div>

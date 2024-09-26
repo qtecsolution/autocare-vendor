@@ -26,8 +26,10 @@ function AddServicePage() {
     const [selectedVehicleEngine, setSelectedVehicleEngine] = useState([]);
     const [compatibleBrands, setCompatibleBrands] = useState([]);
     const [selectedCompatibleBrands, setSelectedCompatibleBrands] = useState([]);
-    const [images, setImages] = useState([]);
-    const [viewImages, setViewImages] = useState([]);
+    // const [images, setImages] = useState([]);
+    // const [viewImages, setViewImages] = useState([]);
+    const [mainImage, setMainImage] = useState(null)
+    const [mainImagePreview, setMainImagePreview] = useState(null);
     const [mainDesc, setMainDesc] = useState('');
     const [compatibility, setCompatibility] = useState('');
     const [price, setPrice] = useState(null);
@@ -37,7 +39,8 @@ function AddServicePage() {
     const initialErrors = {
         name: '',
         category: '',
-        images: '',
+        main_image: '',
+        // images: '',
         price: '',
     };
     const [errors, setErrors] = useState(initialErrors);
@@ -47,7 +50,8 @@ function AddServicePage() {
 
         if (!serviceName) newErrors.name = 'Service name is required';
         if (!selectedCategory) newErrors.category = 'Category is required';
-        if (images.length === 0) newErrors.images = 'At least one service image is required';
+        if (!mainImage) newErrors.main_image = 'Service image is required';
+        // if (images.length === 0) newErrors.images = 'At least one service image is required';
         if (!price || isNaN(price)) newErrors.price = 'Valid price is required';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -77,21 +81,21 @@ function AddServicePage() {
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
         if (selectedOption) {
-          const subCats = selectedOption.children.map((subCategory) => ({
-            value: subCategory.id,
-            label: subCategory.name,
-            children: subCategory.children,
-          }));
-          setSubCategories(subCats);
-          setSelectedSubCategories([]);
+            const subCats = selectedOption.children.map((subCategory) => ({
+                value: subCategory.id,
+                label: subCategory.name,
+                children: subCategory.children,
+            }));
+            setSubCategories(subCats);
+            setSelectedSubCategories([]);
         } else {
-          setSubCategories([]);
+            setSubCategories([]);
         }
-      };
-    
-      const handleSubCategoryChange = (selectedOptions) => {
+    };
+
+    const handleSubCategoryChange = (selectedOptions) => {
         setSelectedSubCategories(selectedOptions);
-      };
+    };
 
     const handleBrandChange = (selectedOptions) => {
         setSelectedCompatibleBrands(selectedOptions);
@@ -106,51 +110,88 @@ function AddServicePage() {
         setSelectedServicingTypes(selectedOptions);
     };
 
-    const handleImageUpload = (e) => {
-        const files = Array.from(e.target.files);
-        if (images.length + files.length > 4) {
-            toast.custom((t) => (
-                <AlertToast
-                    message="You can upload a maximum of 4 images!"
-                    dismiss={() => toast.dismiss(t.id)}
-                />
-            ));
-            return;
-        }
+    // const handleImageUpload = (e) => {
+    //     const files = Array.from(e.target.files);
+    //     if (images.length + files.length > 4) {
+    //         toast.custom((t) => (
+    //             <AlertToast
+    //                 message="You can upload a maximum of 4 images!"
+    //                 dismiss={() => toast.dismiss(t.id)}
+    //             />
+    //         ));
+    //         return;
+    //     }
 
-        // To track valid images
-        const validFiles = [];
-        const newViewImages = [];
+    //     // To track valid images
+    //     const validFiles = [];
+    //     const newViewImages = [];
 
-        files.forEach((file) => {
+    //     files.forEach((file) => {
+    //         const img = new Image();
+    //         img.src = URL.createObjectURL(file);
+    //         img.onload = () => {
+    //             const { width, height } = img;
+    //             if (width === height) {
+    //                 validFiles.push(file);
+    //                 newViewImages.push(img.src);
+
+    //                 // Check if all files are processed before updating state
+    //                 if (validFiles.length === files.length) {
+    //                     setImages((prevImages) => [...prevImages, ...validFiles]);
+    //                     setViewImages((prevImages) => [...prevImages, ...newViewImages]);
+    //                 }
+    //             } else {
+    //                 toast.custom((t) => (
+    //                     <AlertToast
+    //                         message="Image must have a 1:1 aspect ratio."
+    //                         dismiss={() => toast.dismiss(t.id)}
+    //                     />
+    //                 ));
+    //             }
+    //         };
+    //     });
+    // };
+
+    // const handleImageRemove = (index) => {
+    //     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    //     setViewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    // };
+
+    const handleMainImage = (e) => {
+        const file = e.target.files[0];
+        if (file) {
             const img = new Image();
             img.src = URL.createObjectURL(file);
             img.onload = () => {
                 const { width, height } = img;
                 if (width === height) {
-                    validFiles.push(file);
-                    newViewImages.push(img.src);
-
-                    // Check if all files are processed before updating state
-                    if (validFiles.length === files.length) {
-                        setImages((prevImages) => [...prevImages, ...validFiles]);
-                        setViewImages((prevImages) => [...prevImages, ...newViewImages]);
-                    }
+                    // Valid 1:1 ratio, update thumbnail
+                    setMainImage(file);
                 } else {
+                    // Show an error message if the image ratio is not 1:1
                     toast.custom((t) => (
                         <AlertToast
-                            message="Image must have a 1:1 aspect ratio."
+                            message="Thumbnail must have a 1:1 aspect ratio."
                             dismiss={() => toast.dismiss(t.id)}
                         />
                     ));
                 }
             };
-        });
+        }
     };
 
-    const handleImageRemove = (index) => {
-        setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-        setViewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    useEffect(() => {
+        if (mainImage) {
+            const objectUrl = URL.createObjectURL(mainImage);
+            setMainImagePreview(objectUrl);
+            return () => URL.revokeObjectURL(objectUrl);
+        }
+    }, [mainImage]);
+
+    const removeMainImage = (e) => {
+        e.preventDefault();
+        setMainImage(null);
+        setMainImagePreview(null);
     };
     const text_max_len = 100;
     const handleServiceName = (e) => {
@@ -172,7 +213,7 @@ function AddServicePage() {
             formData.append('categoryId', selectedCategory?.value);
 
             const subCategoryIds = selectedSubCategories.map(cat => cat.value);
-            formData.append('subCategoryIds', JSON.stringify(subCategoryIds));            
+            formData.append('subCategoryIds', JSON.stringify(subCategoryIds));
 
             const servicingTypeIds = selectedServicingTypes.map(item => item.value);
             formData.append('servicingTypeIds', JSON.stringify(servicingTypeIds));
@@ -186,10 +227,8 @@ function AddServicePage() {
             const compatibleBrandIds = selectedCompatibleBrands.map(item => item.value);
             formData.append('brandIds', JSON.stringify(compatibleBrandIds));
 
-            if (images) {
-                images.forEach((image) => {
-                    formData.append("image", image);
-                });
+            if (mainImage) {
+                formData.append('image', mainImage);
             }
 
             formData.append('startFrom', price);
@@ -227,8 +266,10 @@ function AddServicePage() {
                 setSelectedVehicleTypes([]);
                 setSelectedServicingTypes([]);
                 setSelectedVehicleEngine([]);
-                setImages([]);
-                setViewImages([]);
+                // setImages([]);
+                // setViewImages([]);
+                setMainImage(null)
+                setMainImagePreview(null);
                 setMainDesc('');
                 setCompatibility('');
                 setPrice(null);
@@ -403,12 +444,11 @@ function AddServicePage() {
 
                                     <div className="product-img-body">
                                         <div className="uplod-img">
-                                            {viewImages.map((image, index) => (
-                                                <div key={index} className="product-img">
-                                                    <img src={image}
-                                                        alt={`Review ${index}`} />
+                                            {mainImagePreview &&
+                                                <div className="product-img">
+                                                    <img src={mainImagePreview} alt="thumbnail" />
                                                     <div className="img-close-btn">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={() => handleImageRemove(index)}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none" onClick={removeMainImage}>
                                                             <g filter="url(#filter0_dd_239_17341)">
                                                                 <circle cx="21" cy="19.9995" r="15" fill="white" />
                                                             </g>
@@ -441,14 +481,13 @@ function AddServicePage() {
                                                         </svg>
                                                     </div>
                                                 </div>
-                                            ))}
+                                            }
 
-                                            {images?.length === 4 ?
-                                                ''
+                                            {mainImage ? ''
                                                 :
                                                 <div className="add-product-img-inner">
-                                                    <label for="add-product-img" className="add-product-img">
-                                                        <input className="add-product-img-input" type="file" name="" id="add-product-img" accept='.png,.jpg,.jpeg' multiple onChange={handleImageUpload} />
+                                                    <label for="product-main-img" className="add-product-img">
+                                                        <input className="add-product-img-input" type="file" name="" id="product-main-img" accept='.png,.jpg,.jpeg' onChange={handleMainImage} />
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
                                                             <path d="M15 5.62451V24.3745M24.375 14.9995H5.625" stroke="#0F766D" stroke-width="1.875"
                                                                 stroke-linecap="round" stroke-linejoin="round" />
@@ -456,6 +495,7 @@ function AddServicePage() {
                                                     </label>
                                                 </div>
                                             }
+
                                         </div>
                                         <div className="">
                                             <ul className="add-product-img-list">
@@ -465,7 +505,7 @@ function AddServicePage() {
                                             </ul>
                                         </div>
                                     </div>
-                                    {errors.images && <div className="error-message text-danger"><small>{errors.images}</small></div>}
+                                    {errors.main_image && <div className="error-message text-danger"><small>{errors.main_image}</small></div>}
 
                                 </div>
 
