@@ -153,7 +153,7 @@ function LoginPage() {
 
                                             <p className="forgot">
                                                 Forgot Password?{" "}
-                                                <Link href="#">Reset</Link>
+                                                <Link href="/reset-password">Reset</Link>
                                             </p>
                                             <button onClick={handleSubmit} className={`login-btn ${checkButtonDisable() ? 'show_disable_button' : ''}`} disabled={checkButtonDisable()}>
                                                 Login

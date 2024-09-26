@@ -138,6 +138,41 @@ function SignupPage() {
         }
     }
 
+    const resendOTP = async (event) => {
+        event.preventDefault();
+        const phoneNumberRegex = /^\d{11,}$/;
+        if (!phoneNumberRegex.test(phoneNumber)) {
+            toast.custom((t) => (
+                <AlertToast
+                    message={"Please enter a valid phone number (minimum 11 digits)"}
+                    dismiss={() => toast.dismiss(t.id)}
+                />
+            ));
+        } else {
+            try {
+                const response = await axiosWithBaseURL.post('/seller-panel-api/resend-otp/', {
+                    phoneNumber: phoneNumber
+                });
+
+                if (response.status === 200) {
+                    toast.custom((t) => (
+                        <SuccessToast
+                            message="OTP Re-Send on Your Phone Number"
+                            dismiss={() => toast.dismiss(t.id)}
+                        />
+                    ));
+                }
+            } catch (error) {
+                toast.custom((t) => (
+                    <AlertToast
+                        message={error.response.data.message}
+                        dismiss={() => toast.dismiss(t.id)}
+                    />
+                ));
+            }
+        }
+    }
+
     const createProfileStep1 = async (event) => {
         event.preventDefault();
 
@@ -344,7 +379,7 @@ function SignupPage() {
                                             <div className="login-form">
                                                 <div className="d-flex flex-column gap-3">
                                                     <h1 className="form-title">
-                                                        Registration
+                                                        Verify OTP
                                                     </h1>
 
                                                     <p className="form-details">
@@ -352,7 +387,7 @@ function SignupPage() {
                                                         Enter the 6-digit code send to <span>{phoneNumber}</span>
                                                     </p>
                                                 </div>
-                                                <form className="form-inner">
+                                                <div className="form-inner">
                                                     <div className="otp-inputs" onPaste={handlePaste}>
                                                         {Array(6)
                                                             .fill('')
@@ -373,7 +408,10 @@ function SignupPage() {
                                                     <button className={`login-btn ${otp.length < 6 ? 'show_disable_button' : ''}`} onClick={verifyOTP} disabled={otp.length < 6 ? true : false}>
                                                         Verify
                                                     </button>
-                                                </form>
+                                                    <div>
+                                                        <span onClick={resendOTP} style={{ color: 'blue', cursor: 'pointer' }}>Resend OTP</span>
+                                                    </div>
+                                                </div>
                                             </div>}
                                         {step === 3 &&
                                             <div className="login-form">
