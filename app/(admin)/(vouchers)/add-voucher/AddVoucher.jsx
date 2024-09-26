@@ -1,17 +1,25 @@
 'use client';
+import AlertToast from '@/components/toast/AlertToast';
+import SuccessToast from '@/components/toast/Success';
+import axiosInstance from '@/lib/axiosInstance';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 const animatedComponents = makeAnimated();
 export default function AddVoucher({ voucherCreationData }) {
+  const router = useRouter();
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [brandOptions, setBrandOptions] = useState([]);
   const [productOptions, setProductOptions] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState('');
-  const [formData, setFormData] = useState({
-    voucherType: '',
+  const [categoryShow, setCategoryShow] = useState(false);
+  const [brandShow, setBrandShow] = useState(false);
+  const [productShow, setProductShow] = useState(false);
+  const initialFormData = {
+    voucherType: 1,
     discountType: 'fixed',
     discountValue: '',
     minimumPurchaseAmount: '',
@@ -19,10 +27,77 @@ export default function AddVoucher({ voucherCreationData }) {
     validFrom: '',
     validTo: '',
     isActive: true,
-    excludeProducts: [],
-    excludeCategories: [],
-    excludeBrands: [],
-  });
+    productIds: [],
+    categoriesIds: [],
+    brandIds: [],
+    excludeCategorieIds: [],
+    excludeBrandIds: [],
+    excludeProductIds: [],
+  };
+  const [formData, setFormData] = useState(initialFormData);
+
+  const updateFormData = newValues => {
+    setFormData(prevData => ({
+      ...prevData,
+      ...newValues, // Spread the new values to overwrite specific keys
+    }));
+  };
+  useEffect(() => {
+    //generale = 1;
+    //category = 2;
+    //brand = 3;
+    //product = 4;
+
+    if (formData?.voucherType == 2) {
+      setCategoryShow(true);
+      setBrandShow(false);
+      setProductShow(false);
+      updateFormData({
+        productIds: [],
+        categoriesIds: [],
+        brandIds: [],
+        excludeCategorieIds: [],
+        excludeBrandIds: [],
+        excludeProductIds: [],
+      });
+    } else if (formData?.voucherType == 3) {
+      setCategoryShow(false);
+      setBrandShow(true);
+      setProductShow(false);
+      updateFormData({
+        productIds: [],
+        categoriesIds: [],
+        brandIds: [],
+        excludeCategorieIds: [],
+        excludeBrandIds: [],
+        excludeProductIds: [],
+      });
+    } else if (formData?.voucherType == 4) {
+      setCategoryShow(false);
+      setBrandShow(false);
+      setProductShow(true);
+      updateFormData({
+        productIds: [],
+        categoriesIds: [],
+        brandIds: [],
+        excludeCategorieIds: [],
+        excludeBrandIds: [],
+        excludeProductIds: [],
+      });
+    } else {
+      setCategoryShow(false);
+      setBrandShow(false);
+      setProductShow(false);
+      updateFormData({
+        productIds: [],
+        categoriesIds: [],
+        brandIds: [],
+        excludeCategorieIds: [],
+        excludeBrandIds: [],
+        excludeProductIds: [],
+      });
+    }
+  }, [formData.voucherType]);
   useEffect(() => {
     if (voucherCreationData?.categories) {
       const formattedCategories = voucherCreationData.categories.map(
@@ -52,23 +127,22 @@ export default function AddVoucher({ voucherCreationData }) {
   // Update form data when input changes
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    const fieldValue = type === 'checkbox' ? checked : value;
+    const fieldValue =
+      type === 'radio' ? Number(value) : type === 'checkbox' ? checked : value;
 
     setFormData({
       ...formData,
       [name]: fieldValue,
     });
-    console.log("formdata:", formData);
   };
 
-  // Handle React Select multi-select changes
-  const handleMultiSelectChange = (selectedOptions, name) => {
-    setFormData({
-      ...formData,
-      [name]: selectedOptions
-        ? selectedOptions.map(option => option.value)
-        : [],
-    });
+  const handleMultiSelectChange = (selectedOptions, fieldName) => {
+    const selectedValues = selectedOptions.map(option => option.value);
+
+    setFormData(prevData => ({
+      ...prevData,
+      [fieldName]: selectedValues,
+    }));
   };
 
   // Validate form before submission
@@ -88,12 +162,6 @@ export default function AddVoucher({ voucherCreationData }) {
     if (!formData.validFrom) newErrors.validFrom = 'Start date is required';
     if (!formData.validTo) newErrors.validTo = 'End date is required';
 
-    // Dynamic fields based on voucherType (for example, voucherType "3" might need to exclude products)
-    if (formData.voucherType === '3' && formData.excludeProducts.length === 0) {
-      newErrors.excludeProducts =
-        'Exclusion of products is required for this voucher type';
-    }
-
     return newErrors;
   };
 
@@ -102,7 +170,6 @@ export default function AddVoucher({ voucherCreationData }) {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-    setSuccess('');
 
     // Validate form
     const validationErrors = validateForm();
@@ -111,24 +178,34 @@ export default function AddVoucher({ voucherCreationData }) {
       setLoading(false);
       return;
     }
-
-    alert('called');
-    return;
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         '/seller-panel-api/frontend/create-voucher/',
         {
           ...formData,
         }
       );
-
-      setSuccess('Voucher created successfully!');
+      setFormData(initialFormData);
+      toast.custom(t => (
+        <SuccessToast
+          message={response.data.message}
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      router.push('/voucher-list/');
     } catch (err) {
       setErrors({ form: 'Error creating voucher.' });
+      toast.custom(t => (
+        <AlertToast
+          message={err.response.data.message}
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
     } finally {
       setLoading(false);
     }
   };
+
   const inputRefFrom = useRef(null);
   const inputRefTo = useRef(null);
   const handleSvgClickFrom = () => {
@@ -209,7 +286,7 @@ export default function AddVoucher({ voucherCreationData }) {
                 <div className="d-flex align-items-center gap-3">
                   {/* <a href="" className="add-product-btn"></a> */}
                   <button
-                    className="add-product-btn"
+                    className="add-product-btn btn"
                     type="submit"
                     disabled={loading}
                     onClick={handleSubmit}
@@ -257,7 +334,8 @@ export default function AddVoucher({ voucherCreationData }) {
                                     type="radio"
                                     name="voucherType"
                                     value={type.id}
-                                    defaultChecked={type.name === 'General'}
+                                    checked={formData.voucherType === type.id}
+                                    onChange={handleChange}
                                   />{' '}
                                   <span className="checkmark"></span>
                                 </label>
@@ -265,7 +343,9 @@ export default function AddVoucher({ voucherCreationData }) {
                             </div>
                           ))}
                           {errors.voucherType && (
-                            <p className="text-danger">{errors.voucherType}</p>
+                            <p className="text-danger small">
+                              {errors.voucherType}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -277,55 +357,148 @@ export default function AddVoucher({ voucherCreationData }) {
                       <div className="exclude-category">
                         <div className="row g-3">
                           <div className="col-6 col-sm-4">
-                            <div className="box">
-                              <label className="category-select-label">
-                                {' '}
-                                Exclude Category{' '}
-                              </label>
-                              <Select
-                                className="wide selectize"
-                                isMulti
-                                components={animatedComponents}
-                                options={categoryOptions}
-                                placeholder="Select Categories"
-                              />
-                            </div>
+                            {!categoryShow && !productShow && (
+                              <div className="box">
+                                <label className="category-select-label">
+                                  {' '}
+                                  Exclude Category{' '}
+                                </label>
+                                <Select
+                                  className="wide selectize"
+                                  isMulti
+                                  components={animatedComponents}
+                                  options={categoryOptions}
+                                  name="excludeCategorieIds"
+                                  placeholder="Select Categories"
+                                  onChange={selectedOptions =>
+                                    handleMultiSelectChange(
+                                      selectedOptions,
+                                      'excludeCategorieIds'
+                                    )
+                                  }
+                                />
+                              </div>
+                            )}
+                            {categoryShow && (
+                              <div className="box">
+                                <label className="category-select-label">
+                                  {' '}
+                                  Category{' '}
+                                </label>
+                                <Select
+                                  className="wide selectize"
+                                  isMulti
+                                  components={animatedComponents}
+                                  options={categoryOptions}
+                                  name="categoriesIds"
+                                  placeholder="Select Categories"
+                                  onChange={selectedOptions =>
+                                    handleMultiSelectChange(
+                                      selectedOptions,
+                                      'categoriesIds'
+                                    )
+                                  }
+                                />
+                              </div>
+                            )}
                           </div>
 
                           <div className="col-6 col-sm-4">
-                            <div className="box">
-                              <label className="category-select-label">
-                                Exclude Brand
-                              </label>
-                              <Select
-                                className="wide selectize"
-                                isMulti
-                                components={animatedComponents}
-                                options={brandOptions}
-                                placeholder="Select Brands"
-                              />
-                            </div>
+                            {!brandShow && !productShow && (
+                              <div className="box">
+                                <label className="category-select-label">
+                                  Exclude Brand
+                                </label>
+                                <Select
+                                  className="wide selectize"
+                                  isMulti
+                                  components={animatedComponents}
+                                  options={brandOptions}
+                                  placeholder="Select Brands"
+                                  name="excludeBrandIds"
+                                  onChange={selectedOptions =>
+                                    handleMultiSelectChange(
+                                      selectedOptions,
+                                      'excludeBrandIds'
+                                    )
+                                  }
+                                />
+                              </div>
+                            )}
+                            {brandShow && (
+                              <div className="box">
+                                <label className="category-select-label">
+                                  Brand
+                                </label>
+                                <Select
+                                  className="wide selectize"
+                                  isMulti
+                                  components={animatedComponents}
+                                  options={brandOptions}
+                                  placeholder="Select Brands"
+                                  name="brandIds"
+                                  onChange={selectedOptions =>
+                                    handleMultiSelectChange(
+                                      selectedOptions,
+                                      'brandIds'
+                                    )
+                                  }
+                                />
+                              </div>
+                            )}
                           </div>
 
                           <div className="col-6 col-sm-4">
-                            <div className="box">
-                              <label className="category-select-label">
-                                Exclude Product
-                              </label>
-                              <Select
-                                className="wide selectize"
-                                isMulti
-                                components={animatedComponents}
-                                options={productOptions}
-                                placeholder="Select Products"
-                              />
-                            </div>
+                            {!productShow && (
+                              <div className="box">
+                                <label className="category-select-label">
+                                  Exclude Product
+                                </label>
+                                <Select
+                                  className="wide selectize"
+                                  isMulti
+                                  components={animatedComponents}
+                                  options={productOptions}
+                                  placeholder="Select Products"
+                                  name="excludeProductIds"
+                                  onChange={selectedOptions =>
+                                    handleMultiSelectChange(
+                                      selectedOptions,
+                                      'excludeProductIds'
+                                    )
+                                  }
+                                />
+                              </div>
+                            )}
                           </div>
+
+                          {productShow && (
+                            <div className="col-6 col-sm-4">
+                              <div className="box">
+                                <label className="category-select-label">
+                                  Product
+                                </label>
+                                <Select
+                                  className="wide selectize"
+                                  isMulti
+                                  components={animatedComponents}
+                                  options={productOptions}
+                                  placeholder="Select Products"
+                                  name="productIds"
+                                  onChange={selectedOptions =>
+                                    handleMultiSelectChange(
+                                      selectedOptions,
+                                      'productIds'
+                                    )
+                                  }
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
                   </div>
-
                   <div className="col-12">
                     <div className="generate-random-code-section">
                       <div className="exclude-category">
@@ -348,7 +521,7 @@ export default function AddVoucher({ voucherCreationData }) {
                                 onChange={handleChange}
                               />{' '}
                               {errors.discountType && (
-                                <p className="text-danger">
+                                <p className="text-danger small">
                                   {errors.discountType}
                                 </p>
                               )}
@@ -377,7 +550,7 @@ export default function AddVoucher({ voucherCreationData }) {
                                 onChange={handleChange}
                               />{' '}
                               {errors.discountValue && (
-                                <p className="text-danger">
+                                <p className="text-danger small">
                                   {errors.discountValue}
                                 </p>
                               )}
@@ -392,7 +565,7 @@ export default function AddVoucher({ voucherCreationData }) {
                     <div className="generate-random-code-section">
                       <div className="exclude-category">
                         <div className="row g-3">
-                          <div className="col-6 col-sm-4">
+                          <div className="col-6 col-sm-6">
                             <div className="box">
                               <label className="category-select-label">
                                 Minimum Purchase{' '}
@@ -413,7 +586,7 @@ export default function AddVoucher({ voucherCreationData }) {
                                 onChange={handleChange}
                               />{' '}
                               {errors.minimumPurchaseAmount && (
-                                <p className="text-danger">
+                                <p className="text-danger small">
                                   {errors.minimumPurchaseAmount}
                                 </p>
                               )}
@@ -435,7 +608,7 @@ export default function AddVoucher({ voucherCreationData }) {
                             </div>
                           </div> */}
 
-                          <div className="col-6 col-sm-4">
+                          <div className="col-6 col-sm-6">
                             <div className="box">
                               <label className="category-select-label">
                                 Usage limit
@@ -503,7 +676,7 @@ export default function AddVoucher({ voucherCreationData }) {
                                 />{' '}
                               </div>
                               {errors.validFrom && (
-                                <p className="text-danger">
+                                <p className="text-danger small">
                                   {errors.validFrom}
                                 </p>
                               )}
@@ -547,7 +720,9 @@ export default function AddVoucher({ voucherCreationData }) {
                                 />{' '}
                               </div>
                               {errors.validTo && (
-                                <p className="text-danger">{errors.validTo}</p>
+                                <p className="text-danger small">
+                                  {errors.validTo}
+                                </p>
                               )}
                             </div>
                           </div>
@@ -580,7 +755,7 @@ export default function AddVoucher({ voucherCreationData }) {
                                 <input
                                   type="checkbox"
                                   name="isActive"
-                                  checked
+                                  checked={formData.isActive}
                                   onChange={handleChange}
                                 />
                                 <span className="slider round"></span>
@@ -604,7 +779,12 @@ export default function AddVoucher({ voucherCreationData }) {
                       <div className="right-section">
                         <div className="d-flex justify-content-between align-items-center">
                           <h1 className="title">Status</h1>
-                          <span className="draft-btn">Draft</span>
+                          {/* <span className="draft-btn">Draft</span> */}
+                          {formData.isActive ? (
+                            <span className="badge bg-success">Active</span>
+                          ) : (
+                            <span className="badge bg-danger">Inactive</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -616,15 +796,14 @@ export default function AddVoucher({ voucherCreationData }) {
                         <div className="d-flex flex-column gap-4">
                           <div className="d-flex flex-column gap-3">
                             <h1 className="title">Summary</h1>
-                            <h1 className="title text-uppercase">
+                            {/* <h1 className="title text-uppercase">
                               FREESHIPPING26
-                            </h1>
+                            </h1> */}
                           </div>
 
                           <div className="">
                             <p className="text">Type & Method</p>
                             <ul className="mt-1">
-                              <li className="light-text">General</li>
                               <li className="light-text">Fixed</li>
                             </ul>
                           </div>
@@ -633,11 +812,17 @@ export default function AddVoucher({ voucherCreationData }) {
                             <p className="text">Details</p>
                             <ul className="mt-1">
                               <li className="light-text">
-                                Minimum Purchase 10
+                                Discount Value {formData.discountValue}
                               </li>
-                              <li className="light-text">Usage limit 2</li>
                               <li className="light-text">
-                                Valid from Nov 11 - 20 of 2024
+                                Minimum Purchase{' '}
+                                {formData.minimumPurchaseAmount}
+                              </li>
+                              <li className="light-text">
+                                Usage limit {formData.usageLimit}
+                              </li>
+                              <li className="light-text">
+                                Valid {formData.validFrom} To {formData.validTo}
                               </li>
                             </ul>
                           </div>

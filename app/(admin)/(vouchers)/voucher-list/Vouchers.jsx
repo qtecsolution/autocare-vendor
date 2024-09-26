@@ -1,5 +1,8 @@
-"use client"
-function Vouchers() {
+'use client';
+
+import Link from 'next/link';
+
+function Vouchers({ vouchers }) {
   return (
     <main id="content">
       <div className="inner-content">
@@ -59,7 +62,7 @@ function Vouchers() {
                 <h1 className="title">Voucher</h1>
 
                 <div className="d-flex align-items-center gap-3">
-                  <a href="./Voucher-add.html" className="add-product-btn">
+                  <Link href="/add-voucher" className="add-product-btn">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="20"
@@ -76,7 +79,7 @@ function Vouchers() {
                       ></path>
                     </svg>
                     <span>Add Voucher</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -90,13 +93,13 @@ function Vouchers() {
                   <span className="text">Active</span>
                   <span className="number">0</span>
                 </button>
-                {/* 
-                <!-- <button className="manage-products-btn">
-                  <span className="text">Inactive</span>
-                  <span className="number">0</span>
-                </button> --> */}
 
                 <button className="manage-products-btn">
+                  <span className="text">Inactive</span>
+                  <span className="number">0</span>
+                </button>
+
+                {/* <button className="manage-products-btn">
                   <span className="text">Draft</span>
                   <span className="number">0</span>
                 </button>
@@ -109,7 +112,7 @@ function Vouchers() {
                 <button className="manage-products-btn">
                   <span className="text">Expired</span>
                   <span className="number">0</span>
-                </button>
+                </button> */}
 
                 {/* <!-- <button className="manage-products-btn">
                   <span className="text">Deleted</span>
@@ -122,7 +125,7 @@ function Vouchers() {
               <div className="order-management-body-top">
                 <div className="order-management-search-inner">
                   <form action="" className="order-form">
-                    <div className="order-input">
+                    {/* <div className="order-input">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -139,11 +142,11 @@ function Vouchers() {
                         />
                       </svg>
                       <input type="text" name="" id="" placeholder="Order No" />
-                    </div>
+                    </div> */}
                   </form>
                 </div>
 
-                <div className="box">
+                {/* <div className="box">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="18"
@@ -176,7 +179,7 @@ function Vouchers() {
                     <option data-display="Select">Newest</option>
                     <option value="1">Oldest</option>
                   </select>
-                </div>
+                </div> */}
               </div>
 
               <div className="order-management-body-inner">
@@ -202,662 +205,86 @@ function Vouchers() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox1"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox1"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
+                      {vouchers.map((voucher, index) => (
+                        <tr key={voucher.id}>
+                          <td className="product-info-inner">
+                            <div className="product-info">
+                              <input
+                                className="table-header-checkbox"
+                                type="checkbox"
+                                id="table-header-checkbox1"
+                              />
+                              <label
+                                className="id-text text-capitalize"
+                                for="table-header-checkbox1"
+                                tabindex="4"
                               >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
+                                {voucher.discount_type}
+                              </label>
+                            </div>
+                          </td>
 
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                          <td>
+                            <p className="id-text"> {voucher.voucher_code}</p>
+                          </td>
 
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox2"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox2"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
+                          <td>
+                            <p className="id-text text-center">
+                              {voucher.discount_value} Tk
+                            </p>
+                          </td>
 
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
+                          <td className="text-center">
+                            <p className="id-text">{voucher.used_count}</p>
+                          </td>
 
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
+                          <td className="text-center">
+                            {voucher.is_active ? (
+                              <span className="badge bg-success">Active</span>
+                            ) : (
+                              <span className="badge bg-danger">Inactive</span>
+                            )}
+                          </td>
 
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
+                          <td className="text-center">
+                            <div className="d-flex gap-2 align-items-center justify-content-center">
+                              <Link href="/edit-voucher/" className="edit-btn">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="12"
+                                  height="12"
+                                  viewBox="0 0 12 12"
+                                  fill="none"
+                                >
+                                  <path
+                                    d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
+                                    stroke="#A7AAB9"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              </Link>
 
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox3"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox3"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox4"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox4"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox5"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox5"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox6"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox6"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox7"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox7"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox8"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox8"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td className="product-info-inner">
-                          <div className="product-info">
-                            <input
-                              className="table-header-checkbox"
-                              type="checkbox"
-                              id="table-header-checkbox9"
-                            />
-                            <label
-                              className="id-text text-capitalize"
-                              for="table-header-checkbox9"
-                              tabindex="4"
-                            >
-                              Fixed
-                            </label>
-                          </div>
-                        </td>
-
-                        <td>
-                          <p className="id-text">CRAZY500</p>
-                        </td>
-
-                        <td>
-                          <p className="id-text text-center">500 Tk</p>
-                        </td>
-
-                        <td className="text-center">
-                          <p className="id-text">10</p>
-                        </td>
-
-                        <td className="text-center">
-                          <span className="status cancelled">Requested</span>
-                        </td>
-
-                        <td className="text-center">
-                          <div className="d-flex gap-2 align-items-center justify-content-center">
-                            <a href="./Voucher-add.html" className="edit-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </a>
-
-                            <button className="delete-btn">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="12"
-                                viewBox="0 0 12 12"
-                                fill="none"
-                              >
-                                <path
-                                  d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                  stroke="#A7AAB9"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                              <button className="delete-btn">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="12"
+                                  height="12"
+                                  viewBox="0 0 12 12"
+                                  fill="none"
+                                >
+                                  <path
+                                    d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
+                                    stroke="#A7AAB9"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
