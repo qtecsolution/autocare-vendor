@@ -197,7 +197,7 @@ function Vouchers({ vouchers }) {
                             Discount Type
                           </label>
                         </th>
-                        <th>Code</th>
+                        {/* <th>Code</th> */}
                         <th className="text-center">Discount Value</th>
                         <th className="text-center">voucher Used</th>
                         <th className="text-center">STATUS</th>
@@ -205,8 +205,8 @@ function Vouchers({ vouchers }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {vouchers.map((voucher, index) => (
-                        <tr key={voucher.id}>
+                      {vouchers?.map((voucher, index) => (
+                        <tr key={voucher?.id}>
                           <td className="product-info-inner">
                             <div className="product-info">
                               <input
@@ -219,27 +219,27 @@ function Vouchers({ vouchers }) {
                                 for="table-header-checkbox1"
                                 tabindex="4"
                               >
-                                {voucher.discount_type}
+                                {voucher?.discount_type}
                               </label>
                             </div>
                           </td>
 
-                          <td>
+                          {/* <td>
                             <p className="id-text"> {voucher.voucher_code}</p>
-                          </td>
+                          </td> */}
 
                           <td>
                             <p className="id-text text-center">
-                              {voucher.discount_value} Tk
+                              {voucher?.discount_value} Tk
                             </p>
                           </td>
 
                           <td className="text-center">
-                            <p className="id-text">{voucher.used_count}</p>
+                            <p className="id-text">{voucher?.used_count}</p>
                           </td>
 
                           <td className="text-center">
-                            {voucher.is_active ? (
+                            {voucher?.is_active ? (
                               <span className="badge bg-success">Active</span>
                             ) : (
                               <span className="badge bg-danger">Inactive</span>
