@@ -175,7 +175,7 @@ function ResetPasswordPage() {
       }
     }
   }
-  
+
   const resetPassword = async (event) => {
     event.preventDefault();
 
@@ -398,6 +398,8 @@ function ResetPasswordPage() {
               </div>
             </div>
           </div>
+        </div>
+        <div className='mb-5'>
         </div>
       </section>
     </>

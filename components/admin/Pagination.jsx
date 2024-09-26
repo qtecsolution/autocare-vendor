@@ -47,27 +47,29 @@ const Pagination = ({ totalPages, currentPage, handlePagination }) => {
 
     return (
         <nav className="pagination-nav">
-            <ul className="list-unstyled d-flex align-items-center gap-2">
-                <li className="pagination-nav-list">
-                    <button
-                        onClick={() => handlePagination(Math.max(currentPage - 1, 1))}
-                        disabled={currentPage === 1}
-                        className="pagination-nav-link previous"
-                    >
-                        « Previous
-                    </button>
-                </li>
-                {renderPageNumbers()}
-                <li className="pagination-nav-list">
-                    <button
-                        onClick={() => handlePagination(Math.min(currentPage + 1, totalPages))}
-                        disabled={currentPage === totalPages}
-                        className="pagination-nav-link next"
-                    >
-                        Next »
-                    </button>
-                </li>
-            </ul>
+            {totalPages > 0 &&
+                <ul className="list-unstyled d-flex align-items-center gap-2">
+                    <li className="pagination-nav-list">
+                        <button
+                            onClick={() => handlePagination(Math.max(currentPage - 1, 1))}
+                            disabled={currentPage === 1}
+                            className="pagination-nav-link previous"
+                        >
+                            « Previous
+                        </button>
+                    </li>
+                    {renderPageNumbers()}
+                    <li className="pagination-nav-list">
+                        <button
+                            onClick={() => handlePagination(Math.min(currentPage + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                            className="pagination-nav-link next"
+                        >
+                            Next »
+                        </button>
+                    </li>
+                </ul>
+            }
         </nav>
     );
 };

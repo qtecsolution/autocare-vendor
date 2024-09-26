@@ -550,6 +550,8 @@ function SignupPage() {
                             </div>
                         </div>
                     </div>
+                    <div className='mb-5'>
+                    </div>
                 </section>}
             {step === 5 &&
                 <section className="login-section">
@@ -589,6 +591,8 @@ function SignupPage() {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div className='mb-5'>
                     </div>
                 </section>}
         </>

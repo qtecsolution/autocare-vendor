@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Pagination from '@/components/admin/Pagination';
 import { usePathname, useRouter } from "next/navigation";
 import Select from 'react-select';
+import EmptyServiceList from './EmptyServiceList';
 
 function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
 
@@ -55,7 +56,7 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                         </h3>
 
                         <div className="d-flex align-items-center gap-3">
-                            <a href="#" className="import-btn">
+                            {/* <a href="#" className="import-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                     <g clip-path="url(#clip0_119_933)">
                                         <path
@@ -69,7 +70,7 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                                     </defs>
                                 </svg>
                                 <span>Import</span>
-                            </a>
+                            </a> */}
                             <Link href="/add-service" className="add-product-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                     <path d="M9.99984 4.1665V15.8332M4.1665 9.99984H15.8332" stroke="white" stroke-width="1.67"
@@ -122,38 +123,39 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                             </div>
                         </div>
 
-                        <div className="manage-all-product-section-inner-body">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead class="thead-light">
-                                        <tr>
-                                            <th scope="col" class="product-info-header">
-                                                <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" />
-                                                <label for="table-header-checkbox" tabindex="4">Product</label>
-                                            </th>
-                                            <th scope="col">Price</th>
-                                            {/* <th scope="col">Availabilities</th> */}
-                                            <th scope="col" class="text-center">booked</th>
-                                            <th scope="col" class="text-center">active</th>
-                                            <th scope="col" class="text-center">STATUS</th>
-                                            <th scope="col" class="text-center">ACTIONS</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {allServices?.props?.services?.results?.services?.map((service) => (
-                                            <tr key={service?.id}>
-                                                <td class="product-info-inner">
-                                                    <div class="product-info">
-                                                        <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox" />
-                                                        <label class="d-flex align-items-center flex-shrink-0" for="table-body-checkbox" tabindex="4">
-                                                            <img class="product-image" src={service?.image} alt="Service Image" />
-                                                        </label>
+                        {allServices?.props?.services?.results?.services?.length > 0 ?
+                            <div className="manage-all-product-section-inner-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th scope="col" class="product-info-header">
+                                                    <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" />
+                                                    <label for="table-header-checkbox" tabindex="4">Product</label>
+                                                </th>
+                                                <th scope="col">Price</th>
+                                                {/* <th scope="col">Availabilities</th> */}
+                                                <th scope="col" class="text-center">booked</th>
+                                                <th scope="col" class="text-center">active</th>
+                                                <th scope="col" class="text-center">STATUS</th>
+                                                <th scope="col" class="text-center">ACTIONS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {allServices?.props?.services?.results?.services?.map((service) => (
+                                                <tr key={service?.id}>
+                                                    <td class="product-info-inner">
+                                                        <div class="product-info">
+                                                            <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox" />
+                                                            <label class="d-flex align-items-center flex-shrink-0" for="table-body-checkbox" tabindex="4">
+                                                                <img class="product-image" src={service?.image} alt="Service Image" />
+                                                            </label>
 
-                                                        <div class="product-details d-flex flex-column gap-2">
-                                                            <p class="title">{service?.name}</p>
+                                                            <div class="product-details d-flex flex-column gap-2">
+                                                                <p class="title">{service?.name}</p>
 
-                                                            <div class="d-flex align-items-center gap-3">
-                                                                {/* <div class="d-flex align-items-center gap-2 buy-product">
+                                                                <div class="d-flex align-items-center gap-3">
+                                                                    {/* <div class="d-flex align-items-center gap-2 buy-product">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
                                                                         fill="none">
                                                                         <path
@@ -163,7 +165,7 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                                                                     <p>3256</p>
                                                                 </div> */}
 
-                                                                {/* <div class="d-flex align-items-center gap-2 see-product">
+                                                                    {/* <div class="d-flex align-items-center gap-2 see-product">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14"
                                                                         fill="none">
                                                                         <path
@@ -175,20 +177,20 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                                                                     </svg>
                                                                     <p>3256</p>
                                                                 </div> */}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </td>
+                                                    </td>
 
-                                                <td>
-                                                    <div>
-                                                        <p class="pice-text">
-                                                            {service?.maximum_price ? service?.maximum_price : service?.minimum_price} Tk
-                                                        </p>
-                                                    </div>
-                                                </td>
+                                                    <td>
+                                                        <div>
+                                                            <p class="pice-text">
+                                                                {service?.maximum_price ? service?.maximum_price : service?.minimum_price} Tk
+                                                            </p>
+                                                        </div>
+                                                    </td>
 
-                                                {/* <td>
+                                                    {/* <td>
                                                     <label class="switch">
                                                         <span class="close-btn">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"
@@ -204,43 +206,45 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                                                     </label>
                                                 </td> */}
 
-                                                <td class="text-center">
-                                                    <p class="pice-text">
-                                                        50
-                                                    </p>
-                                                </td>
+                                                    <td class="text-center">
+                                                        <p class="pice-text">
+                                                            50
+                                                        </p>
+                                                    </td>
 
-                                                <td class="text-center">
-                                                    <p class="pice-text ">
-                                                        50
-                                                    </p>
-                                                </td>
+                                                    <td class="text-center">
+                                                        <p class="pice-text ">
+                                                            50
+                                                        </p>
+                                                    </td>
 
-                                                <td class="text-center">
-                                                <span className={`status ${service?.is_active ? 'active' : 'inactive'}`}>{service?.is_active ? 'Active' : 'Inactive'}</span>
-                                                </td>
-                                                <td className="text-center">
-                                                    <div class="dropdown">
-                                                        <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <figure className="action-btn">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
-                                                                    <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
-                                                                    <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
-                                                                    <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
-                                                                </svg>
-                                                            </figure>
-                                                        </button>
-                                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                            <li><Link href={"/service-list/edit-service/" + service?.id} class="dropdown-item">Edit</Link></li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                                    <td class="text-center">
+                                                        <span className={`status ${service?.is_active ? 'active' : 'inactive'}`}>{service?.is_active ? 'Active' : 'Inactive'}</span>
+                                                    </td>
+                                                    <td className="text-center">
+                                                        <div class="dropdown">
+                                                            <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                <figure className="action-btn">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                                                        <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                                                        <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                                                        <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                                                    </svg>
+                                                                </figure>
+                                                            </button>
+                                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                <li><Link href={"/service-list/edit-service/" + service?.id} class="dropdown-item">Edit</Link></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
+                            : <EmptyServiceList />
+                        }
                     </div>
                 </section>
 
