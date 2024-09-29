@@ -13,6 +13,7 @@ function Vouchers({ vouchers }) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
 
+  const [filter, setFilter] = useState('');
   const openConfirmModal = item_id => {
     setSelectedItemId(item_id);
     setIsConfirmModalOpen(true);
@@ -47,6 +48,15 @@ function Vouchers({ vouchers }) {
       ));
     }
   };
+  
+    // useEffect(() => {
+    //   if (filter) queryParams.set('filter_by', filter);
+
+    //   const queryString = queryParams.toString();
+    //   router.push(queryString ? `${pathname}/?${queryString}` : pathname, {
+    //     scroll: false,
+    //   });
+    // }, [filter]);
   return (
     <main id="content">
       <div className="inner-content">
@@ -103,7 +113,7 @@ function Vouchers({ vouchers }) {
           <div className="order-management-section-inner">
             <div className="order-management-header">
               <div className="d-flex justify-content-between align-items-center">
-                <h1 className="title">Voucher</h1>
+                <h1 className="title">Vouchers</h1>
 
                 <div className="d-flex align-items-center gap-3">
                   <Link href="/add-voucher" className="add-product-btn">
@@ -130,17 +140,30 @@ function Vouchers({ vouchers }) {
               <div className="d-flex align-items-center gap-3 all-buttons-inner">
                 <button className="manage-products-btn active">
                   <span className="text">All</span>
-                  <span className="number">0</span>
+                  <span className="number">{voucherList?.length}</span>
                 </button>
 
-                <button className="manage-products-btn">
-                  <span className="text">Active</span>
-                  <span className="number">0</span>
+                <button
+                  className={`manage-products-btn ${
+                    filter === '' ? 'active' : ''
+                  }`}
+                >
+                  <span className="text" onClick={() => setFilter('active')}>
+                    Active
+                  </span>
+                  <span className="number">
+                    {voucherList?.filter(voucher => voucher.is_active).length ||
+                      0}
+                  </span>
                 </button>
 
                 <button className="manage-products-btn">
                   <span className="text">Inactive</span>
-                  <span className="number">0</span>
+                  <span className="number">
+                    {' '}
+                    {voucherList?.filter(voucher => !voucher.is_active)
+                      .length || 0}
+                  </span>
                 </button>
 
                 {/* <button className="manage-products-btn">

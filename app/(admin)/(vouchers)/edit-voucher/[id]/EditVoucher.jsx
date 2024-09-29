@@ -26,6 +26,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
   const [selectedCat, setSelectedCat] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [selectedProd, setSelectedProd] = useState([]);
+  const [vType, setVtype] = useState(1);
 
   const initialFormData = {
     voucherType: 1,
@@ -39,7 +40,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
     productIds: [],
     categoriesIds: [],
     brandIds: [],
-    excludeCategorieIds: [],
+    excludeCategoryIds: [],
     excludeBrandIds: [],
     excludeProductIds: [],
   };
@@ -56,7 +57,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
     //brand = 3;
     //product = 4;
 
-    if (formData?.voucherType == 2) {
+    if (vType == 2) {
       setCategoryShow(true);
       setBrandShow(false);
       setProductShow(false);
@@ -64,11 +65,11 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
-    } else if (formData?.voucherType == 3) {
+    } else if (vType == 3) {
       setCategoryShow(false);
       setBrandShow(true);
       setProductShow(false);
@@ -76,11 +77,11 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
-    } else if (formData?.voucherType == 4) {
+    } else if (vType == 4) {
       setCategoryShow(false);
       setBrandShow(false);
       setProductShow(true);
@@ -88,7 +89,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
@@ -100,12 +101,12 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
     }
-  }, [formData.voucherType]);
+  }, [vType]);
   useEffect(() => {
     if (voucherCreationData?.categories) {
       const formattedCategories = voucherCreationData.categories.map(
@@ -147,13 +148,31 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         productIds: voucher?.product || [],
         categoriesIds: voucher?.category || [],
         brandIds: voucher?.brand || [],
-        excludeCategorieIds: voucher?.exclude_category || [],
+        excludeCategoryIds: voucher?.exclude_category || [],
         excludeBrandIds: voucher?.exclude_brand || [],
         excludeProductIds: voucher?.exclude_product || [],
       });
+      if (voucher?.voucher_type == 2) {
+        setCategoryShow(true);
+        setBrandShow(false);
+        setProductShow(false);
+      } else if (voucher?.voucher_type == 3) {
+        setCategoryShow(false);
+        setBrandShow(true);
+        setProductShow(false);
+      } else if (voucher?.voucher_type == 4) {
+        setCategoryShow(false);
+        setBrandShow(false);
+        setProductShow(true);
+      } else {
+        setCategoryShow(false);
+        setBrandShow(false);
+        setProductShow(false);
+      }
     }
   }, [voucher]);
-
+  console.log('FormData:', formData);
+  console.log('voucher:', voucher);
   // Set initial selected categories for the excludeCategoryIds
   useEffect(() => {
     //exlcude category
@@ -200,7 +219,6 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
       setSelectedProd(initialSelectedProducts);
     }
   }, [voucher, categoryOptions, brandOptions, productOptions]);
-
   // Update form data when input changes
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
@@ -210,6 +228,18 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
       ...formData,
       [name]: fieldValue,
     });
+  };
+
+  // Update form data when input changes
+  const handleChangevType = e => {
+    const { name, value, type, checked } = e.target;
+    const fieldValue =
+      type === 'radio' ? Number(value) : type === 'checkbox' ? checked : value;
+    setFormData({
+      ...formData,
+      [name]: fieldValue,
+    });
+    setVtype(fieldValue);
   };
   // Updated handleMultiSelectChange function
   const handleMultiSelectChange = (selectedOptions, fieldName) => {
@@ -225,7 +255,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
     }));
 
     // Update the selected state for exclude categories
-    if (fieldName === 'excludeCategorieIds') {
+    if (fieldName === 'excludeCategoryIds') {
       setSelectedExcludeCat(selectedOptions || []);
     }
     // Update the selected state for exclude brands
@@ -292,6 +322,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         }
       );
       setFormData(initialFormData);
+      router.refresh();
       router.push('/voucher-list/');
       toast.custom(t => (
         <SuccessToast
@@ -437,7 +468,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
                                     name="voucherType"
                                     value={type.id}
                                     checked={formData.voucherType === type.id}
-                                    onChange={handleChange}
+                                    onChange={handleChangevType}
                                   />{' '}
                                   <span className="checkmark"></span>
                                 </label>
@@ -471,12 +502,12 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
                                   value={selectedExcludeCat}
                                   components={animatedComponents}
                                   options={categoryOptions}
-                                  name="excludeCategorieIds"
+                                  name="excludeCategoryIds"
                                   placeholder="Select Categories"
                                   onChange={selectedOptions =>
                                     handleMultiSelectChange(
                                       selectedOptions,
-                                      'excludeCategorieIds'
+                                      'excludeCategoryIds'
                                     )
                                   }
                                 />

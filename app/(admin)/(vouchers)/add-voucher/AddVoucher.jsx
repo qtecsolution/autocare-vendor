@@ -30,7 +30,7 @@ export default function AddVoucher({ voucherCreationData }) {
     productIds: [],
     categoriesIds: [],
     brandIds: [],
-    excludeCategorieIds: [],
+    excludeCategoryIds: [],
     excludeBrandIds: [],
     excludeProductIds: [],
   };
@@ -56,7 +56,7 @@ export default function AddVoucher({ voucherCreationData }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
@@ -68,7 +68,7 @@ export default function AddVoucher({ voucherCreationData }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
@@ -80,7 +80,7 @@ export default function AddVoucher({ voucherCreationData }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
@@ -92,7 +92,7 @@ export default function AddVoucher({ voucherCreationData }) {
         productIds: [],
         categoriesIds: [],
         brandIds: [],
-        excludeCategorieIds: [],
+        excludeCategoryIds: [],
         excludeBrandIds: [],
         excludeProductIds: [],
       });
@@ -368,12 +368,12 @@ export default function AddVoucher({ voucherCreationData }) {
                                   isMulti
                                   components={animatedComponents}
                                   options={categoryOptions}
-                                  name="excludeCategorieIds"
+                                  name="excludeCategoryIds"
                                   placeholder="Select Categories"
                                   onChange={selectedOptions =>
                                     handleMultiSelectChange(
                                       selectedOptions,
-                                      'excludeCategorieIds'
+                                      'excludeCategoryIds'
                                     )
                                   }
                                 />
