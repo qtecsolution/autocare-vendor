@@ -248,7 +248,12 @@ function Vouchers({ vouchers }) {
 
                           <td className="text-center">
                             <div className="d-flex gap-2 align-items-center justify-content-center">
-                              <Link href="/edit-voucher/" className="edit-btn">
+                              <Link
+                                href={
+                                  '/edit-voucher/' + voucher?.id
+                                }
+                                className="edit-btn"
+                              >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="12"
