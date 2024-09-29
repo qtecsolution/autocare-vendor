@@ -277,7 +277,7 @@ export default function AddVoucher({ voucherCreationData }) {
             <div className="order-management-header">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h1 className="title">Voucher</h1>
+                  <h1 className="title">Add Voucher</h1>
                   <p className="details mt-1">
                     Make Changes and publish for review
                   </p>

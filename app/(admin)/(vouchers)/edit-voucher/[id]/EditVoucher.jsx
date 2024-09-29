@@ -322,7 +322,6 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         }
       );
       setFormData(initialFormData);
-      router.refresh();
       router.push('/voucher-list/');
       toast.custom(t => (
         <SuccessToast

@@ -2,18 +2,35 @@
 
 import Link from 'next/link';
 import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import axiosInstance from '@/lib/axiosInstance';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
-function Vouchers({ vouchers }) {
-  const [voucherList, setVoucherList] = useState(vouchers);
+import { useRouter, useSearchParams } from 'next/navigation';
+import page from './page';
+function Vouchers() {
+  const router = useRouter();
+
+  const [activeCount, setActiveCount] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [inActiveCount, setInactiveCount] = useState(0);
+  const [allVouchersCount, setAllVouchersCount] = useState(0);
+  const [nextPage, setNextPage] = useState('');
+  const [prevPage, setPrevPage] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Pagination and filtering state
+  const [filterBy, setFilterBy] = useState('');
+  const [pageSize, setPageSize] = useState(10);
+  const searchParams = useSearchParams();
+
+  const [voucherList, setVoucherList] = useState();
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
 
-  const [filter, setFilter] = useState('');
   const openConfirmModal = item_id => {
     setSelectedItemId(item_id);
     setIsConfirmModalOpen(true);
@@ -48,15 +65,74 @@ function Vouchers({ vouchers }) {
       ));
     }
   };
-  
-    // useEffect(() => {
-    //   if (filter) queryParams.set('filter_by', filter);
 
-    //   const queryString = queryParams.toString();
-    //   router.push(queryString ? `${pathname}/?${queryString}` : pathname, {
-    //     scroll: false,
-    //   });
-    // }, [filter]);
+  const fetchVouchers = async (
+    filter = filterBy,
+    pageSize = pageSize,
+    page
+  ) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        `/seller-panel-api/frontend/voucher-list/?filter_by=${filter}&page=${page}&page_size=${pageSize}`
+      );
+      const data = response?.data?.results;
+      setVoucherList(data?.vouchers || []);
+      setActiveCount(data?.activeVouchersCount || 0);
+      setInactiveCount(data?.inactiveVouchersCount || 0);
+      setAllVouchersCount(data?.allVouchersCount || 0);
+      if (response?.data?.next != null) setNextPage(response?.data?.next);
+      if (response?.data?.prev != null) setPrevPage(response?.data?.prev);
+      setTotalPage(Math.ceil(data?.allVouchersCount / pageSize));
+    } catch (error) {
+      console.error('Error fetching vouchers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    const filterParam = searchParams.get('filter_by') || '';
+    const pageSizeParam = searchParams.get('page_size') || pageSize;
+    const page = searchParams.get('page') || 1;
+
+    setFilterBy(filterParam);
+    setPageSize(pageSizeParam);
+    setCurrentPage(page);
+    fetchVouchers(filterParam, pageSizeParam, page);
+  }, [searchParams]);
+
+  // Handle filter change
+  const filter = newFilter => {
+    setFilterBy(newFilter);
+    router.push(
+      `/voucher-list/?filter_by=${newFilter}&page=${currentPage}&page_size=${pageSize}`
+    );
+  };
+
+  // Handle page size change
+  const goToPage = page => {
+    setCurrentPage(page);
+    router.push(
+      `/voucher-list/?filter_by=${filterBy}&page=${page}&page_size=${pageSize}`
+    );
+  };
+
+  // Handle page size change
+  const goToNext = () => {
+    let curP = parseInt(currentPage) + 1;
+    if (totalPage + 1 <= curP) return;
+    router.push(
+      `/voucher-list/?filter_by=${filterBy}&page=${curP}&page_size=${pageSize}`
+    );
+  };
+  const goToPrev = () => {
+    let curP = parseInt(currentPage) - 1;
+    if (curP == 0) return;
+    router.push(
+      `/voucher-list/?filter_by=${filterBy}&page=${curP}&page_size=${pageSize}`
+    );
+  };
+  if (loading) return <div>Loading...</div>;
   return (
     <main id="content">
       <div className="inner-content">
@@ -138,32 +214,34 @@ function Vouchers({ vouchers }) {
               </div>
 
               <div className="d-flex align-items-center gap-3 all-buttons-inner">
-                <button className="manage-products-btn active">
-                  <span className="text">All</span>
-                  <span className="number">{voucherList?.length}</span>
-                </button>
-
                 <button
+                  onClick={() => filter('')}
                   className={`manage-products-btn ${
                     filter === '' ? 'active' : ''
                   }`}
                 >
-                  <span className="text" onClick={() => setFilter('active')}>
-                    Active
-                  </span>
-                  <span className="number">
-                    {voucherList?.filter(voucher => voucher.is_active).length ||
-                      0}
-                  </span>
+                  <span className="text">All</span>
+                  <span className="number">{allVouchersCount}</span>
                 </button>
 
-                <button className="manage-products-btn">
+                <button
+                  onClick={() => filter('active')}
+                  className={`manage-products-btn ${
+                    filter === 'active' ? 'active' : ''
+                  }`}
+                >
+                  <span className="text">Active</span>
+                  <span className="number">{activeCount || 0}</span>
+                </button>
+
+                <button
+                  onClick={() => filter('inactive')}
+                  className={`manage-products-btn ${
+                    filter === 'inactive' ? 'active' : ''
+                  }`}
+                >
                   <span className="text">Inactive</span>
-                  <span className="number">
-                    {' '}
-                    {voucherList?.filter(voucher => !voucher.is_active)
-                      .length || 0}
-                  </span>
+                  <span className="number"> {inActiveCount}</span>
                 </button>
 
                 {/* <button className="manage-products-btn">
@@ -255,11 +333,11 @@ function Vouchers({ vouchers }) {
                     <thead className="thead-light">
                       <tr>
                         <th scope="col">
-                          <input
+                          {/* <input
                             className="table-header-checkbox"
                             type="checkbox"
                             id="table-header-checkbox"
-                          />
+                          /> */}
                           <label for="table-header-checkbox" tabindex="4">
                             Discount Type
                           </label>
@@ -276,11 +354,11 @@ function Vouchers({ vouchers }) {
                         <tr key={voucher?.id}>
                           <td className="product-info-inner">
                             <div className="product-info">
-                              <input
+                              {/* <input
                                 className="table-header-checkbox"
                                 type="checkbox"
                                 id="table-header-checkbox1"
-                              />
+                              /> */}
                               <label
                                 className="id-text text-capitalize"
                                 for="table-header-checkbox1"
@@ -368,48 +446,52 @@ function Vouchers({ vouchers }) {
         <section className="pagination-section">
           <div className="pagination-section-inner">
             <div className="left">
-              <p className="text">Showing 1 to 10 of 23 entries</p>
+              <p className="text">
+                Showing {currentPage * pageSize - pageSize + 1} to{' '}
+                {currentPage * pageSize > allVouchersCount
+                  ? allVouchersCount
+                  : currentPage * pageSize}{' '}
+                of {allVouchersCount} entries
+              </p>
             </div>
             <div className="right">
               <nav className="pagination-nav">
                 <ul className="list-unstyled d-flex align-items-center gap-2">
                   <li className="pagination-nav-list">
-                    <a className="pagination-nav-link previous" href="">
+                    <button
+                      className="pagination-nav-link previous"
+                      onClick={goToPrev}
+                    >
                       « Previous
-                    </a>
+                    </button>
                   </li>
+                  {Array.from({ length: totalPage }, (_, index) => (
+                    <li
+                      key={index + 1}
+                      className={`pagination-nav-list ${
+                        currentPage === index + 1 ? 'active' : ''
+                      }`}
+                    >
+                      <a
+                        className="pagination-nav-link"
+                        href="#"
+                        onClick={e => {
+                          e.preventDefault();
+                          goToPage(index + 1);
+                        }}
+                      >
+                        {index + 1}
+                      </a>
+                    </li>
+                  ))}
 
                   <li className="pagination-nav-list">
-                    <a className="pagination-nav-link" href="">
-                      1
-                    </a>
-                  </li>
-                  <li className="pagination-nav-list">
-                    <a className="pagination-nav-link" href="">
-                      2
-                    </a>
-                  </li>
-                  <li className="pagination-nav-list">
-                    <a className="pagination-nav-link" href="">
-                      3
-                    </a>
-                  </li>
-
-                  <li className="pagination-nav-list">
-                    <a className="pagination-nav-link" href="">
-                      •••
-                    </a>
-                  </li>
-                  <li className="pagination-nav-list">
-                    <a className="pagination-nav-link" href="">
-                      10
-                    </a>
-                  </li>
-
-                  <li className="pagination-nav-list">
-                    <a className="pagination-nav-link next" href="">
+                    <button
+                      className="pagination-nav-link next"
+                      onClick={goToNext}
+                    >
                       Next »
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </nav>
