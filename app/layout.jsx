@@ -14,8 +14,8 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.min.css" />
         {/* <!-- sidebar css --> */}
         <link rel="stylesheet" href="/assets/css/sidebar/sidebar.css" />
-        {/* <link rel="stylesheet" href="/assets/css/quill-rich-text-editor/quill.snow.css" /> */}
         {/* <!-- New style --> */}
+        {/* <link rel="stylesheet" href="/assets/css/jquery-ui/jquery-ui.css"/> */}
         <link rel="stylesheet" href="/assets/css/style.css" />
         <link rel="stylesheet" href="/assets/css/custom.css" />
       </head>
@@ -24,16 +24,14 @@ export default function RootLayout({ children }) {
         <ToasterProvider />
         {/* <!-- jquery js --> */}
         <Script src="/assets/js/jquery.min.js"></Script>
+        {/* <Script src="/assets/js/jquery-ui/jquery-ui.min.js"></Script>
+        <Script src="/assets/js/jquery-ui/custom-jquery-ui.js"></Script> */}
         {/* <!-- BOOTSTRAP-JS --> */}
         <Script src="/assets/js/bootstrap.min.js"></Script>
         {/* <!-- main js --> */}
         <Script src="/assets/js/main.js"></Script>
 
         <Script src="/assets/js/sidebar.js"></Script>
-        {/* <Script src="/assets/js/nice-select2/nice-select2.js"></Script> */}
-        {/* <!-- quill js --> */}
-        {/* <Script src="/assets/js/quill-rich-text-editor/quill.js"></Script>
-        <Script src="/assets/js/quill-rich-text-editor/custom.js"></Script> */}
         <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></Script>
       </body>
     </html>
