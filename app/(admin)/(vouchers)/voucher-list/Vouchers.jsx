@@ -1,8 +1,52 @@
 'use client';
 
 import Link from 'next/link';
+import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
+import { useState } from 'react';
 
+import axiosInstance from '@/lib/axiosInstance';
+import toast from 'react-hot-toast';
+import AlertToast from '@/components/toast/AlertToast';
+import SuccessToast from '@/components/toast/Success';
 function Vouchers({ vouchers }) {
+  const [voucherList, setVoucherList] = useState(vouchers);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+
+  const openConfirmModal = item_id => {
+    setSelectedItemId(item_id);
+    setIsConfirmModalOpen(true);
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+  };
+  const handleDelete = async id => {
+    try {
+      const response = await axiosInstance.delete(
+        `/seller-panel-api/frontend/delete-voucher/${selectedItemId}/`
+      );
+      // Update local state to remove deleted voucher
+      setVoucherList(prevList =>
+        prevList.filter(item => item.id !== selectedItemId)
+      );
+
+      toast.custom(t => (
+        <SuccessToast
+          message={response.data.message}
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      setIsConfirmModalOpen(false);
+    } catch (error) {
+      toast.custom(t => (
+        <AlertToast
+          message={error.response.data.message || 'Something Wrong !'}
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+    }
+  };
   return (
     <main id="content">
       <div className="inner-content">
@@ -205,7 +249,7 @@ function Vouchers({ vouchers }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {vouchers?.map((voucher, index) => (
+                      {voucherList?.map((voucher, index) => (
                         <tr key={voucher?.id}>
                           <td className="product-info-inner">
                             <div className="product-info">
@@ -249,9 +293,7 @@ function Vouchers({ vouchers }) {
                           <td className="text-center">
                             <div className="d-flex gap-2 align-items-center justify-content-center">
                               <Link
-                                href={
-                                  '/edit-voucher/' + voucher?.id
-                                }
+                                href={'/edit-voucher/' + voucher?.id}
                                 className="edit-btn"
                               >
                                 <svg
@@ -270,7 +312,10 @@ function Vouchers({ vouchers }) {
                                 </svg>
                               </Link>
 
-                              <button className="delete-btn">
+                              <button
+                                className="delete-btn"
+                                onClick={() => openConfirmModal(voucher?.id)}
+                              >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="12"
@@ -349,6 +394,14 @@ function Vouchers({ vouchers }) {
           </div>
         </section>
       </div>
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        title="Delete Item"
+        message="Are you sure you want to delete this item ?"
+        onConfirm={handleDelete}
+        onClose={closeConfirmModal}
+        button_name="Delete"
+      />
     </main>
   );
 }
