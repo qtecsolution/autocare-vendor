@@ -9,7 +9,6 @@ import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import { useRouter, useSearchParams } from 'next/navigation';
-import page from './page';
 function Vouchers() {
   const router = useRouter();
 
@@ -132,7 +131,6 @@ function Vouchers() {
       `/voucher-list/?filter_by=${filterBy}&page=${curP}&page_size=${pageSize}`
     );
   };
-  if (loading) return <div>Loading...</div>;
   return (
     <main id="content">
       <div className="inner-content">
@@ -217,7 +215,7 @@ function Vouchers() {
                 <button
                   onClick={() => filter('')}
                   className={`manage-products-btn ${
-                    filter === '' ? 'active' : ''
+                    filterBy === '' ? 'active' : ''
                   }`}
                 >
                   <span className="text">All</span>
@@ -227,7 +225,7 @@ function Vouchers() {
                 <button
                   onClick={() => filter('active')}
                   className={`manage-products-btn ${
-                    filter === 'active' ? 'active' : ''
+                    filterBy === 'active' ? 'active' : ''
                   }`}
                 >
                   <span className="text">Active</span>
@@ -237,7 +235,7 @@ function Vouchers() {
                 <button
                   onClick={() => filter('inactive')}
                   className={`manage-products-btn ${
-                    filter === 'inactive' ? 'active' : ''
+                    filterBy === 'inactive' ? 'active' : ''
                   }`}
                 >
                   <span className="text">Inactive</span>
@@ -327,177 +325,190 @@ function Vouchers() {
                 </div> */}
               </div>
 
-              <div className="order-management-body-inner">
-                <div className="table-responsive">
-                  <table className="table">
-                    <thead className="thead-light">
-                      <tr>
-                        <th scope="col">
-                          {/* <input
+              {!loading ? (
+                <div className="order-management-body-inner">
+                  <div className="table-responsive">
+                    <table className="table">
+                      <thead className="thead-light">
+                        <tr>
+                          <th scope="col">
+                            {/* <input
                             className="table-header-checkbox"
                             type="checkbox"
                             id="table-header-checkbox"
                           /> */}
-                          <label for="table-header-checkbox" tabindex="4">
-                            Discount Type
-                          </label>
-                        </th>
-                        {/* <th>Code</th> */}
-                        <th className="text-center">Discount Value</th>
-                        <th className="text-center">voucher Used</th>
-                        <th className="text-center">STATUS</th>
-                        <th className="text-center">ACTIONS</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {voucherList?.map((voucher, index) => (
-                        <tr key={voucher?.id}>
-                          <td className="product-info-inner">
-                            <div className="product-info">
-                              {/* <input
+                            <label for="table-header-checkbox" tabindex="4">
+                              Discount Type
+                            </label>
+                          </th>
+                          {/* <th>Code</th> */}
+                          <th className="text-center">Discount Value</th>
+                          <th className="text-center">voucher Used</th>
+                          <th className="text-center">STATUS</th>
+                          <th className="text-center">ACTIONS</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {voucherList?.map((voucher, index) => (
+                          <tr key={voucher?.id}>
+                            <td className="product-info-inner">
+                              <div className="product-info">
+                                {/* <input
                                 className="table-header-checkbox"
                                 type="checkbox"
                                 id="table-header-checkbox1"
                               /> */}
-                              <label
-                                className="id-text text-capitalize"
-                                for="table-header-checkbox1"
-                                tabindex="4"
-                              >
-                                {voucher?.discount_type}
-                              </label>
-                            </div>
-                          </td>
+                                <label
+                                  className="id-text text-capitalize"
+                                  for="table-header-checkbox1"
+                                  tabindex="4"
+                                >
+                                  {voucher?.discount_type}
+                                </label>
+                              </div>
+                            </td>
 
-                          {/* <td>
+                            {/* <td>
                             <p className="id-text"> {voucher.voucher_code}</p>
                           </td> */}
 
-                          <td>
-                            <p className="id-text text-center">
-                              {voucher?.discount_value} Tk
-                            </p>
-                          </td>
+                            <td>
+                              <p className="id-text text-center">
+                                {voucher?.discount_value} Tk
+                              </p>
+                            </td>
 
-                          <td className="text-center">
-                            <p className="id-text">{voucher?.used_count}</p>
-                          </td>
+                            <td className="text-center">
+                              <p className="id-text">{voucher?.used_count}</p>
+                            </td>
 
-                          <td className="text-center">
-                            {voucher?.is_active ? (
-                              <span className="badge bg-success">Active</span>
-                            ) : (
-                              <span className="badge bg-danger">Inactive</span>
-                            )}
-                          </td>
+                            <td className="text-center">
+                              {voucher?.is_active ? (
+                                <span className="badge bg-success">Active</span>
+                              ) : (
+                                <span className="badge bg-danger">
+                                  Inactive
+                                </span>
+                              )}
+                            </td>
 
-                          <td className="text-center">
-                            <div className="d-flex gap-2 align-items-center justify-content-center">
-                              <Link
-                                href={'/edit-voucher/' + voucher?.id}
-                                className="edit-btn"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="12"
-                                  height="12"
-                                  viewBox="0 0 12 12"
-                                  fill="none"
+                            <td className="text-center">
+                              <div className="d-flex gap-2 align-items-center justify-content-center">
+                                <Link
+                                  href={'/edit-voucher/' + voucher?.id}
+                                  className="edit-btn"
                                 >
-                                  <path
-                                    d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                    stroke="#A7AAB9"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
-                              </Link>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="12"
+                                    height="12"
+                                    viewBox="0 0 12 12"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
+                                      stroke="#A7AAB9"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                </Link>
 
-                              <button
-                                className="delete-btn"
-                                onClick={() => openConfirmModal(voucher?.id)}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="12"
-                                  height="12"
-                                  viewBox="0 0 12 12"
-                                  fill="none"
+                                <button
+                                  className="delete-btn"
+                                  onClick={() => openConfirmModal(voucher?.id)}
                                 >
-                                  <path
-                                    d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                    stroke="#A7AAB9"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="12"
+                                    height="12"
+                                    viewBox="0 0 12 12"
+                                    fill="none"
+                                  >
+                                    <path
+                                      d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
+                                      stroke="#A7AAB9"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+              ) : (
+                <div>Loading....</div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {allVouchersCount > pageSize ? (
+          <section className="pagination-section">
+            <div className="pagination-section-inner">
+              <div className="left">
+                <p className="text">
+                  Showing {currentPage * pageSize - pageSize + 1} to{' '}
+                  {currentPage * pageSize > allVouchersCount
+                    ? allVouchersCount
+                    : currentPage * pageSize}{' '}
+                  of {allVouchersCount} entries
+                </p>
+              </div>
+              <div className="right">
+                <nav className="pagination-nav">
+                  <ul className="list-unstyled d-flex align-items-center gap-2">
+                    <li className="pagination-nav-list">
+                      <button
+                        className="pagination-nav-link previous"
+                        onClick={goToPrev}
+                      >
+                        « Previous
+                      </button>
+                    </li>
+                    {Array.from({ length: totalPage }, (_, index) => (
+                      <li
+                        key={index + 1}
+                        className={`pagination-nav-list ${
+                          currentPage === index + 1 ? 'active' : ''
+                        }`}
+                      >
+                        <a
+                          className={`pagination-nav-link ${
+                            currentPage == index + 1 ? 'btn btn-primary' : ''
+                          }`}
+                          href="#"
+                          onClick={e => {
+                            e.preventDefault();
+                            goToPage(index + 1);
+                          }}
+                        >
+                          {index + 1}
+                        </a>
+                      </li>
+                    ))}
+
+                    <li className="pagination-nav-list">
+                      <button
+                        className="pagination-nav-link next"
+                        onClick={goToNext}
+                      >
+                        Next »
+                      </button>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
-          </div>
-        </section>
-        <section className="pagination-section">
-          <div className="pagination-section-inner">
-            <div className="left">
-              <p className="text">
-                Showing {currentPage * pageSize - pageSize + 1} to{' '}
-                {currentPage * pageSize > allVouchersCount
-                  ? allVouchersCount
-                  : currentPage * pageSize}{' '}
-                of {allVouchersCount} entries
-              </p>
-            </div>
-            <div className="right">
-              <nav className="pagination-nav">
-                <ul className="list-unstyled d-flex align-items-center gap-2">
-                  <li className="pagination-nav-list">
-                    <button
-                      className="pagination-nav-link previous"
-                      onClick={goToPrev}
-                    >
-                      « Previous
-                    </button>
-                  </li>
-                  {Array.from({ length: totalPage }, (_, index) => (
-                    <li
-                      key={index + 1}
-                      className={`pagination-nav-list ${
-                        currentPage === index + 1 ? 'active' : ''
-                      }`}
-                    >
-                      <a
-                        className="pagination-nav-link"
-                        href="#"
-                        onClick={e => {
-                          e.preventDefault();
-                          goToPage(index + 1);
-                        }}
-                      >
-                        {index + 1}
-                      </a>
-                    </li>
-                  ))}
-
-                  <li className="pagination-nav-list">
-                    <button
-                      className="pagination-nav-link next"
-                      onClick={goToNext}
-                    >
-                      Next »
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-        </section>
+          </section>
+        ) : (
+          ''
+        )}
       </div>
       <ConfirmModal
         isOpen={isConfirmModalOpen}

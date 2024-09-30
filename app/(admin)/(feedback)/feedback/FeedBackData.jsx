@@ -73,7 +73,7 @@ export default function Data({ feedBackType }) {
   useEffect(() => {
     const filterBy = type;
     const pageSizeParam = searchParams.get('page_size') || pageSize;
-    const page = searchParams.get('page') || 1;
+    const page = searchParams.get('page')|| currentPage;
     setPageSize(pageSizeParam);
     setCurrentPage(page);
     fetchData(filterBy, pageSizeParam, page);
@@ -105,8 +105,6 @@ export default function Data({ feedBackType }) {
     if (curP == 0) return;
     router.push(`/feedback/?page=${curP}&page_size=${pageSize}`);
   };
-
-  if (loading) return <div>Loading...</div>;
   return (
     <>
       <div className="order-details mt-4">
@@ -122,57 +120,76 @@ export default function Data({ feedBackType }) {
                     <th className="text-end action-header">Action</th>
                   </tr>
                 </thead>
-                <tbody>
-                  {feedbackList?.map((feedback, index) => (
-                    <tr key={index}>
-                      <td className="rating-data">
-                        <div className="d-flex align-items-center">
-                          {feedback?.rating &&
-                            !isNaN(feedback.rating) &&
-                            Array.from(
-                              { length: parseInt(feedback.rating) },
-                              (_, i) => <Star key={i} />
-                            )}
-                        </div>
-                      </td>
+                {!loading ? (
+                  <tbody>
+                    {feedbackList?.map((feedback, index) => (
+                      <tr key={index}>
+                        <td className="rating-data">
+                          <div className="d-flex align-items-center">
+                            {feedback?.rating &&
+                              !isNaN(feedback.rating) &&
+                              Array.from(
+                                { length: parseInt(feedback.rating) },
+                                (_, i) => <Star key={i} />
+                              )}
+                          </div>
+                        </td>
 
-                      <td className="review-text">
-                        <p className="pice-text review-content">
-                          {feedback?.review}
-                        </p>
-                      </td>
+                        <td className="review-text">
+                          <p className="pice-text review-content">
+                            {feedback?.review}
+                          </p>
+                        </td>
 
-                      <td className="review-img">
-                        <div className="d-flex gap-2">
-                          {feedback?.images?.map((image, index) => (
-                            <Image
-                              src={image?.image}
-                              width={500}
-                              height={500}
-                              alt="Review Image"
-                            />
-                          ))}
-                        </div>
-                      </td>
+                        <td className="review-img">
+                          <div className="d-flex gap-2">
+                            {feedback?.images?.map((image, index) => (
+                              <Image
+                                src={image?.image}
+                                width={500}
+                                height={500}
+                                alt="Review Image"
+                              />
+                            ))}
+                          </div>
+                        </td>
 
-                      <td className="text-end">
-                        <figure className="action-btn review">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="5"
-                            height="21"
-                            viewBox="0 0 5 21"
-                            fill="none"
-                          >
-                            <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
-                            <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
-                            <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
-                          </svg>
-                        </figure>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
+                        <td className="text-end">
+                          <figure className="action-btn review">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="5"
+                              height="21"
+                              viewBox="0 0 5 21"
+                              fill="none"
+                            >
+                              <circle
+                                cx="2.5"
+                                cy="2.5"
+                                r="2.5"
+                                fill="#D9D9D9"
+                              />
+                              <circle
+                                cx="2.5"
+                                cy="10.5"
+                                r="2.5"
+                                fill="#D9D9D9"
+                              />
+                              <circle
+                                cx="2.5"
+                                cy="18.5"
+                                r="2.5"
+                                fill="#D9D9D9"
+                              />
+                            </svg>
+                          </figure>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                ) : (
+                  <div>Loading...</div>
+                )}
               </table>
             </div>
           </div>
@@ -205,7 +222,7 @@ export default function Data({ feedBackType }) {
                     <li key={index + 1} className="pagination-nav-list">
                       <a
                         className={`pagination-nav-link ${
-                          currentPage === index + 1 ? 'btn' : ''
+                          currentPage == index + 1 ? 'btn btn-primary' : ''
                         }`}
                         href="#"
                         onClick={e => {
