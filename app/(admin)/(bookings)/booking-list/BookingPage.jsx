@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from 'next/link'
 import EmptyBookingPage from './EmptyBookingPage';
 import moment from 'moment';
+import { convertToAMPM } from '@/utils/timeFormat'
 
 function BookingPage({ allBookings, pageProps, calculatedTotalPages }) {
   const [currentPage, setCurrentPage] = useState(parseInt(pageProps) || 1);
@@ -55,13 +56,7 @@ function BookingPage({ allBookings, pageProps, calculatedTotalPages }) {
     router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
   }, [searchQuery, currentPage, filter, timeSlotId, startDate, endDate]);
 
-  function convertToAMPM(time) {
-    let [hour, minute] = time.split(':');
-    hour = parseInt(hour, 10);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    hour = hour % 12 || 12;
-    return `${hour}:${minute} ${ampm}`;
-  }
+
   const handleRangeClick = (range) => {
     setSelectedRange(selectedRange === range ? '' : range);
 
@@ -254,7 +249,7 @@ function BookingPage({ allBookings, pageProps, calculatedTotalPages }) {
                             </td>
 
                             <td>
-                              <Link href="#" className="itemName-text">
+                              <Link href={"/booking-list/details/" + booking?.id} className="itemName-text">
                                 {booking?.service?.name?.length > 25 ? booking?.service?.name.slice(0, 25) + "..." : booking?.service?.name}
                               </Link>
                             </td>
@@ -281,14 +276,20 @@ function BookingPage({ allBookings, pageProps, calculatedTotalPages }) {
                             </td>
 
                             <td className="text-center">
-                              <figure className="action-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21"
-                                  fill="none">
-                                  <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
-                                  <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
-                                  <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
-                                </svg>
-                              </figure>
+                              <div class="dropdown">
+                                <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <figure className="action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
+                                      <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
+                                      <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />
+                                      <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
+                                    </svg>
+                                  </figure>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                  <li><Link href={"/booking-list/reschedule/" + booking?.id} class="dropdown-item">Reschedule</Link></li>
+                                </ul>
+                              </div>
                             </td>
                           </tr>
                         ))}
