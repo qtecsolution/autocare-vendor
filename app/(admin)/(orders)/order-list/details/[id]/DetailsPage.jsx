@@ -1,9 +1,32 @@
 'use client'
 import GlobalSearch from '@/components/admin/GlobalSearch'
+import Progress6 from '@/components/admin/progressbar/Progress6'
+import axiosInstance from '@/lib/axiosInstance'
 import { formatDate } from '@/utils/formatDate'
 import React from 'react'
 
+
 function DetailsPage({ orderDetails }) {
+
+  const downloadInvoice = async () => {
+    try {
+      const response = await axiosInstance.get(`/seller-panel-api/frontend/download-order-invoice/${orderDetails?.order?.id}/`, {
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+
+      link.setAttribute('download', `invoice_${orderDetails?.order?.id}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading the invoice:', error);
+    }
+  };
+
   return (
     <main id="content">
       <div className="inner-content">
@@ -64,7 +87,7 @@ function DetailsPage({ orderDetails }) {
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-3">
-                  <a href="" className="primary-50-button">Download Invoice</a>
+                  <button className="primary-50-button" onClick={downloadInvoice}>Download Invoice</button>
                 </div>
               </div>
             </div>
@@ -287,9 +310,6 @@ function DetailsPage({ orderDetails }) {
                           <tr>
                             <td className="border-bottom-0">
                               <div className="d-flex align-items-center gap-2 order-details-product">
-                                <figure>
-                                  <img src="/assets/images/order-details-product.png" alt="product-img" />
-                                </figure>
                                 <div className="">
                                   <p className="itemName-text">
                                     Purolator Oil Filter 133500I99 – Fits Toyota Qualis
@@ -341,69 +361,7 @@ function DetailsPage({ orderDetails }) {
 
                           <tr>
                             <td colspan="6" className="border-top-0">
-                              <div className="">
-                                <div className="" style={{ zIndex: "0", position: 'relative' }}>
-                                  <ul className="progressbar text-center">
-                                    <li className="active step0">
-                                      <div className="step-content">
-                                        <h3 className="heading">
-                                          Order Placed
-                                        </h3>
-                                        <p className="text">
-                                          User makes the payment
-                                        </p>
-                                      </div>
-                                    </li>
-                                    <li className="active step0">
-                                      <div className="step-content">
-                                        <button className="primary-button py-2">
-                                          Processing
-                                        </button>
-                                      </div>
-                                    </li>
-                                    <li className="step0">
-                                      <div className="step-content">
-                                        <h3 className="heading">
-                                          Payment
-                                        </h3>
-                                        <p className="text">
-                                          User makes the payment
-                                        </p>
-                                      </div>
-                                    </li>
-                                    <li className=" step0">
-                                      <div className="step-content">
-                                        <h3 className="heading">
-                                          Confirmed
-                                        </h3>
-                                        <p className="text">
-                                          User makes the payment
-                                        </p>
-                                      </div>
-                                    </li>
-                                    <li className=" step0">
-                                      <div className="step-content">
-                                        <h3 className="heading">
-                                          Shipped
-                                        </h3>
-                                        <p className="text">
-                                          User makes the payment
-                                        </p>
-                                      </div>
-                                    </li>
-                                    <li className=" step0">
-                                      <div className="step-content">
-                                        <h3 className="heading">
-                                          Delivered
-                                        </h3>
-                                        <p className="text">
-                                          User makes the payment
-                                        </p>
-                                      </div>
-                                    </li>
-                                  </ul>
-                                </div>
-                              </div>
+                              <Progress6 />
                             </td>
                           </tr>
                         </React.Fragment>

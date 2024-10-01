@@ -47,24 +47,18 @@ function OrderListPage({ allOrders, pageProps, calculatedTotalPages }) {
     const downloadExcel = async () => {
         try {
             const response = await axiosInstance.get('/seller-panel-api/frontend/export-order-items-to-excel/', {
-                responseType: 'blob', // Ensure the response is treated as a Blob
+                responseType: 'blob',
             });
 
-            // Create a URL for the Blob object
             const url = window.URL.createObjectURL(new Blob([response.data]));
-
-            // Create a temporary anchor element for downloading the file
             const link = document.createElement('a');
             link.href = url;
 
-            // Set the download attribute with a filename
             link.setAttribute('download', 'order-items.xlsx');
 
-            // Append the link to the document body and trigger the download
             document.body.appendChild(link);
             link.click();
 
-            // Clean up and remove the link
             document.body.removeChild(link);
 
         } catch (error) {
