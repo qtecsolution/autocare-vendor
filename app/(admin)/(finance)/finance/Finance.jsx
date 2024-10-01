@@ -94,18 +94,18 @@ export default function Finance() {
         };
       case 'yesterday':
         return {
-          startDate: today.subtract(1, 'days').format('YYYY-MM-DD'),
-          endDate: today.format('YYYY-MM-DD'),
+          startDate: moment().subtract(1, 'days').format('YYYY-MM-DD'),
+          endDate: moment().format('YYYY-MM-DD'),
         };
       case 'last7days':
         return {
-          startDate: today.subtract(7, 'days').format('YYYY-MM-DD'),
-          endDate: today.format('YYYY-MM-DD'),
+          startDate: moment().subtract(7, 'days').format('YYYY-MM-DD'),
+          endDate: moment().format('YYYY-MM-DD'),
         };
       case 'last30days':
         return {
-          startDate: today.subtract(30, 'days').format('YYYY-MM-DD'),
-          endDate: today.format('YYYY-MM-DD'),
+          startDate: moment().subtract(30, 'days').format('YYYY-MM-DD'),
+          endDate: moment().format('YYYY-MM-DD'),
         };
       default:
         return { startDate: '', endDate: '' };
@@ -170,7 +170,6 @@ export default function Finance() {
         setHistories(data?.payouts_history);
         setTotalItem(response?.data?.count);
         setTotalPage(Math.ceil(response?.data?.count / pageSize));
-        console.log('response.data:', response.data);
       } catch (error) {
         console.error('Error fetching reports:', error);
       } finally {
