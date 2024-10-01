@@ -159,7 +159,7 @@ export default function SideBar() {
       ),
       submenu: [
         { name: 'Orders', path: '/order-list' },
-        { name: 'Return Refund', path: '#' },
+        { name: 'Return Orders', path: '/return-order-list' },
         { name: 'Review', path: '#' },
       ],
     },

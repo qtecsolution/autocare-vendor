@@ -1,13 +1,17 @@
 'use client'
 import GlobalSearch from '@/components/admin/GlobalSearch'
+import Progress1 from '@/components/admin/progressbar/Progress1'
+import Progress2 from '@/components/admin/progressbar/Progress2'
+import Progress3 from '@/components/admin/progressbar/Progress3'
+import Progress4 from '@/components/admin/progressbar/Progress4'
+import Progress5 from '@/components/admin/progressbar/Progress5'
 import Progress6 from '@/components/admin/progressbar/Progress6'
 import axiosInstance from '@/lib/axiosInstance'
-import { formatDate } from '@/utils/formatDate'
+import moment from 'moment'
 import React from 'react'
 
 
 function DetailsPage({ orderDetails }) {
-
   const downloadInvoice = async () => {
     try {
       const response = await axiosInstance.get(`/seller-panel-api/frontend/download-order-invoice/${orderDetails?.order?.id}/`, {
@@ -104,26 +108,14 @@ function DetailsPage({ orderDetails }) {
               </div>
               <div className="order-details-inner-body">
                 <div className="row g-4 g-xl-5">
-                  <div className="col-xl-4">
+                  <div className="col-xl-6">
                     <div className="d-flex flex-column gap-1">
                       <div className="d-flex justify-content-between align-items-center">
                         <p className="light-text">
-                          Date & Time
+                          Time
                         </p>
                         <p className="bold-text">
-                          {orderDetails?.order?.created_at
-                            ? new Date(orderDetails.order.created_at).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            }) +
-                            ' ' +
-                            new Date(orderDetails.order.created_at).toLocaleTimeString('en-US', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit',
-                            })
-                            : 'Loading...'}
+                          {moment(orderDetails?.order?.created_at).format('DD/MM/YYYY')}
                         </p>
                       </div>
 
@@ -146,7 +138,7 @@ function DetailsPage({ orderDetails }) {
                       </div> */}
                     </div>
                   </div>
-                  <div className="col-xl-4">
+                  <div className="col-xl-6">
                     <div className="d-flex flex-column gap-1">
                       <div className="d-flex justify-content-between align-items-center">
                         <p className="light-text">
@@ -176,14 +168,14 @@ function DetailsPage({ orderDetails }) {
                       </div>
                     </div>
                   </div>
-                  <div className="col-xl-4">
+                  {/* <div className="col-xl-4">
                     <div className="d-flex justify-content-end align-items-center h-100">
                       <div className="d-flex align-items-center gap-2">
                         <p className="light-text">Status</p>
                         <p className="status pending">{orderDetails?.order?.payment_status}</p>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -301,7 +293,7 @@ function DetailsPage({ orderDetails }) {
                         <th className="text-center">rice per Unit</th>
                         <th className="text-center">Total Price</th>
                         <th className="text-center">status</th>
-                        <th className="text-center">Action</th>
+                        {/* <th className="text-center">Action</th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -312,11 +304,11 @@ function DetailsPage({ orderDetails }) {
                               <div className="d-flex align-items-center gap-2 order-details-product">
                                 <div className="">
                                   <p className="itemName-text">
-                                    Purolator Oil Filter 133500I99 – Fits Toyota Qualis
+                                    {item?.product?.name}
                                   </p>
                                   <div className="d-flex align-items-center gap-2 mt-1">
-                                    <p className="light-text">manufacturer: <span>ZZVF</span></p>
-                                    <p className="light-text">Part Number: <span>ZZVF</span></p>
+                                    {item?.product?.is_manufacturer_active && <p className="light-text">Manufacturer: <span>{item?.product?.manufacturer}</span></p>}
+                                    {item?.product?.is_part_number_active && <p className="light-text">Part Number: <span>{item?.product?.part_number}</span></p>}
                                   </div>
                                 </div>
                               </div>
@@ -324,30 +316,30 @@ function DetailsPage({ orderDetails }) {
 
                             <td className="border-bottom-0">
                               <p className="id-text text-center">
-                                2
+                                {item?.quantity}
                               </p>
                             </td>
 
                             <td className="border-bottom-0">
                               <p className="id-text text-center">
-                                10,000 Tk
+                                {item?.unit_price} Tk
                               </p>
                             </td>
 
                             <td className="border-bottom-0">
                               <p className="id-text text-center">
-                                20,000 Tk
+                                {item?.quantity * item?.unit_price} Tk
                               </p>
                             </td>
 
                             <td className="border-bottom-0 text-center">
                               <div className="">
-                                <span className="status processing ">Processing</span>
-                                <p className="delivered-time mt-2">Delivered On: 05 Feb 2024 </p>
+                                <span className="status processing ">{item?.status}</span>
+                                {item?.status === "Delivered" && <p className="delivered-time mt-2">Delivered On:  {moment(item?.updated_at).format('YYYY-MM-DD')} </p>}
                               </div>
                             </td>
 
-                            <td className="text-center border-bottom-0">
+                            {/* <td className="text-center border-bottom-0">
                               <figure className="action-btn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21"
                                   fill="none">
@@ -356,12 +348,17 @@ function DetailsPage({ orderDetails }) {
                                   <circle cx="2.5" cy="18.5" r="2.5" fill="#D9D9D9" />
                                 </svg>
                               </figure>
-                            </td>
+                            </td> */}
                           </tr>
 
                           <tr>
                             <td colspan="6" className="border-top-0">
-                              <Progress6 />
+                              {item?.status === "Order Placed" && <Progress1 />}
+                              {item?.status === "Processing" && <Progress2 />}
+                              {item?.status === "Payment" && <Progress3 />}
+                              {item?.status === "Confirmed" && <Progress4 />}
+                              {item?.status === "Shipped" && <Progress5 />}
+                              {item?.status === "Delivered" && <Progress6 />}
                             </td>
                           </tr>
                         </React.Fragment>
@@ -377,7 +374,7 @@ function DetailsPage({ orderDetails }) {
         <section className="my-5">
           <div className="row g-4 g-xl-5">
             <div className="col-lg-6">
-              <div className="order-details">
+              {/* <div className="order-details">
                 <div className="order-details-inner">
                   <div className="order-details-inner-head">
                     <h1 className="heading">
@@ -391,7 +388,7 @@ function DetailsPage({ orderDetails }) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="col-lg-6">
               <div className="total-summary">
@@ -403,15 +400,15 @@ function DetailsPage({ orderDetails }) {
                   <div className="d-flex flex-column gap-2">
                     <div className="d-flex justify-content-between align-items-center gap-3">
                       <p className="light-text">Subtotal</p>
-                      <p className="bold-text">10,000 Tk</p>
+                      <p className="bold-text">{orderDetails?.subtotal} Tk</p>
                     </div>
 
                     <div className="d-flex justify-content-between align-items-center gap-3">
                       <p className="light-text">Shipping Cost</p>
-                      <p className="bold-text">+ 200 Tk</p>
+                      <p className="bold-text">+ {orderDetails?.shipping_cost} Tk</p>
                     </div>
 
-                    <div className="d-flex justify-content-between align-items-center gap-3">
+                    {/* <div className="d-flex justify-content-between align-items-center gap-3">
                       <p className="light-text">Discount</p>
                       <p className="color-text">- 500 Tk</p>
                     </div>
@@ -419,13 +416,13 @@ function DetailsPage({ orderDetails }) {
                     <div className="d-flex justify-content-between align-items-center gap-3">
                       <p className="light-text">Commission</p>
                       <p className="color-text">- 200 Tk</p>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="border-top pt-3">
                     <div className="d-flex justify-content-between align-items-center gap-3">
-                      <p className="total-text">Subtotal</p>
-                      <p className="total-color-text">10,000 Tk</p>
+                      <p className="total-text">Total</p>
+                      <p className="total-color-text">{orderDetails?.total_price} Tk</p>
                     </div>
                   </div>
                 </div>
