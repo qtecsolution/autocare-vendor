@@ -8,6 +8,7 @@ import Select from 'react-select';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/lib/axiosInstance';
 import moment from 'moment';
+import EmptyFinance from './EmptyFinance';
 
 const dateRanges = [
   { label: 'Today', value: 'today' },
@@ -36,7 +37,7 @@ export default function Finance() {
   const [histories, setHistories] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalItem, setTotalItem] = useState(0);
+  const [totalItem, setTotalItem] = useState(1);
   const [loading, setLoading] = useState(true);
   const [paymentStatus, setPaymentStatus] = useState();
   const [selectedFinanceRange, setSelectedFinanceRange] = useState(null);
@@ -200,6 +201,9 @@ export default function Finance() {
     if (curP == 0) return;
     setCurrentPage(curP);
   };
+  if (!totalItem) {
+    return <EmptyFinance />;
+  }
 
   return (
     <main id="content">
