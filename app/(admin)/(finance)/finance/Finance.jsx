@@ -5,11 +5,28 @@ import { TRANSACTION_STATUS } from '@/lib/TransactionStatus';
 import React, { useEffect, useState } from 'react';
 import styles from './Finance.module.css';
 import Select from 'react-select';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import axiosInstance from '@/lib/axiosInstance';
 import moment from 'moment';
+
+const dateRanges = [
+  { label: 'Today', value: 'today' },
+  { label: 'Yesterday', value: 'yesterday' },
+  { label: 'Last 7 Days', value: 'last7days' },
+  { label: 'Last 30 Days', value: 'last30days' },
+];
+const statusClasses = {
+  Pending: 'pending',
+  Paid: 'delivered',
+  Cancelled: 'cancelled',
+  Hold: 'pending',
+  InProgress: 'processing',
+};
+const pageSize = 10;
+const STATUS = TRANSACTION_STATUS;
+
 export default function Finance() {
-  const STATUS = TRANSACTION_STATUS;
+  const router = useRouter();
   const [revenue, setRevenue] = useState('0');
   const [commission, setCommission] = useState('0');
   const [storeRevenue, setStoreRevenue] = useState('0');
@@ -17,28 +34,20 @@ export default function Finance() {
   const [refunds, setRefunds] = useState('0');
   const [balance, setBalance] = useState('0');
   const [histories, setHistories] = useState([]);
-  const statusClasses = {
-    Pending: 'pending',
-    Paid: 'delivered',
-    Cancelled: 'cancelled',
-    Hold: 'pending',
-    InProgress: 'processing',
-  };
-  const router = useRouter();
   const [totalPage, setTotalPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItem, setTotalItem] = useState(0);
   const [loading, setLoading] = useState(true);
-  // Pagination and filtering state
-  const [type, setType] = useState('');
-  const [pageSize, setPageSize] = useState(10);
-  const searchParams = useSearchParams();
+  const [paymentStatus, setPaymentStatus] = useState();
+  const [selectedFinanceRange, setSelectedFinanceRange] = useState(null);
+  const [selectedTransactionRange, setSelectedTransactionRange] =
+    useState(null);
 
-  const fetchData = async (filterBy = type, pageSize = pageSize, page) => {
+  const fetchData = async () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
-        `/seller-panel-api/frontend/finance-report/?finance_start_date=&finance_end_date=&transaction_start_date=&transaction_end_date=&payment_status=`
+        '/seller-panel-api/frontend/finance-report/'
       );
       const data = response?.data?.results;
       setRevenue(data?.total_revenue);
@@ -57,41 +66,139 @@ export default function Finance() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    const filterBy = type;
-    const pageSizeParam = searchParams.get('page_size') || pageSize;
-    const page = searchParams.get('page') || currentPage;
-    setPageSize(pageSizeParam);
-    setCurrentPage(page);
-    fetchData(filterBy, pageSizeParam, page);
-  }, [searchParams, type]);
-  useEffect(() => {
-    setType();
+    fetchData();
   }, []);
 
-  // Handle filter change
-  // const filter = newFilter => {
-  //   setFilterBy(newFilter);
-  //   router.push(
-  //     `/feedback/?page=${currentPage}&page_size=${pageSize}`
-  //   );
-  // };
+  const handlePaymentStatus = selectedOption => {
+    setPaymentStatus(selectedOption?.id);
+  };
+  const handleFinanceDateRangeChange = selectedOption => {
+    setSelectedFinanceRange(selectedOption);
+  };
+  const handleTransactionDateRangeChange = selectedOption => {
+    setSelectedTransactionRange(selectedOption);
+  };
+
+  const getDateRange = range => {
+    if (!range) return { startDate: '', endDate: '' };
+
+    const today = moment();
+    switch (range.value) {
+      case 'today':
+        return {
+          startDate: today.format('YYYY-MM-DD'),
+          endDate: today.format('YYYY-MM-DD'),
+        };
+      case 'yesterday':
+        return {
+          startDate: today.subtract(1, 'days').format('YYYY-MM-DD'),
+          endDate: today.format('YYYY-MM-DD'),
+        };
+      case 'last7days':
+        return {
+          startDate: today.subtract(7, 'days').format('YYYY-MM-DD'),
+          endDate: today.format('YYYY-MM-DD'),
+        };
+      case 'last30days':
+        return {
+          startDate: today.subtract(30, 'days').format('YYYY-MM-DD'),
+          endDate: today.format('YYYY-MM-DD'),
+        };
+      default:
+        return { startDate: '', endDate: '' };
+    }
+  };
+
+  useEffect(() => {
+    const { startDate: financeStartDate, endDate: financeEndDate } =
+      getDateRange(selectedFinanceRange);
+    const { startDate: transactionStartDate, endDate: transactionEndDate } =
+      getDateRange(selectedTransactionRange);
+
+    // Update URL with query parameters
+    const queryParams = new URLSearchParams({
+      finance_start_date: financeStartDate || '',
+      finance_end_date: financeEndDate || '',
+      transaction_start_date: transactionStartDate || '',
+      transaction_end_date: transactionEndDate || '',
+      payment_status: paymentStatus || '',
+      // page: currentPage.toString(),
+      // page_size: pageSize.toString(),
+    });
+
+    router.push(`/finance/?${queryParams.toString()}`);
+  }, [
+    selectedFinanceRange,
+    selectedTransactionRange,
+    paymentStatus,
+    currentPage,
+    pageSize,
+  ]);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true);
+      const { startDate: financeStartDate, endDate: financeEndDate } =
+        getDateRange(selectedFinanceRange);
+      const { startDate: transactionStartDate, endDate: transactionEndDate } =
+        getDateRange(selectedTransactionRange);
+      try {
+        const response = await axiosInstance.get(
+          '/seller-panel-api/frontend/finance-report/',
+          {
+            params: {
+              finance_start_date: financeStartDate,
+              finance_end_date: financeEndDate,
+              transaction_start_date: transactionStartDate,
+              transaction_end_date: transactionEndDate,
+              payment_status: paymentStatus,
+              page: currentPage,
+              page_size: pageSize,
+            },
+          }
+        );
+        const data = response?.data?.results;
+        setRevenue(data?.total_revenue);
+        setCommission(data?.platform_commission_fee);
+        setStoreRevenue(data?.net_store_revenue);
+        setPayouts(data?.total_payouts);
+        setRefunds(data?.total_refunds);
+        setBalance(data?.current_balance);
+        setHistories(data?.payouts_history);
+        setTotalItem(response?.data?.count);
+        setTotalPage(Math.ceil(response?.data?.count / pageSize));
+        console.log('response.data:', response.data);
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+  }, [
+    selectedFinanceRange,
+    selectedTransactionRange,
+    paymentStatus,
+    currentPage,
+    pageSize,
+  ]);
 
   // Handle page size change
   const goToPage = page => {
     setCurrentPage(page);
-    router.push(`/feedback/?page=${page}&page_size=${pageSize}`);
   };
-  // Handle page size change
   const goToNext = () => {
     let curP = parseInt(currentPage) + 1;
     if (totalPage + 1 <= curP) return;
-    router.push(`/feedback/?page=${curP}&page_size=${pageSize}`);
+    setCurrentPage(curP);
   };
   const goToPrev = () => {
     let curP = parseInt(currentPage) - 1;
     if (curP == 0) return;
-    router.push(`/feedback/?page=${curP}&page_size=${pageSize}`);
+    setCurrentPage(curP);
   };
 
   return (
@@ -103,52 +210,74 @@ export default function Finance() {
             <div className="order-management-header">
               <div className="d-flex justify-content-between align-items-center">
                 <h1 className="title">Finance</h1>
-
-                <select className="selectize">
-                  <option data-display="Select">This Month</option>
-                  <option value="1">This Month1</option>
-                  <option value="2">This Month2</option>
-                  <option value="4">This Month3</option>
-                </select>
+                <Select
+                  className={`selectize ${styles.select}`}
+                  options={dateRanges}
+                  value={selectedFinanceRange}
+                  onChange={handleFinanceDateRangeChange}
+                  placeholder="Select Range"
+                />
               </div>
             </div>
           </div>
         </section>
-
         <section className="finance-section">
           <div className="finance-section-inner">
             <div className="d-flex flex-wrap gap-3">
               <div className="revenue-card">
                 <h3 className="title">Total Revenue</h3>
-                <h1 className="price">{revenue} Tk</h1>
+                {!loading ? (
+                  <h1 className="price">{revenue} Tk</h1>
+                ) : (
+                  <h1 className="price">Loading...</h1>
+                )}
               </div>
 
               <div className="revenue-card">
                 <h3 className="title">Platform Commission Fee</h3>
-                <h1 className="price">{commission} Tk</h1>
+                {!loading ? (
+                  <h1 className="price">{commission} Tk</h1>
+                ) : (
+                  <h1 className="price">Loading...</h1>
+                )}
               </div>
 
               <div className="revenue-card">
                 <h3 className="title">Net Store Revenue</h3>
-                <h1 className="price">{storeRevenue} Tk</h1>
+                {!loading ? (
+                  <h1 className="price">{storeRevenue} Tk</h1>
+                ) : (
+                  <h1 className="price">Loading...</h1>
+                )}
               </div>
 
               <div className="revenue-card">
                 <h3 className="title">Total Payouts</h3>
-                <h1 className="price">{payouts} Tk</h1>
+                {!loading ? (
+                  <h1 className="price">{payouts} Tk</h1>
+                ) : (
+                  <h1 className="price">Loading...</h1>
+                )}
               </div>
 
               <div className="revenue-card">
                 <h3 className="title">Total Refunds</h3>
-                <h1 className="price">{refunds} Tk</h1>
+                {!loading ? (
+                  <h1 className="price">{refunds} Tk</h1>
+                ) : (
+                  <h1 className="price">Loading...</h1>
+                )}
               </div>
             </div>
-
             <div className="mt-4">
               <p className="title">Balance</p>
               <div className="revenue-card w-100 mt-3">
                 <h3 className="title">Total Balance</h3>
-                <h1 className="color-text">{balance} Tk</h1>
+                {!loading ? (
+                  <h1 className="color-text">{balance} Tk</h1>
+                ) : (
+                  <h1 className="color-text">Loading...</h1>
+                )}
               </div>
             </div>
           </div>
@@ -162,6 +291,7 @@ export default function Finance() {
                 <Select
                   className={styles.select}
                   options={STATUS}
+                  onChange={handlePaymentStatus}
                   placeholder="Status"
                 />
               </div>
@@ -194,11 +324,18 @@ export default function Finance() {
                     fill="#60637A"
                   ></path>
                 </svg>
-                <select className="selectize">
+                {/* <select className="selectize">
                   <option data-display="Select">This Month</option>
                   <option value="1">This Month1</option>
                   <option value="2">This Month2</option>
-                </select>
+                </select> */}
+                <Select
+                  className={styles.select}
+                  options={dateRanges}
+                  value={selectedTransactionRange}
+                  onChange={handleTransactionDateRangeChange}
+                  placeholder="Select Range"
+                />
               </div>
             </div>
           </div>
@@ -217,38 +354,46 @@ export default function Finance() {
                         <th className="text-center Status-header">Status</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {histories.map(history => (
-                        <tr key={history?.id}>
-                          <td>
-                            <p className="date">
-                              {moment(history?.created_at).format('YYYY-MM-DD')}
-                            </p>
-                          </td>
-                          <td>
-                            <p className="date">#{history?.id}</p>
-                          </td>
-                          <td>
-                            <p className="amount">{history?.amount} Tk</p>
-                          </td>
-                          <td>
-                            {' '}
-                            <p className="amount">{history?.payment_method}</p>
-                          </td>
-                          <td className="text-center">
-                            <span
-                              className={`status ${
-                                statusClasses[
-                                  history?.status.replace(/\s+/g, '')
-                                ] || ''
-                              }`}
-                            >
-                              {history?.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+                    {!loading ? (
+                      <tbody>
+                        {histories.map(history => (
+                          <tr key={history?.id}>
+                            <td>
+                              <p className="date">
+                                {moment(history?.created_at).format(
+                                  'YYYY-MM-DD'
+                                )}
+                              </p>
+                            </td>
+                            <td>
+                              <p className="date">#{history?.id}</p>
+                            </td>
+                            <td>
+                              <p className="amount">{history?.amount} Tk</p>
+                            </td>
+                            <td>
+                              {' '}
+                              <p className="amount">
+                                {history?.payment_method}
+                              </p>
+                            </td>
+                            <td className="text-center">
+                              <span
+                                className={`status ${
+                                  statusClasses[
+                                    history?.status.replace(/\s+/g, '')
+                                  ] || ''
+                                }`}
+                              >
+                                {history?.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    ) : (
+                      <div>Loading...</div>
+                    )}
                   </table>
                 </div>
               </div>

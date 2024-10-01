@@ -120,6 +120,7 @@ function Vouchers() {
   const goToNext = () => {
     let curP = parseInt(currentPage) + 1;
     if (totalPage + 1 <= curP) return;
+    setCurrentPage(curP);
     router.push(
       `/voucher-list/?filter_by=${filterBy}&page=${curP}&page_size=${pageSize}`
     );
@@ -127,6 +128,7 @@ function Vouchers() {
   const goToPrev = () => {
     let curP = parseInt(currentPage) - 1;
     if (curP == 0) return;
+    setCurrentPage(curP);
     router.push(
       `/voucher-list/?filter_by=${filterBy}&page=${curP}&page_size=${pageSize}`
     );
