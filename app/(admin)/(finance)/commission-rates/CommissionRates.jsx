@@ -1,10 +1,60 @@
 'use client';
 
 import GlobalSearch from '@/components/admin/GlobalSearch';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function CommissionRates({ categories }) {
   const [expandedCategories, setExpandedCategories] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState(categories);
+
+  // Handle input change
+  const handleSearchChange = e => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+  // Function to filter categories and their children with match children expanded
+
+  // const filterCategories = (categories, term) => {
+  //   return categories.reduce((acc, category) => {
+  //     const hasMatchingChild = category.children && category.children.length > 0
+  //       ? filterCategories(category.children, term).length > 0
+  //       : false;
+
+  //     // Check if category matches or has matching children
+  //     if (category.name.toLowerCase().includes(term) || hasMatchingChild) {
+  //       acc.push({
+  //         ...category,
+  //         children: hasMatchingChild ? filterCategories(category.children, term) : category.children,
+  //       });
+  //       // Ensure the parent category is expanded if it has matching children
+  //       if (hasMatchingChild) {
+  //         setExpandedCategories(prevState => ({
+  //           ...prevState,
+  //           [category.id]: true, // Expand parent category
+  //         }));
+  //       }
+  //     }
+  //     return acc;
+  //   }, []);
+  // };
+
+  // Function to filter only root category
+  const filterCategories = (data, term) => {
+    const filtered = data.filter(category =>
+      category.name.toLowerCase().includes(term)
+    );
+    return filtered;
+  };
+
+  useEffect(() => {
+    // Filter categories based on the search term
+    if (searchTerm !== '') {
+      const filtered = filterCategories(categories, searchTerm);
+      setFilteredCategories(filtered);
+    } else {
+      setFilteredCategories(categories);
+    }
+  }, [searchTerm]);
 
   // Function to toggle visibility of category's children
   const toggleCategory = categoryId => {
@@ -110,9 +160,10 @@ export default function CommissionRates({ categories }) {
                 <input
                   className="page-search-input"
                   type="text"
-                  name=""
+                  name="name"
                   id="search-input"
-                  placeholder="Search"
+                  onChange={handleSearchChange}
+                  placeholder="Enter name"
                 />
               </form>
             </div>
@@ -131,7 +182,9 @@ export default function CommissionRates({ categories }) {
                     </tr>
                   </thead>{' '}
                   <tbody>
-                    {categories.map(category => renderCategory(category))}
+                    {filteredCategories?.map(category =>
+                      renderCategory(category)
+                    )}
                   </tbody>
                 </table>
               </div>
