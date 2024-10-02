@@ -5,7 +5,7 @@ function GlobalSearch() {
     return (
         <section className="page-top-section">
             <div className="page-top-section-inner">
-                <form className="search-form">
+                <div className="search-form">
                     <label for="search-svg">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path
@@ -15,7 +15,7 @@ function GlobalSearch() {
                     </label>
 
                     <input className="page-search-input" type="text" name="" id="search-input" placeholder="Search" />
-                </form>
+                </div>
 
                 <Link href="/notification" className="notification-svg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
