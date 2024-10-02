@@ -8,7 +8,6 @@ async function getMyBadges() {
 }
 const BadgeColor = [
   'flagshipStore',
-  'topSeller',
   'newArrival',
   'customerFavorite',
   'fastShipper',
@@ -37,7 +36,7 @@ export default async function page() {
                   <Badge
                     key={index}
                     badge={badge?.badge}
-                    color={BadgeColor[index]}
+                    color={BadgeColor[Math.floor(Math.random() * BadgeColor.length)]}
                   />
                 ))}
               </div>
