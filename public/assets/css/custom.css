@@ -127,3 +127,7 @@
     width: 1.875rem;
     height: 1.875rem;
 }
+
+.order-management-body-inner .thead-light th {
+    z-index: 0 !important;
+}

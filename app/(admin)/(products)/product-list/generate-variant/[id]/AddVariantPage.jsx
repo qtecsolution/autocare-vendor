@@ -1,13 +1,13 @@
 'use client'
 import axiosInstance from '@/lib/axiosInstance';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Select from 'react-select';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import Link from 'next/link';
 import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
-
+import { useRouter } from 'next/navigation';
 
 function AddVariantPage({ variantData, productId }) {
   const [selectedOptions, setSelectedOptions] = useState([{ id: null, values: [] }]);
@@ -15,7 +15,59 @@ function AddVariantPage({ variantData, productId }) {
   const [productVariantData, setProductVariantData] = useState([]);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const router = useRouter();
+  const fileInputRefs = useRef({});
 
+  const handleImageClick = (variantId) => {
+    fileInputRefs.current[variantId].click();
+  };
+
+
+  const handleUpdateImageVariant = (e, v_id) => {
+    console.log(v_id, 'VID');
+
+    const file = e.target.files[0];
+    if (file) {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = async () => {
+        const { width, height } = img;
+        if (width === height) {
+          const formData = new FormData();
+          formData.append('image', file);
+          try {
+            const response = await axiosInstance.patch(`/seller-panel-api/frontend/product-variant/${v_id}/update-image/`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              }
+            });
+            toast.custom((t) => (
+              <SuccessToast
+                message={response.data.message}
+                dismiss={() => toast.dismiss(t.id)}
+              />
+            ));
+            fetchProductVariantData();
+          } catch (error) {
+            console.log(error);
+            toast.custom((t) => (
+              <AlertToast
+                message={error.response.data.message}
+                dismiss={() => toast.dismiss(t.id)}
+              />
+            ));
+          }
+        } else {
+          toast.custom((t) => (
+            <AlertToast
+              message="Varient image must have a 1:1 aspect ratio."
+              dismiss={() => toast.dismiss(t.id)}
+            />
+          ));
+        }
+      };
+    }
+  };
 
   const openConfirmModal = (item_id) => {
     setSelectedItemId(item_id)
@@ -295,9 +347,20 @@ function AddVariantPage({ variantData, productId }) {
                                 </td>
 
                                 <td className="text-center">
-                                  <figure className="d-flex justify-content-center variant-img">
-                                    {variant?.image && <img src={variant?.image} alt="Image" />}
+                                  <figure className="d-flex justify-content-center variant-img" onClick={() => handleImageClick(variant?.id)}>
+                                    <img
+                                      src={variant?.image ? variant?.image : '/assets/images/uploadicon.svg'}
+                                      alt="Image"
+                                      style={{ cursor: 'pointer' }} // Change cursor to pointer
+                                    />
                                   </figure>
+                                  <input
+                                    type="file"
+                                    ref={(el) => (fileInputRefs.current[variant?.id] = el)} // Create a ref for each variant dynamically
+                                    onChange={(e) => handleUpdateImageVariant(e, variant?.id)} // Handle file change for the specific variant
+                                    style={{ display: 'none' }} // Hide the file input
+                                    accept="image/*" // Accept only image files
+                                  />
                                 </td>
 
                                 <td className="rating-data">

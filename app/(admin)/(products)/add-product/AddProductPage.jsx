@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Select from 'react-select';
-import CustomQuillEditor from '@/components/admin/CustomQuill';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
@@ -1074,11 +1073,9 @@ function AddProductPage() {
                     Main Description English
                   </label>
                   <div className="editor-container">
-                    {/* <CustomQuillEditor editorId="editor1" toolbarId="toolbar1" placeholder="Write here ..."
+                    <CustomCKEditor
                       content={mainDescEN}
-                      onContentChange={setMainDescEN}
-                    /> */}
-                    <CustomCKEditor/>
+                      onContentChange={setMainDescEN} />
                   </div>
                 </div>
 
@@ -1087,10 +1084,9 @@ function AddProductPage() {
                     Main Description Bangla
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor2" toolbarId="toolbar2" placeholder="Write here for ..."
+                    <CustomCKEditor
                       content={mainDescBN}
-                      onContentChange={setMainDescBN}
-                    />
+                      onContentChange={setMainDescBN} />
                   </div>
 
                 </div>
@@ -1100,10 +1096,9 @@ function AddProductPage() {
                     Specification English
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor3" toolbarId="toolbar3" placeholder="Write here for ..."
+                    <CustomCKEditor
                       content={specificationEN}
-                      onContentChange={setSpecificationEN}
-                    />
+                      onContentChange={setSpecificationEN} />
                   </div>
                 </div>
 
@@ -1112,10 +1107,9 @@ function AddProductPage() {
                     Specification Bangla
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor4" toolbarId="toolbar4" placeholder="Write here for ..."
+                    <CustomCKEditor
                       content={specificationBN}
-                      onContentChange={setSpecificationBN}
-                    />
+                      onContentChange={setSpecificationBN} />
                   </div>
                 </div>
               </div>

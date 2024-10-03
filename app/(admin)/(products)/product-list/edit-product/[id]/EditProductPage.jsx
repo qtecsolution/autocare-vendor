@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Select from 'react-select';
-import CustomQuillEditor from '@/components/admin/CustomQuill';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/navigation';
+import CustomCKEditor from '@/components/admin/CustomCKEditor';
 
 function EditProductPage({ productDetails }) {
 
@@ -393,6 +393,7 @@ function EditProductPage({ productDetails }) {
           dismiss={() => toast.dismiss(t.id)}
         />
       ));
+      e.target.value = '';
       return;
     }
 
@@ -424,6 +425,7 @@ function EditProductPage({ productDetails }) {
         }
       };
     });
+    e.target.value = '';
   };
 
 
@@ -510,16 +512,16 @@ function EditProductPage({ productDetails }) {
 
       const compatibleBrandIds = selectedCompatibleBrands.map(item => item.value);
       formData.append('compatibleBrandIds', JSON.stringify(compatibleBrandIds));
-      if (selectedManufacturer) {
-        formData.append('manufacturersId', selectedManufacturer.value);
-      }
+
+      formData.append('manufacturersId', selectedManufacturer ? selectedManufacturer.value : "");
+
       formData.append('isManufacturerActive', isManufacturerActive);
       formData.append('partNumber', partNumber);
       formData.append('isPartNumberActive', isPartNumberActive);
       formData.append('warranty', warranty);
       formData.append('isWarrantyActive', isWarrantyActive);
       if (oldImageIdForRemove) {
-        formData.append('removeImagesIds', oldImageIdForRemove);
+        formData.append('removeImagesIds', JSON.stringify(oldImageIdForRemove));
       }
       if (mainImage) {
         formData.append('productMainImage', mainImage);
@@ -869,12 +871,12 @@ function EditProductPage({ productDetails }) {
                 <div className="product-image-section">
                   <div className="product-img-head">
                     <div className="d-flex align-items-center gap-1">
-                      <h1 className="title">Product Additional Image <span>*</span> </h1>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <h1 className="title">Product Additional Image  </h1>
+                      {/* <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path
                           d="M9.375 9.37476L9.40917 9.35809C9.51602 9.3047 9.63594 9.28306 9.75472 9.29572C9.8735 9.30838 9.98616 9.35481 10.0794 9.42951C10.1726 9.50422 10.2424 9.60407 10.2806 9.71724C10.3189 9.83042 10.3238 9.95217 10.295 10.0681L9.705 12.4314C9.67595 12.5474 9.68078 12.6693 9.71891 12.7826C9.75704 12.8959 9.82687 12.9959 9.92011 13.0707C10.0134 13.1455 10.1261 13.1921 10.245 13.2047C10.3639 13.2174 10.4839 13.1957 10.5908 13.1423L10.625 13.1248M17.5 9.99976C17.5 10.9847 17.306 11.9599 16.9291 12.8699C16.5522 13.7798 15.9997 14.6066 15.3033 15.3031C14.6069 15.9995 13.7801 16.5519 12.8701 16.9289C11.9602 17.3058 10.9849 17.4998 10 17.4998C9.01509 17.4998 8.03982 17.3058 7.12987 16.9289C6.21993 16.5519 5.39314 15.9995 4.6967 15.3031C4.00026 14.6066 3.44781 13.7798 3.0709 12.8699C2.69399 11.9599 2.5 10.9847 2.5 9.99976C2.5 8.01063 3.29018 6.10298 4.6967 4.69645C6.10322 3.28993 8.01088 2.49976 10 2.49976C11.9891 2.49976 13.8968 3.28993 15.3033 4.69645C16.7098 6.10298 17.5 8.01063 17.5 9.99976ZM10 6.87476H10.0067V6.88142H10V6.87476Z"
                           stroke="#0F766D" stroke-linecap="round" stroke-linejoin="round" />
-                      </svg>
+                      </svg> */}
                     </div>
 
                     <h1 className="example-text">
@@ -1165,9 +1167,12 @@ function EditProductPage({ productDetails }) {
 
                 <div className="vehicle-information">
                   <div className="add-product-body">
-                    <form className="d-flex flex-column gap-4">
+                    <div className="d-flex flex-column gap-4">
                       <div className="tag-container">
-                        <label className="category-select-label">Vehicle Type</label>
+                        <div className='d-flex justify-content-between'>
+                          <label className="category-select-label">Vehicle Type</label>
+                          <button className='confirm-btn active' onClick={() => setSelectedVehicleTypes(vehicleTypesOptions)}>SELECT ALL</button>
+                        </div>
                         <Select
                           isMulti
                           name="vehicletype"
@@ -1179,7 +1184,10 @@ function EditProductPage({ productDetails }) {
                       </div>
 
                       <div className="tag-container">
-                        <label className="category-select-label">Compatible Brand <span className="text-danger">*</span></label>
+                        <div className='d-flex justify-content-between'>
+                          <label className="category-select-label">Compatible Brand <span className="text-danger">*</span></label>
+                          <button className='confirm-btn active' onClick={() => setSelectedCompatibleBrands(compatibleBrandsOptions)}>SELECT ALL</button>
+                        </div>
                         <Select
                           isMulti
                           name="compatiblebrand"
@@ -1214,7 +1222,7 @@ function EditProductPage({ productDetails }) {
                           value={selectedCarModelYears}
                         />
                       </div>
-                    </form>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1225,10 +1233,9 @@ function EditProductPage({ productDetails }) {
                     Main Description English
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor1" toolbarId="toolbar1" placeholder="Write here ..."
+                    <CustomCKEditor
                       content={mainDescEN}
-                      onContentChange={setMainDescEN}
-                    />
+                      onContentChange={setMainDescEN} />
                   </div>
                 </div>
 
@@ -1237,10 +1244,9 @@ function EditProductPage({ productDetails }) {
                     Main Description Bangla
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor2" toolbarId="toolbar2" placeholder="Write here for ..."
+                    <CustomCKEditor
                       content={mainDescBN}
-                      onContentChange={setMainDescBN}
-                    />
+                      onContentChange={setMainDescBN} />
                   </div>
 
                 </div>
@@ -1250,10 +1256,9 @@ function EditProductPage({ productDetails }) {
                     Specification English
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor3" toolbarId="toolbar3" placeholder="Write here for ..."
+                    <CustomCKEditor
                       content={specificationEN}
-                      onContentChange={setSpecificationEN}
-                    />
+                      onContentChange={setSpecificationEN} />
                   </div>
                 </div>
 
@@ -1262,10 +1267,9 @@ function EditProductPage({ productDetails }) {
                     Specification Bangla
                   </label>
                   <div className="editor-container">
-                    <CustomQuillEditor editorId="editor4" toolbarId="toolbar4" placeholder="Write here for ..."
+                    <CustomCKEditor
                       content={specificationBN}
-                      onContentChange={setSpecificationBN}
-                    />
+                      onContentChange={setSpecificationBN} />
                   </div>
                 </div>
               </div>
