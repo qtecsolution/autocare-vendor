@@ -26,10 +26,10 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
   const [selectedCat, setSelectedCat] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState([]);
   const [selectedProd, setSelectedProd] = useState([]);
-  const [vType, setVtype] = useState(1);
+  const [vType, setVtype] = useState(null);
 
   const initialFormData = {
-    voucherType: 1,
+    voucherType:null,
     discountType: 'fixed',
     discountValue: '',
     minimumPurchaseAmount: '',
@@ -56,7 +56,6 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
     //category = 2;
     //brand = 3;
     //product = 4;
-
     if (vType == 2) {
       setCategoryShow(true);
       setBrandShow(false);
