@@ -110,7 +110,7 @@ function ManufacturerPage({ allManufacturer, pageProps, calculatedTotalPages }) 
                                         <tr scope="col">
                                             <th className="product-info-header">
                                                 {/* <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox" /> */}
-                                                <label for="table-header-checkbox" tabindex="4">Manufacturer Details</label>
+                                                <label for="table-header-checkbox" tabindex="4">Manufacturer Name</label>
                                             </th>
                                             {/* <th scope="col">Relation</th>
                                         <th scope="col">Category</th> */}

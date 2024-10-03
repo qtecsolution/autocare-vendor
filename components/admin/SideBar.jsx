@@ -117,7 +117,7 @@ export default function SideBar() {
       submenu: [
         { name: 'Add Product', path: '/add-product' },
         { name: 'Products', path: '/product-list' },
-        { name: 'Brand', path: '/brand-list' },
+        { name: 'Compatible Brands', path: '/brand-list' },
         { name: 'Manufacturer', path: '/manufacturer' },
       ],
     },
@@ -621,9 +621,9 @@ export default function SideBar() {
       <div className="sidebar-scroll">
         <div className="sidebar-header">
           <Link href="/">
-            <figure className="d-flex justify-content-center">
-              <img src="/assets/images/logo.png" alt="logo" />
-            </figure>
+            <h4 style={{ fontWeight: 'bold' }}>
+              {sellerInfo?.full_name}
+            </h4>
           </Link>
 
           <form className="search-input">

@@ -111,7 +111,7 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                                         <tr scope="col">
                                             <th className="product-info-header">
                                                 {/* <input className="table-header-checkbox" type="checkbox" id="table-header-checkbox" /> */}
-                                                <label for="table-header-checkbox" tabindex="4">Brand Details</label>
+                                                <label for="table-header-checkbox" tabindex="4">Brand Name</label>
                                             </th>
                                             {/* <th scope="col">Relation</th>
                                             <th scope="col">Category</th> */}
@@ -188,7 +188,7 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
                 <section className="pagination-section">
                     <div className="pagination-section-inner">
                         <div className="left">
-                            <p className="text">Showing 1 to 10 of 23 entries</p>
+                            {/* <p className="text">Showing 1 to 10 of 23 entries</p> */}
                         </div>
                         <div className="right">
                             <Pagination
