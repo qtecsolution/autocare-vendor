@@ -29,7 +29,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
   const [vType, setVtype] = useState(null);
 
   const initialFormData = {
-    voucherType:null,
+    voucherType: null,
     discountType: 'fixed',
     discountValue: '',
     minimumPurchaseAmount: '',
@@ -105,6 +105,12 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
         excludeProductIds: [],
       });
     }
+    setSelectedExcludeCat([]);
+    setSelectedExcludeBrand([]);
+    setSelectedExcludeProd([]);
+    setSelectedCat([]);
+    setSelectedBrand([]);
+    setSelectedProd([]);
   }, [vType]);
   useEffect(() => {
     if (voucherCreationData?.categories) {
