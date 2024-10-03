@@ -64,6 +64,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
     }, [searchQuery, currentPage, filter]);
+    console.log(allProducts, 'Products');
 
     return (
         <main id="content">
@@ -189,6 +190,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                 <th scope="col">In Stock</th>
                                                 <th scope="col" class="text-center">sold</th>
                                                 <th scope="col" class="text-center">Wishlist</th>
+                                                <th scope="col" class="text-center">Variants</th>
                                                 <th scope="col" class="text-center">STATUS</th>
                                                 <th scope="col" class="text-center">ACTIONS</th>
                                             </tr>
@@ -279,6 +281,12 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                     <td class="text-center">
                                                         <p class="pice-text ">
                                                             50
+                                                        </p>
+                                                    </td>
+
+                                                    <td class="text-center">
+                                                        <p class="pice-text text-white" style={{ borderRadius: '25px', backgroundColor: product?.is_variant_available ? 'green' : 'red',padding:'1px' }}>
+                                                            Variant | {product?.total_variant}
                                                         </p>
                                                     </td>
 
