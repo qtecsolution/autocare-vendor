@@ -298,8 +298,9 @@ export default function Finance() {
                   placeholder="Status"
                 />
               </div>
-              <div className="box month-box d-flex align-items-center">
-                <svg
+               <div className="box">
+               {/* <div className="box month-box d-flex align-items-center"> */}
+                {/*<svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="18"
                   height="18"
@@ -326,7 +327,7 @@ export default function Finance() {
                     d="M9.5625 14.3438H7.3125C7.08872 14.3438 6.87411 14.4326 6.71588 14.5909C6.55764 14.7491 6.46875 14.9637 6.46875 15.1875C6.46875 15.4113 6.55764 15.6259 6.71588 15.7841C6.87411 15.9424 7.08872 16.0312 7.3125 16.0312H9.5625C9.78628 16.0312 10.0009 15.9424 10.1591 15.7841C10.3174 15.6259 10.4062 15.4113 10.4062 15.1875C10.4062 14.9637 10.3174 14.7491 10.1591 14.5909C10.0009 14.4326 9.78628 14.3438 9.5625 14.3438Z"
                     fill="#60637A"
                   ></path>
-                </svg>
+                </svg> */}
                 {/* <select className="selectize">
                   <option data-display="Select">This Month</option>
                   <option value="1">This Month1</option>
