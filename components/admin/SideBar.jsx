@@ -653,61 +653,70 @@ export default function SideBar() {
         </div>
 
         <ul className="list-unstyled menu-list">
-          {filteredMenuItems.map(item => (
-            <li key={item.path} className="menu-list-item">
-              {item.submenu ? (
-                <>
-                  <a
-                    className={`menu-list-link ${isLinkActive([
-                      item.path,
-                      ...item.submenu.map(sub => sub.path),
-                    ])}`}
-                    data-toggle="collapse"
-                    href={item.path}
-                    aria-expanded="false"
-                  >
-                    <span className="icontitle">
-                      <span className="icon">{item.icon}</span>
-                      <span className="linktitle">{item.name}</span>
-                    </span>
-                    <span className="arrowicon">{item.icon2}</span>
-                  </a>
-                  <div
-                    className={`collapse ${isShowMenu([
-                      item.path,
-                      ...item.submenu.map(sub => sub.path),
-                    ])}`}
-                    id={item.path.replace('#', '')}
-                  >
-                    <ul className="submenu list-unstyled mt-2">
-                      {item.submenu.map(subitem => (
-                        <li key={subitem.path} className="sumenu-item">
-                          <Link
-                            href={subitem.path}
-                            className={`submenu-link ${isLinkActive([
-                              `${subitem.path}`,
-                            ])}`}
-                          >
-                            <span className="text"> {subitem.name}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              ) : (
-                <Link
-                  href={item.path}
-                  className={`menu-list-link ${isLinkActive([`${item.path}`])}`}
-                >
-                  <span className="icontitle">
-                    <span className="icon">{item.icon}</span>
-                    <span className="linktitle">{item.name}</span>
-                  </span>
-                </Link>
-              )}
-            </li>
-          ))}
+          {filteredMenuItems.map(item => {
+            const businessType = sellerInfo?.business_type?.name;
+            const isProductsItem = item.name === 'Products';
+            const isServicesItem = item.name === 'Services';
+            const showProducts = isProductsItem && (businessType === "Product" || businessType === "Both");
+            const showServices = isServicesItem && (businessType === "Service" || businessType === "Both");
+
+            if (!isProductsItem && !isServicesItem || showProducts || showServices) {
+              return (
+                <li key={item.path} className="menu-list-item">
+                  {item.submenu ? (
+                    <>
+                      <a
+                        className={`menu-list-link ${isLinkActive([
+                          item.path,
+                          ...item.submenu.map(sub => sub.path),
+                        ])}`}
+                        data-toggle="collapse"
+                        href={item.path}
+                        aria-expanded="false"
+                      >
+                        <span className="icontitle">
+                          <span className="icon">{item.icon}</span>
+                          <span className="linktitle">{item.name}</span>
+                        </span>
+                        <span className="arrowicon">{item.icon2}</span>
+                      </a>
+                      <div
+                        className={`${item.submenu && searchText ? '' : 'collapse'}  ${isShowMenu([
+                          item.path,
+                          ...item.submenu.map(sub => sub.path),
+                        ])}`}
+                        id={item.path.replace('#', '')}
+                      >
+                        <ul className="submenu list-unstyled mt-2">
+                          {item.submenu.map(subitem => (
+                            <li key={subitem.path} className="submenu-item">
+                              <Link
+                                href={subitem.path}
+                                className={`submenu-link ${isLinkActive([`${subitem.path}`])}`}
+                              >
+                                <span className="text"> {subitem.name}</span>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </>
+                  ) : (
+                    <Link
+                      href={item.path}
+                      className={`menu-list-link ${isLinkActive([`${item.path}`])}`}
+                    >
+                      <span className="icontitle">
+                        <span className="icon">{item.icon}</span>
+                        <span className="linktitle">{item.name}</span>
+                      </span>
+                    </Link>
+                  )}
+                </li>
+              );
+            }
+            return null;
+          })}
         </ul>
 
         <div className="sidebar-footer">

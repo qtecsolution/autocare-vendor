@@ -9,6 +9,7 @@ import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/navigation';
 import CustomCKEditor from '@/components/admin/CustomCKEditor';
+import { getAuthUser } from '@/utils/auth';
 
 function AddProductPage() {
 
@@ -21,6 +22,14 @@ function AddProductPage() {
   const [shortDescriptionBN, setShortDescriptionBN] = useState('');
   const [isShortDescActive, setIsShortDescActive] = useState(false);
   const text_max_len = 100;
+
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const businessType = sellerInfo?.business_type?.name;
+    if (businessType === "Service") {
+      router.push('/');
+    }
+  }, [sellerInfo, router]);
 
   const initialErrors = {
     name: '',

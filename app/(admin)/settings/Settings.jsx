@@ -413,6 +413,7 @@ export default function Settings() {
       );
       localStorage.setItem('seller', JSON.stringify(response.data.seller));
       closeConfirmModal2();
+      router.refresh();
       toast.custom(t => (
         <SuccessToast
           message="Business Profile Updated Successfully"

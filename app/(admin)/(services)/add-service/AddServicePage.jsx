@@ -9,6 +9,7 @@ import SuccessToast from '@/components/toast/Success';
 import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import axiosInstance from '@/lib/axiosInstance';
+import { getAuthUser } from '@/utils/auth';
 
 function AddServicePage() {
     const router = useRouter();
@@ -35,6 +36,15 @@ function AddServicePage() {
     const [price, setPrice] = useState(null);
     const [maxPrice, setMaxPrice] = useState(null);
     const [isActive, setIsActive] = useState(false);
+
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+      const businessType = sellerInfo?.business_type?.name;
+      if (businessType === "Product") {
+        router.push('/');
+      }
+    }, [sellerInfo, router]);
 
     const initialErrors = {
         name: '',
