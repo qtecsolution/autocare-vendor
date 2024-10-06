@@ -51,7 +51,7 @@ function ManufacturerPage({ allManufacturer, pageProps, calculatedTotalPages }) 
                 <section className="manage-product-section">
                     <div className="manage-product-section-header">
                         <h3 className="heading-text">
-                        Manufacturer
+                            Manufacturer
                         </h3>
 
                         <div className="d-flex align-items-center gap-3">
@@ -140,13 +140,13 @@ function ManufacturerPage({ allManufacturer, pageProps, calculatedTotalPages }) 
                                                 </td>
 
                                                 <td className="text-center">
-                                                    <span className={`status ${manufacturer?.is_active ? 'active' : 'inactive'}`}>Active</span>
+                                                    <span className={`status ${manufacturer?.is_active ? 'active' : 'inactive'}`}>{manufacturer?.is_active ? 'Active' : 'Inactive'}</span>
                                                 </td>
 
                                                 <td className="text-center">
-                                                <div class="dropdown">
+                                                    <div class="dropdown">
                                                         <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <figure className="action-btn">
+                                                            <figure className="action-btn">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="5" height="21" viewBox="0 0 5 21" fill="none">
                                                                     <circle cx="2.5" cy="2.5" r="2.5" fill="#D9D9D9" />
                                                                     <circle cx="2.5" cy="10.5" r="2.5" fill="#D9D9D9" />

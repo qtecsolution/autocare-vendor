@@ -35,7 +35,7 @@ function AddServicePage() {
     const [compatibility, setCompatibility] = useState('');
     const [price, setPrice] = useState(null);
     const [maxPrice, setMaxPrice] = useState(null);
-    const [isActive, setIsActive] = useState(false);
+    // const [isActive, setIsActive] = useState(false);
 
 
     const sellerInfo = getAuthUser();
@@ -84,9 +84,9 @@ function AddServicePage() {
         fetchServiceData();
     }, []);
 
-    const handleIsActive = () => {
-        setIsActive(!isActive)
-    };
+    // const handleIsActive = () => {
+    //     setIsActive(!isActive)
+    // };
 
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
@@ -249,7 +249,7 @@ function AddServicePage() {
 
             formData.append('description', mainDesc);
             formData.append('compatability', compatibility);
-            formData.append('isActive', isActive);
+            // formData.append('isActive', isActive);
 
             try {
                 const response = await axiosInstance.post('/seller-panel-api/frontend/service/create/', formData, {
@@ -284,7 +284,7 @@ function AddServicePage() {
                 setCompatibility('');
                 setPrice(null);
                 setMaxPrice(null);
-                setIsActive(false);
+                // setIsActive(false);
 
             } catch (error) {
                 console.error('Error:', error);
@@ -589,7 +589,7 @@ function AddServicePage() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="d-flex gap-2 align-items-center">
+                                    {/* <div className="d-flex gap-2 align-items-center">
                                         <label className="switch">
                                             <span className="close-btn">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"
@@ -603,7 +603,7 @@ function AddServicePage() {
                                             <span className="slider round"></span>
                                         </label>
                                         <p>Is Active</p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 

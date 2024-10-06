@@ -95,7 +95,7 @@ function EditPage({ manufacturerDetails }) {
                                         </div>
 
                                         <div className="d-flex flex-column gap-2">
-                                            <label className="input-label" far="frontPart"> Brand Image <span className="text-danger">*</span>
+                                            <label className="input-label" far="frontPart"> Manufacturer Image <span className="text-danger">*</span>
                                             </label>
                                             <label for="manufacturerImage" className="upload-card">
                                                 <figure>

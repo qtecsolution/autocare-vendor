@@ -64,7 +64,6 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
     }, [searchQuery, currentPage, filter]);
-    console.log(allProducts, 'Products');
 
     return (
         <main id="content">
@@ -285,9 +284,11 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                     </td>
 
                                                     <td class="text-center">
-                                                        <p class="pice-text text-white" style={{ borderRadius: '25px', backgroundColor: product?.is_variant_available ? 'green' : 'red',padding:'1px' }}>
-                                                            Variant | {product?.total_variant}
-                                                        </p>
+                                                        <Link href={"/product-list/generate-variant/" + product?.id}>
+                                                            <p class="pice-text text-white" style={{ borderRadius: '25px', backgroundColor: product?.is_variant_available ? 'green' : 'red', padding: '1px' }}>
+                                                                Variant | {product?.total_variant}
+                                                            </p>
+                                                        </Link>
                                                     </td>
 
                                                     <td class="text-center">

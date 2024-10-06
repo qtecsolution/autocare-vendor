@@ -10,6 +10,7 @@ import Select from 'react-select';
 import { useRouter } from 'next/navigation';
 import Otp from './Otp';
 import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
+import BankInfoPage from './BankInfoPage';
 export default function Settings() {
   const router = useRouter();
   const [errors, setErrors] = useState({});
@@ -95,21 +96,21 @@ export default function Settings() {
       security.confirmPassword.trim() == '' ||
       security.currentPassword.trim() == ''
     ) {
-       toast.custom(t => (
-         <AlertToast
-           message="Please Enter All Required Fields"
-           dismiss={() => toast.dismiss(t.id)}
-         />
-       ));
+      toast.custom(t => (
+        <AlertToast
+          message="Please Enter All Required Fields"
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
       return;
     }
-      if (security.newPassword.trim() !== security.confirmPassword.trim()) {
-        setErrors(prevErrors => ({
-          ...prevErrors,
-          confirmPassword: 'Confirm password does not matched',
-        }));
-        return;
-      }
+    if (security.newPassword.trim() !== security.confirmPassword.trim()) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        confirmPassword: 'Confirm password does not matched',
+      }));
+      return;
+    }
     setIsConfirmModalOpen3(true);
   };
   const closeConfirmModal3 = () => {
@@ -491,6 +492,12 @@ export default function Settings() {
                   aria-selected="false"
                 >
                   Business
+                </button>
+
+                <button class="basic-info" id="bankInformation-tab" data-bs-toggle="tab"
+                  data-bs-target="#bankInformation" type="button" role="tab" aria-controls="bankInformation"
+                  aria-selected="false">
+                  Bank Information
                 </button>
 
                 <button
@@ -876,7 +883,7 @@ export default function Settings() {
                                 onChange={handleDistrictChange}
                                 options={districts}
                                 placeholder="Select District"
-                                // isDisabled={!selectedDivision}
+                              // isDisabled={!selectedDivision}
                               />
                               {errors.district && (
                                 <span className="text-danger">
@@ -896,7 +903,7 @@ export default function Settings() {
                                 onChange={setSelectedCity}
                                 options={cities}
                                 placeholder="Select Thana"
-                                // isDisabled={!selectedDistrict}
+                              // isDisabled={!selectedDistrict}
                               />
                               {errors.city && (
                                 <span className="text-danger">
@@ -1271,7 +1278,9 @@ export default function Settings() {
                   </div>
                 </div>
               </div>
-
+              <div class="tab-pane fade" id="bankInformation" role="tabpanel" aria-labelledby="bankInformation-tab">
+                <BankInfoPage />
+              </div>
               <div
                 className="tab-pane fade"
                 id="price-stock"

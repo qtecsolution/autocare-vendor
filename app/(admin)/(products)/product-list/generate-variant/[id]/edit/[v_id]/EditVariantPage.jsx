@@ -1,12 +1,12 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/navigation';
 
-function EditVariantPage({ productID, variantID, variantDetails }) {
+function EditVariantPage({ productID, variantID }) {
 
   const router = useRouter();
   const initialErrors = {
@@ -14,13 +14,34 @@ function EditVariantPage({ productID, variantID, variantDetails }) {
     price: '',
   };
   const [errors, setErrors] = useState(initialErrors);
-  const [sku, setSku] = useState(variantDetails?.sku);
-  const [price, setPrice] = useState(variantDetails?.price);
-  const [discountPrice, setDiscountPrice] = useState(variantDetails?.discount_price);
+  const [sku, setSku] = useState('');
+  const [price, setPrice] = useState('');
+  const [discountPrice, setDiscountPrice] = useState('');
   const [image, setImage] = useState(null);
-  const [stock, setStock] = useState(variantDetails?.stock);
-  const [isDefaultVariant, setIsDefaultVariant] = useState(variantDetails?.is_default_variant);
+  const [stock, setStock] = useState('');
+  const [isDefaultVariant, setIsDefaultVariant] = useState(false);
 
+  const [variantDetails, setVariantDetails] = useState(''); // for loading state
+
+  const getVariantDetails = async () => {
+    try {
+      const response = await axiosInstance.get(`/seller-panel-api/frontend/product-variant/${variantID}/get-variant-details/`);
+      setVariantDetails(response.data);
+
+      setSku(response.data?.sku || '');
+      setPrice(response.data?.price || '');
+      setDiscountPrice(response.data?.discount_price || '');
+      setStock(response.data?.stock || '');
+      setIsDefaultVariant(response.data?.is_default_variant || false);
+    } catch (error) {
+      console.log("Error fetching variant details", error);
+    }
+  };
+
+  // Fetch variant details when the component mounts or when variantID changes
+  useEffect(() => {
+    getVariantDetails();
+  }, [variantID]); // Re-fetch when `variantID` changes
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -61,7 +82,9 @@ function EditVariantPage({ productID, variantID, variantDetails }) {
       const formData = new FormData();
       formData.append('sku', sku);
       formData.append('price', price);
-      formData.append('discountPrice', discountPrice);
+      if (discountPrice) {
+        formData.append('discountPrice', discountPrice);
+      }
       formData.append('image', image);
       formData.append('stock', stock);
       formData.append('isDefaultVariant', isDefaultVariant);
@@ -78,6 +101,7 @@ function EditVariantPage({ productID, variantID, variantDetails }) {
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
+        router.refresh();
         router.push(`/product-list/generate-variant/${productID}`)
       } catch (error) {
         console.log(error);

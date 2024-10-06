@@ -34,7 +34,7 @@ function EditServicePage({ serviceDetails }) {
     const [compatibility, setCompatibility] = useState(serviceDetails?.compatability);
     const [price, setPrice] = useState(serviceDetails?.minimum_price);
     const [maxPrice, setMaxPrice] = useState(serviceDetails?.maximum_price);
-    const [isActive, setIsActive] = useState(serviceDetails?.is_active);
+    // const [isActive, setIsActive] = useState(serviceDetails?.is_active);
 
     const initialErrors = {
         name: '',
@@ -102,9 +102,9 @@ function EditServicePage({ serviceDetails }) {
         }
     }, [serviceDetails]);
 
-    const handleIsActive = () => {
-        setIsActive(!isActive)
-    };
+    // const handleIsActive = () => {
+    //     setIsActive(!isActive)
+    // };
 
     const handleCategoryChange = (selectedOption) => {
         setSelectedCategory(selectedOption);
@@ -295,7 +295,7 @@ function EditServicePage({ serviceDetails }) {
 
             formData.append('description', mainDesc);
             formData.append('compatability', compatibility);
-            formData.append('isActive', isActive);
+            // formData.append('isActive', isActive);
 
             try {
                 const response = await axiosInstance.put(`/seller-panel-api/frontend/service/${serviceDetails?.id}/update/`, formData, {
@@ -330,7 +330,7 @@ function EditServicePage({ serviceDetails }) {
                 setCompatibility('');
                 setPrice(null);
                 setMaxPrice(null);
-                setIsActive(false);
+                // setIsActive(false);
 
             } catch (error) {
                 console.error('Error:', error);
@@ -639,7 +639,7 @@ function EditServicePage({ serviceDetails }) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="d-flex gap-2 align-items-center">
+                                    {/* <div className="d-flex gap-2 align-items-center">
                                         <label className="switch">
                                             <span className="close-btn">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"
@@ -653,7 +653,7 @@ function EditServicePage({ serviceDetails }) {
                                             <span className="slider round"></span>
                                         </label>
                                         <p>Is Active</p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 
