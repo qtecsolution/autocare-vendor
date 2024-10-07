@@ -356,7 +356,7 @@ export default function AddVoucher({ voucherCreationData }) {
                     <div className="generate-random-code-section">
                       <div className="exclude-category">
                         <div className="row g-3">
-                          <div className="col-6 col-sm-4">
+                          <div className="col-12">
                             {!categoryShow && !productShow && (
                               <div className="box">
                                 <label className="category-select-label">
@@ -403,7 +403,7 @@ export default function AddVoucher({ voucherCreationData }) {
                             )}
                           </div>
 
-                          <div className="col-6 col-sm-4">
+                          <div className="col-12">
                             {!brandShow && !productShow && (
                               <div className="box">
                                 <label className="category-select-label">
@@ -448,7 +448,7 @@ export default function AddVoucher({ voucherCreationData }) {
                             )}
                           </div>
 
-                          <div className="col-6 col-sm-4">
+                          <div className="col-12">
                             {!productShow && (
                               <div className="box">
                                 <label className="category-select-label">
@@ -473,7 +473,7 @@ export default function AddVoucher({ voucherCreationData }) {
                           </div>
 
                           {productShow && (
-                            <div className="col-6 col-sm-4">
+                            <div className="col-12">
                               <div className="box">
                                 <label className="category-select-label">
                                   Product

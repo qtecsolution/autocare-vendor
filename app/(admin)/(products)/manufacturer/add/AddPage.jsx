@@ -1,17 +1,26 @@
 'use client'
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axiosInstance from '@/lib/axiosInstance';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import { useRouter } from 'next/navigation';
+import { getAuthUser } from '@/utils/auth';
 
 function AddPage() {
     const [step, setStep] = useState(1);
     const [manufacturerName, setManufacturerName] = useState('')
     const [manufacturerImage, setManufacturerImage] = useState(null)
     const router = useRouter();
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+      const businessType = sellerInfo?.business_type?.name;
+      if (businessType === "Service") {
+        router.push('/');
+      }
+    }, [sellerInfo, router]);
 
     const handleManufacturerImage = (e) => {
         setManufacturerImage(e.target.files[0]);

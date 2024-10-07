@@ -22,7 +22,6 @@ async function getVoucherCreationDta() {
 
 export default async function page({ params }) {
     const voucher = await getVoucher(params.id);
-    console.log("vocuhre:", voucher);
   const voucherCreationData = await getVoucherCreationDta();
   return (
     <EditVoucher voucherCreationData={voucherCreationData} voucher={voucher} />

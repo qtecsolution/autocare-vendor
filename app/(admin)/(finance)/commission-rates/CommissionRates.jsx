@@ -56,23 +56,45 @@ export default function CommissionRates({ categories }) {
     }
   }, [searchTerm]);
 
-  // Function to toggle visibility of category's children
-  const toggleCategory = categoryId => {
-    setExpandedCategories(prevState => ({
-      ...prevState,
-      [categoryId]: !prevState[categoryId],
-    }));
+  const toggleCategory = (categoryId) => {
+    setExpandedCategories((prevState) => {
+      const newState = {};
+
+      newState[categoryId] = !prevState[categoryId];
+      return newState;
+    });
   };
 
-  // Function to recursively render categories and their children
+  const toggleSubCategory = (subcategoryId, parentCategoryId) => {
+    setExpandedCategories((prevState) => {
+      const newState = {};
+
+      // Loop through all keys (categories and subcategories)
+      Object.keys(prevState).forEach((key) => {
+        // Keep unrelated categories/subcategories open
+        if (!key.startsWith(`${parentCategoryId}_`)) {
+          newState[key] = prevState[key];
+        }
+      });
+
+      // Toggle the clicked subcategory
+      newState[`${parentCategoryId}_${subcategoryId}`] = !prevState[`${parentCategoryId}_${subcategoryId}`];
+
+      return newState;
+    });
+  };
+
+  // Renders a category row with its subcategories
   const renderCategory = (category, level = 0) => {
+    const isExpanded = expandedCategories[category.id] || false;
+
     return (
       <React.Fragment key={category.id}>
         <tr>
           <td>
             <div
               className="d-flex align-items-center gap-2 commission-level"
-              style={{ paddingLeft: `${level * 20}px` }} // Indent based on level
+              style={{ paddingLeft: `${level * 20}px` }}
             >
               <figure>
                 {category.children && category.children.length > 0 && (
@@ -87,7 +109,7 @@ export default function CommissionRates({ categories }) {
                   >
                     <path
                       d={
-                        expandedCategories[category.id]
+                        isExpanded
                           ? 'M5 12.5L10 7.5L15 12.5' // Arrow up
                           : 'M5 7.5L10 12.5L15 7.5' // Arrow down
                       }
@@ -113,10 +135,69 @@ export default function CommissionRates({ categories }) {
           </td>
         </tr>
 
-        {/* Render children recursively if the category is expanded */}
-        {expandedCategories[category.id] &&
+        {isExpanded &&
           category.children &&
-          category.children.map(child => renderCategory(child, level + 1))}
+          category.children.map((child) => renderSubCategory(child, level + 1, category.id))}
+      </React.Fragment>
+    );
+  };
+
+  // Renders a subcategory row
+  const renderSubCategory = (subcategory, level, parentCategoryId) => {
+    const isExpanded = expandedCategories[`${parentCategoryId}_${subcategory.id}`] || false;
+
+    return (
+      <React.Fragment key={subcategory.id}>
+        <tr>
+          <td>
+            <div
+              className="d-flex align-items-center gap-2 commission-level"
+              style={{ paddingLeft: `${level * 20}px` }}
+            >
+              <figure>
+                {subcategory.children && subcategory.children.length > 0 && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    onClick={() => toggleSubCategory(subcategory.id, parentCategoryId)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <path
+                      d={
+                        isExpanded
+                          ? 'M5 12.5L10 7.5L15 12.5' // Arrow up
+                          : 'M5 7.5L10 12.5L15 7.5' // Arrow down
+                      }
+                      stroke="#98A2B3"
+                      strokeWidth="1.66667"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </figure>
+              <p
+                className="pice-text"
+                onClick={() => toggleSubCategory(subcategory.id, parentCategoryId)}
+                style={{ cursor: 'pointer', margin: 0 }}
+              >
+                {subcategory.name}
+              </p>
+            </div>
+          </td>
+          <td className="text-center">
+            <p className="pice-text">{subcategory.commission_rate || '-'}</p>
+          </td>
+        </tr>
+
+        {isExpanded &&
+          subcategory.children &&
+          subcategory.children.map((subChild) =>
+            renderSubCategory(subChild, level + 1, parentCategoryId)
+          )}
       </React.Fragment>
     );
   };

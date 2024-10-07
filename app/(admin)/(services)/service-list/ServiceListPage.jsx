@@ -7,6 +7,7 @@ import Pagination from '@/components/admin/Pagination';
 import { usePathname, useRouter } from "next/navigation";
 import Select from 'react-select';
 import EmptyServiceList from './EmptyServiceList';
+import { getAuthUser } from '@/utils/auth';
 
 function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
 
@@ -44,6 +45,14 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
     }, [searchQuery, currentPage, filter]);
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+        const businessType = sellerInfo?.business_type?.name;
+        if (businessType === "Product") {
+            router.push('/');
+        }
+    }, [sellerInfo, router]);
 
     return (
         <main id="content">
@@ -130,13 +139,12 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                                         <thead class="thead-light">
                                             <tr>
                                                 <th scope="col" class="product-info-header">
-                                                    <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" />
+                                                    {/* <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" /> */}
                                                     <label for="table-header-checkbox" tabindex="4">Product</label>
                                                 </th>
                                                 <th scope="col">Price</th>
                                                 {/* <th scope="col">Availabilities</th> */}
                                                 <th scope="col" class="text-center">booked</th>
-                                                <th scope="col" class="text-center">active</th>
                                                 <th scope="col" class="text-center">STATUS</th>
                                                 <th scope="col" class="text-center">ACTIONS</th>
                                             </tr>
@@ -146,7 +154,7 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                                                 <tr key={service?.id}>
                                                     <td class="product-info-inner">
                                                         <div class="product-info">
-                                                            <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox" />
+                                                            {/* <input class="table-body-checkbox" type="checkbox" id="table-body-checkbox" /> */}
                                                             <label class="d-flex align-items-center flex-shrink-0" for="table-body-checkbox" tabindex="4">
                                                                 <img class="product-image" src={service?.image} alt="Service Image" />
                                                             </label>
@@ -208,13 +216,7 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
 
                                                     <td class="text-center">
                                                         <p class="pice-text">
-                                                            50
-                                                        </p>
-                                                    </td>
-
-                                                    <td class="text-center">
-                                                        <p class="pice-text ">
-                                                            50
+                                                            {service?.service_booked_count}
                                                         </p>
                                                     </td>
 

@@ -176,8 +176,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
       }
     }
   }, [voucher]);
-  console.log('FormData:', formData);
-  console.log('voucher:', voucher);
+
   // Set initial selected categories for the excludeCategoryIds
   useEffect(() => {
     //exlcude category
@@ -493,7 +492,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
                     <div className="generate-random-code-section">
                       <div className="exclude-category">
                         <div className="row g-3">
-                          <div className="col-6 col-sm-4">
+                          <div className="col-12">
                             {!categoryShow && !productShow && (
                               <div className="box">
                                 <label className="category-select-label">
@@ -542,7 +541,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
                             )}
                           </div>
 
-                          <div className="col-6 col-sm-4">
+                          <div className="col-12">
                             {!brandShow && !productShow && (
                               <div className="box">
                                 <label className="category-select-label">
@@ -589,7 +588,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
                             )}
                           </div>
 
-                          <div className="col-6 col-sm-4">
+                          <div className="col-12">
                             {!productShow && (
                               <div className="box">
                                 <label className="category-select-label">
@@ -615,7 +614,7 @@ export default function EditVoucher({ voucherCreationData, voucher }) {
                           </div>
 
                           {productShow && (
-                            <div className="col-6 col-sm-4">
+                            <div className="col-12">
                               <div className="box">
                                 <label className="category-select-label">
                                   Product

@@ -6,11 +6,11 @@ import Select from 'react-select';
 import { usePathname, useRouter } from 'next/navigation';
 import Pagination from '@/components/admin/Pagination';
 import { formatDate } from '@/utils/formatDate';
+import { getAuthUser } from '@/utils/auth';
 
 function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
     const [currentPage, setCurrentPage] = useState(parseInt(pageProps) || 1);
     const totalPages = calculatedTotalPages;
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState('');
     const router = useRouter();
@@ -44,6 +44,13 @@ function BrandListPage({ allBrands, pageProps, calculatedTotalPages }) {
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
     }, [searchQuery, currentPage, filter]);
 
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+        const businessType = sellerInfo?.business_type?.name;
+        if (businessType === "Service") {
+            router.push('/');
+        }
+    }, [sellerInfo, router]);
 
     return (
         <main id="content">

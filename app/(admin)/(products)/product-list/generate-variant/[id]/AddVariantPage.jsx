@@ -8,6 +8,7 @@ import SuccessToast from '@/components/toast/Success';
 import Link from 'next/link';
 import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
 import { useRouter } from 'next/navigation';
+import { getAuthUser } from '@/utils/auth';
 
 function AddVariantPage({ variantData, productId }) {
   const [selectedOptions, setSelectedOptions] = useState([{ id: null, values: [] }]);
@@ -17,6 +18,14 @@ function AddVariantPage({ variantData, productId }) {
   const [selectedItemId, setSelectedItemId] = useState(null);
   const router = useRouter();
   const fileInputRefs = useRef({});
+
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const businessType = sellerInfo?.business_type?.name;
+    if (businessType === "Service") {
+      router.push('/');
+    }
+  }, [sellerInfo, router]);
 
   const handleImageClick = (variantId) => {
     fileInputRefs.current[variantId].click();

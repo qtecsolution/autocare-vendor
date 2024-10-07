@@ -5,6 +5,7 @@ import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/navigation';
+import { getAuthUser } from '@/utils/auth';
 
 function EditVariantPage({ productID, variantID }) {
 
@@ -22,6 +23,14 @@ function EditVariantPage({ productID, variantID }) {
   const [isDefaultVariant, setIsDefaultVariant] = useState(false);
 
   const [variantDetails, setVariantDetails] = useState(''); // for loading state
+
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const businessType = sellerInfo?.business_type?.name;
+    if (businessType === "Service") {
+      router.push('/');
+    }
+  }, [sellerInfo, router]);
 
   const getVariantDetails = async () => {
     try {

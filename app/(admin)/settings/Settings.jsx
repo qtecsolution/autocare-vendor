@@ -693,6 +693,7 @@ export default function Settings() {
                                 })
                               }
                               placeholder="Enter your birth date"
+                              max={new Date().toISOString().split("T")[0]}
                             />{' '}
                             {errors.dob && (
                               <span className="text-danger">{errors.dob}</span>

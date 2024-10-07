@@ -6,6 +6,7 @@ import SuccessToast from '@/components/toast/Success';
 import axiosInstance from '@/lib/axiosInstance';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { getAuthUser } from '@/utils/auth';
 
 function EditPage({ manufacturerDetails }) {
     const [step, setStep] = useState(1);
@@ -13,6 +14,14 @@ function EditPage({ manufacturerDetails }) {
     const [manufacturerImage, setManufacturerImage] = useState(null)
     const [imagePreview, setImagePreview] = useState(null);
     const router = useRouter();
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+      const businessType = sellerInfo?.business_type?.name;
+      if (businessType === "Service") {
+        router.push('/');
+      }
+    }, [sellerInfo, router]);
 
     const handleManufacturerImage = (e) => {
         setManufacturerImage(e.target.files[0]);

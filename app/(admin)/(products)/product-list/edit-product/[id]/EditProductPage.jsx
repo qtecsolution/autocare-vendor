@@ -9,6 +9,7 @@ import axiosWithBaseURL from '@/lib/axiosWithBaseURL';
 import axiosInstance from '@/lib/axiosInstance';
 import { useRouter } from 'next/navigation';
 import CustomCKEditor from '@/components/admin/CustomCKEditor';
+import { getAuthUser } from '@/utils/auth';
 
 function EditProductPage({ productDetails }) {
 
@@ -138,6 +139,13 @@ function EditProductPage({ productDetails }) {
     }
   };
 
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const businessType = sellerInfo?.business_type?.name;
+    if (businessType === "Service") {
+      router.push('/');
+    }
+  }, [sellerInfo, router]);
 
   useEffect(() => {
     if (thumbnail) {

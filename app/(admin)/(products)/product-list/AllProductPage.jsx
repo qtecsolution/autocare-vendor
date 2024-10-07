@@ -7,6 +7,7 @@ import Pagination from '@/components/admin/Pagination';
 import { usePathname, useRouter } from "next/navigation";
 import Select from 'react-select';
 import EmptyProductList from './EmptyProductList';
+import { getAuthUser } from '@/utils/auth';
 
 function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
 
@@ -64,6 +65,14 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
         const queryString = queryParams.toString();
         router.push(queryString ? `${pathname}/?${queryString}` : pathname, { scroll: false });
     }, [searchQuery, currentPage, filter]);
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+      const businessType = sellerInfo?.business_type?.name;
+      if (businessType === "Service") {
+        router.push('/');
+      }
+    }, [sellerInfo, router]);
 
     return (
         <main id="content">

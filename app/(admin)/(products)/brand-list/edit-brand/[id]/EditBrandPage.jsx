@@ -6,6 +6,7 @@ import SuccessToast from '@/components/toast/Success';
 import axiosInstance from '@/lib/axiosInstance';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { getAuthUser } from '@/utils/auth';
 
 function EditBrandPage({ brandDetails }) {
     const [step, setStep] = useState(1);
@@ -13,6 +14,14 @@ function EditBrandPage({ brandDetails }) {
     const [brandImage, setBrandImage] = useState(null)
     const [imagePreview, setImagePreview] = useState(null);
     const router = useRouter();
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+        const businessType = sellerInfo?.business_type?.name;
+        if (businessType === "Service") {
+            router.push('/');
+        }
+    }, [sellerInfo, router]);
 
     const handleBrandImage = (e) => {
         setBrandImage(e.target.files[0]);

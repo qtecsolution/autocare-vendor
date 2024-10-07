@@ -9,6 +9,7 @@ import SuccessToast from '@/components/toast/Success';
 import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import axiosInstance from '@/lib/axiosInstance';
+import { getAuthUser } from '@/utils/auth';
 
 function EditServicePage({ serviceDetails }) {
     const router = useRouter();
@@ -55,6 +56,18 @@ function EditServicePage({ serviceDetails }) {
         return Object.keys(newErrors).length === 0;
 
     };
+
+    const sellerInfo = getAuthUser();
+    useEffect(() => {
+        const businessType = sellerInfo?.business_type?.name;
+        if (businessType === "Product") {
+            router.push('/');
+        }
+    }, [sellerInfo, router]);
+
+    const stores = [
+        { value: sellerInfo?.store?.id, label: sellerInfo?.store?.name },
+    ]
 
     useEffect(() => {
         const fetchServiceData = async () => {
@@ -387,7 +400,18 @@ function EditServicePage({ serviceDetails }) {
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div className="box">
+                                            <label className="category-select-label">Store <span className='text-danger'>*</span></label>
+                                            <Select
+                                                name="store"
+                                                defaultValue={stores[0]}
+                                                options={stores}
+                                                // placeholder="Select Servicing Type"
+                                                // onChange={}
+                                                // value={}
+                                                isDisabled={true}
+                                            />
+                                        </div>
                                         <div className="category-select">
                                             <div className="box">
                                                 <label className="category-select-label">Select Category <span>*</span></label>
