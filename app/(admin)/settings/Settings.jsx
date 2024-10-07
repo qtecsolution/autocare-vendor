@@ -172,38 +172,40 @@ export default function Settings() {
   }, []);
 
   useEffect(() => {
-    // Set selected values based on user data
-    const divisionId = storeData?.divisionId;
-    const districtId = storeData?.districtId;
-    const cityId = storeData?.cityId;
-    // Find the selected division based on the divisionId
-    const oldDiv = divisions?.find(division => division.value === divisionId);
-    setSelectedDivision(oldDiv);
-
-    if (selectedDivision) {
-      const divisionDistrict = selectedDivision?.cities;
-      const updatedDistricts = divisionDistrict?.map(district => ({
-        value: district.id,
-        label: district.name,
-        thanas: district.thanas,
-      }));
-      setDistricts(updatedDistricts);
-      const oldDist = updatedDistricts?.find(
-        district => district.value === districtId
-      );
-      setSelectedDistrict(oldDist);
-      if (oldDist) {
-        const districtThana = oldDist?.thanas;
-        const cityOptions = districtThana?.map(thana => ({
-          value: thana.id,
-          label: thana.name,
+    if (divisions.length > 0) {
+      // Set selected values based on user data
+      const divisionId = storeData?.divisionId;
+      const districtId = storeData?.districtId;
+      const cityId = storeData?.cityId;
+  
+      const oldDiv = divisions.find(division => division.value === divisionId);
+      setSelectedDivision(oldDiv);
+  
+      if (oldDiv) {
+        const updatedDistricts = oldDiv.cities.map(district => ({
+          value: district.id,
+          label: district.name,
+          thanas: district.thanas,
         }));
-        setCities(cityOptions);
-        const oldCity = cityOptions?.find(city => city.value === cityId);
-        setSelectedCity(oldCity);
+        setDistricts(updatedDistricts);
+  
+        const oldDist = updatedDistricts.find(district => district.value === districtId);
+        setSelectedDistrict(oldDist);
+  
+        if (oldDist) {
+          const cityOptions = oldDist.thanas.map(thana => ({
+            value: thana.id,
+            label: thana.name,
+          }));
+          setCities(cityOptions);
+  
+          const oldCity = cityOptions.find(city => city.value === cityId);
+          setSelectedCity(oldCity);
+        }
       }
     }
   }, [divisions]);
+  
 
   useEffect(() => {
     if (thumbnail) {
