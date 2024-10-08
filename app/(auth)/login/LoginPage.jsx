@@ -46,13 +46,15 @@ function LoginPage() {
                     />
                 ));
             } catch (error) {
-                toast.custom((t) => (
-                    <AlertToast
-                        message={`Login failed ! ${error.response?.data?.detail || "Please try again later."
-                            }`}
-                        dismiss={() => toast.dismiss(t.id)}
-                    />
-                ));
+                console.log(error);
+                if (error?.response?.status === 401) {
+                    toast.custom((t) => (
+                        <AlertToast
+                            message="The phone number or password you entered is incorrect !"
+                            dismiss={() => toast.dismiss(t.id)}
+                        />
+                    ));
+                }
             }
         }
     }

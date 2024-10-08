@@ -11,6 +11,9 @@ import { useRouter } from 'next/navigation';
 import Otp from './Otp';
 import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
 import BankInfoPage from './BankInfoPage';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 export default function Settings() {
   const router = useRouter();
   const [errors, setErrors] = useState({});
@@ -457,6 +460,22 @@ export default function Settings() {
       console.error('Error updating profile:', error);
     }
   };
+
+  const handleDateChange = (date) => {
+    if (date) {
+      // Use UTC to avoid timezone issues
+      const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+      const formattedDate = utcDate.toISOString().split('T')[0]; // Convert to yyyy-mm-dd format
+
+      setUser({
+        ...user,
+        dob: formattedDate,
+      });
+    } else {
+      setUser({ ...user, dob: '' });
+    }
+  };
+
   return (
     <>
       <section className="settings-body">
@@ -680,21 +699,21 @@ export default function Settings() {
                                 <span className="text-danger">*</span>
                               </label>
                             </div>
-                            <input
-                              className="input-field"
-                              type="date"
-                              required
-                              id="start-date"
-                              value={user.dob}
-                              onChange={e =>
-                                setUser({
-                                  ...user,
-                                  dob: e.target.value,
-                                })
-                              }
-                              placeholder="Enter your birth date"
-                              max={new Date().toISOString().split("T")[0]}
-                            />{' '}
+                            <div>
+                              <DatePicker
+                                selected={user.dob ? new Date(user.dob) : null} // Convert to Date object for the DatePicker
+                                onChange={handleDateChange}
+                                dateFormat="dd/MM/yyyy" // Display format for the input field
+                                placeholderText="DD/MM/YYYY" // Placeholder text
+                                maxDate={new Date()} // Prevent selecting future dates
+                                showMonthDropdown
+                                showYearDropdown
+                                dropdownMode="select"
+                                className="input-field"
+                                wrapperClassName="date-picker-wrapper"
+                              />
+                            </div>
+                            {' '}
                             {errors.dob && (
                               <span className="text-danger">{errors.dob}</span>
                             )}

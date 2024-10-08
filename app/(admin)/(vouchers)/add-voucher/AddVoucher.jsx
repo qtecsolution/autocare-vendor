@@ -2,6 +2,7 @@
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import axiosInstance from '@/lib/axiosInstance';
+import { getAuthUser } from '@/utils/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -220,6 +221,24 @@ export default function AddVoucher({ voucherCreationData }) {
       inputRefTo.current.focus();
     }
   };
+
+  const isToastShown = useRef(false);
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const isVerified = sellerInfo?.store?.is_verified;
+    if (!isVerified) {
+      router.push('/');
+      if (!isToastShown.current) {
+        isToastShown.current = true;
+        toast.custom((t) => (
+          <AlertToast
+            message="Your store is not verified !"
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+      }
+    }
+  }, [sellerInfo, router]);
   return (
     <main id="content">
       <div className="inner-content">

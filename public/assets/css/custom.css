@@ -131,3 +131,59 @@
 .order-management-body-inner .thead-light th {
     z-index: 0 !important;
 }
+
+.date-picker-wrapper {
+    width: 100%;
+    /* Ensure the wrapper is full width */
+}
+
+.input-field {
+    width: 100%;
+    /* Input field should also be full width */
+}
+
+/* Custom styles for the date picker */
+.react-datepicker {
+    width: 100%;
+    /* Make the date picker full width */
+    border: 1px solid #ccc;
+    /* Add a border */
+    border-radius: 4px;
+    /* Rounded corners */
+}
+
+.react-datepicker__triangle {
+    display: none;
+    /* Hide the triangle */
+}
+
+.react-datepicker__header {
+    background-color: #f5f5f5;
+    /* Header background */
+    border-bottom: 1px solid #ccc;
+    /* Border below header */
+}
+
+.react-datepicker__current-month {
+    font-weight: bold;
+    /* Bold month text */
+}
+
+.react-datepicker__day {
+    margin: 0;
+    /* Remove margins */
+    padding: 10px;
+    /* Add padding for better click area */
+}
+
+.react-datepicker__day--selected {
+    background-color: #007bff;
+    /* Selected day background */
+    color: white;
+    /* Selected day text color */
+}
+
+.react-datepicker__day:hover {
+    background-color: #f0f0f0;
+    /* Hover effect for day */
+}

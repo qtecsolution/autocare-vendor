@@ -24,7 +24,26 @@ function EditBrandPage({ brandDetails }) {
     }, [sellerInfo, router]);
 
     const handleBrandImage = (e) => {
-        setBrandImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (file) {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = () => {
+                const { width, height } = img;
+                if (width === height) {
+                    // Valid 1:1 ratio, update thumbnail
+                    setBrandImage(file);
+                } else {
+                    // Show an error message if the image ratio is not 1:1
+                    toast.custom((t) => (
+                        <AlertToast
+                            message="Brand image must have a 1:1 aspect ratio."
+                            dismiss={() => toast.dismiss(t.id)}
+                        />
+                    ));
+                }
+            };
+        }
     };
     useEffect(() => {
         if (brandImage) {
@@ -137,6 +156,11 @@ function EditBrandPage({ brandDetails }) {
                                                 <p className="paragraph">{brandImage ? brandImage?.name : 'PNG, JPG & JPEG'}</p>
                                                 <input type="file" id="brandImage" accept=".png,.jpg,.jpeg" onChange={handleBrandImage} />
                                             </label>
+                                            <ul className="add-product-img-list">
+                                                <li>Image Ratio: 1:1 </li>
+                                                <li>Max file size: 1MB.</li>
+                                                <li>Format: png, jpg</li>
+                                            </ul>
                                         </div>
 
                                         <button className="login-btn" onClick={updateBrand}>

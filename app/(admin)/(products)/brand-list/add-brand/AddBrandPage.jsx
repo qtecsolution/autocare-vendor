@@ -12,6 +12,7 @@ function AddBrandPage() {
     const [step, setStep] = useState(1);
     const [brandName, setBrandName] = useState('')
     const [brandImage, setBrandImage] = useState(null)
+    const [imagePreview, setImagePreview] = useState(null);
     const router = useRouter();
 
     const isToastShown = useRef(false);
@@ -37,8 +38,37 @@ function AddBrandPage() {
     }, [sellerInfo, router]);
 
     const handleBrandImage = (e) => {
-        setBrandImage(e.target.files[0]);
+        const file = e.target.files[0];
+        if (file) {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = () => {
+                const { width, height } = img;
+                if (width === height) {
+                    // Valid 1:1 ratio, update thumbnail
+                    setBrandImage(file);
+                } else {
+                    // Show an error message if the image ratio is not 1:1
+                    toast.custom((t) => (
+                        <AlertToast
+                            message="Brand image must have a 1:1 aspect ratio."
+                            dismiss={() => toast.dismiss(t.id)}
+                        />
+                    ));
+                }
+            };
+        }
     };
+
+    useEffect(() => {
+        if (brandImage) {
+            const objectUrl = URL.createObjectURL(brandImage);
+            setImagePreview(objectUrl);
+
+            // Clean up the URL object when the component is unmounted or a new file is selected
+            return () => URL.revokeObjectURL(objectUrl);
+        }
+    }, [brandImage]);
 
     const applyForBrand = async (e) => {
         e.preventDefault();
@@ -119,11 +149,15 @@ function AddBrandPage() {
                                             </label>
                                             <label for="brandImage" className="upload-card">
                                                 <figure>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                        <path
-                                                            d="M6.66675 13.3333L10.0001 10M10.0001 10L13.3334 13.3333M10.0001 10V17.5M16.6667 13.9524C17.6847 13.1117 18.3334 11.8399 18.3334 10.4167C18.3334 7.88536 16.2814 5.83333 13.7501 5.83333C13.568 5.83333 13.3976 5.73833 13.3052 5.58145C12.2185 3.73736 10.2121 2.5 7.91675 2.5C4.46497 2.5 1.66675 5.29822 1.66675 8.75C1.66675 10.4718 2.36295 12.0309 3.48921 13.1613"
-                                                            stroke="#475467" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
-                                                    </svg>
+                                                    {imagePreview ? (
+                                                        <img src={imagePreview} alt="Selected Brand" />
+                                                    ) :
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                            <path
+                                                                d="M6.66675 13.3333L10.0001 10M10.0001 10L13.3334 13.3333M10.0001 10V17.5M16.6667 13.9524C17.6847 13.1117 18.3334 11.8399 18.3334 10.4167C18.3334 7.88536 16.2814 5.83333 13.7501 5.83333C13.568 5.83333 13.3976 5.73833 13.3052 5.58145C12.2185 3.73736 10.2121 2.5 7.91675 2.5C4.46497 2.5 1.66675 5.29822 1.66675 8.75C1.66675 10.4718 2.36295 12.0309 3.48921 13.1613"
+                                                                stroke="#475467" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round" />
+                                                        </svg>
+                                                    }
                                                 </figure>
                                                 <div className="d-flex align-items-center gap-1">
                                                     <p className="color-text">Click to upload</p>
@@ -132,6 +166,11 @@ function AddBrandPage() {
                                                 <p className="paragraph">{brandImage ? brandImage?.name : 'PNG, JPG & JPEG'}</p>
                                                 <input type="file" id="brandImage" accept=".png,.jpg,.jpeg" onChange={handleBrandImage} />
                                             </label>
+                                            <ul className="add-product-img-list">
+                                                <li>Image Ratio: 1:1 </li>
+                                                <li>Max file size: 1MB.</li>
+                                                <li>Format: png, jpg</li>
+                                            </ul>
                                         </div>
 
                                         <button className="login-btn" onClick={applyForBrand}>

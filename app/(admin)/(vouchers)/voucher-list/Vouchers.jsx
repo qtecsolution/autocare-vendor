@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import axiosInstance from '@/lib/axiosInstance';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
 import SuccessToast from '@/components/toast/Success';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { getAuthUser } from '@/utils/auth';
 function Vouchers() {
   const router = useRouter();
 
@@ -133,6 +134,25 @@ function Vouchers() {
       `/voucher-list/?filter_by=${filterBy}&page=${curP}&page_size=${pageSize}`
     );
   };
+
+  const isToastShown = useRef(false);
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const isVerified = sellerInfo?.store?.is_verified;
+    if (!isVerified) {
+      router.push('/');
+      if (!isToastShown.current) {
+        isToastShown.current = true;
+        toast.custom((t) => (
+          <AlertToast
+            message="Your store is not verified !"
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+      }
+    }
+  }, [sellerInfo, router]);
+
   return (
     <main id="content">
       <div className="inner-content">
