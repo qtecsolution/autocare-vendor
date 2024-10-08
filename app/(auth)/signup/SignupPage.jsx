@@ -138,8 +138,23 @@ function SignupPage() {
         }
     }
 
+    const ClearOldOTP = () => {
+        setOtp('');
+        inputsRef.current.forEach((input) => {
+            if (input) {
+                input.value = '';
+            }
+        });
+
+        if (inputsRef.current[0]) {
+            inputsRef.current[0].focus();
+        }
+        updateOtp();
+    }
+
     const resendOTP = async (event) => {
         event.preventDefault();
+        ClearOldOTP();
         const phoneNumberRegex = /^\d{11,}$/;
         if (!phoneNumberRegex.test(phoneNumber)) {
             toast.custom((t) => (

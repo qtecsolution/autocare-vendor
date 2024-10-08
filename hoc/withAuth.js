@@ -23,9 +23,12 @@ const withAuth = (WrappedComponent) => {
           if (response.status !== 200 || response.data.code === 'token_not_valid') {
             throw new Error('Token is invalid or expired');
           }
+          const { seller } = response.data;
+          localStorage.setItem("seller", JSON.stringify(seller));
         } catch (error) {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
+          localStorage.removeItem('seller');
           await deleteAccessToken();
           await deleteRefreshToken();
 

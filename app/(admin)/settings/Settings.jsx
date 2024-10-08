@@ -122,7 +122,7 @@ export default function Settings() {
     const fetchUserData = async () => {
       try {
         const user = await getAuthUser();
-        console.log('user:', user);
+
         setUser({
           fullName: user.full_name || '',
           email: user.email || '',
@@ -131,15 +131,15 @@ export default function Settings() {
           dob: user.birth_date || '',
         });
         setStore({
-          name: user.store.name || '',
-          location: user.store.address || '',
-          city: user.store.city.name || '',
-          logo: user.store.logo || '',
-          divisionId: user.store.division.id || '',
-          districtId: user.store.city.id || '',
-          cityId: user.store.thana.id || '',
-          banner: user.store.banner || '',
-          businessTypeId: user.business_type.id || '',
+          businessTypeId: user?.business_type?.id || '',
+          name: user?.store?.name || '',
+          location: user?.store?.address || '',
+          city: user?.store?.city?.name || '',
+          logo: user?.store?.logo || '',
+          divisionId: user?.store?.division?.id || '',
+          districtId: user?.store?.city?.id || '',
+          cityId: user?.store?.thana?.id || '',
+          banner: user?.store?.banner || '',
         });
         setShowSecPhoneInput(user.secondary_phone_number ? true : false);
         setThumbnailPreview(user.store.logo);
@@ -177,10 +177,10 @@ export default function Settings() {
       const divisionId = storeData?.divisionId;
       const districtId = storeData?.districtId;
       const cityId = storeData?.cityId;
-  
+
       const oldDiv = divisions.find(division => division.value === divisionId);
       setSelectedDivision(oldDiv);
-  
+
       if (oldDiv) {
         const updatedDistricts = oldDiv.cities.map(district => ({
           value: district.id,
@@ -188,24 +188,24 @@ export default function Settings() {
           thanas: district.thanas,
         }));
         setDistricts(updatedDistricts);
-  
+
         const oldDist = updatedDistricts.find(district => district.value === districtId);
         setSelectedDistrict(oldDist);
-  
+
         if (oldDist) {
           const cityOptions = oldDist.thanas.map(thana => ({
             value: thana.id,
             label: thana.name,
           }));
           setCities(cityOptions);
-  
+
           const oldCity = cityOptions.find(city => city.value === cityId);
           setSelectedCity(oldCity);
         }
       }
     }
   }, [divisions]);
-  
+
 
   useEffect(() => {
     if (thumbnail) {

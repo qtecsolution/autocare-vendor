@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import axiosInstance from '@/lib/axiosInstance';
 import toast from 'react-hot-toast';
 import AlertToast from '@/components/toast/AlertToast';
@@ -14,11 +14,25 @@ function AddBrandPage() {
     const [brandImage, setBrandImage] = useState(null)
     const router = useRouter();
 
+    const isToastShown = useRef(false);
     const sellerInfo = getAuthUser();
     useEffect(() => {
         const businessType = sellerInfo?.business_type?.name;
         if (businessType === "Service") {
             router.push('/');
+        }
+        const isVerified = sellerInfo?.store?.is_verified;
+        if (!isVerified) {
+            router.push('/');
+            if (!isToastShown.current) {
+                isToastShown.current = true;
+                toast.custom((t) => (
+                    <AlertToast
+                        message="Your store is not verified !"
+                        dismiss={() => toast.dismiss(t.id)}
+                    />
+                ));
+            }
         }
     }, [sellerInfo, router]);
 

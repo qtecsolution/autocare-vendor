@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import GlobalSearch from '@/components/admin/GlobalSearch'
 import CustomQuillEditor from '@/components/admin/CustomQuill';
@@ -37,12 +37,25 @@ function AddServicePage() {
     const [maxPrice, setMaxPrice] = useState(null);
     // const [isActive, setIsActive] = useState(false);
 
-
+    const isToastShown = useRef(false);
     const sellerInfo = getAuthUser();
     useEffect(() => {
         const businessType = sellerInfo?.business_type?.name;
         if (businessType === "Product") {
             router.push('/');
+        }
+        const isVerified = sellerInfo?.store?.is_verified;
+        if (!isVerified) {
+            router.push('/');
+            if (!isToastShown.current) {
+                isToastShown.current = true;
+                toast.custom((t) => (
+                    <AlertToast
+                        message="Your store is not verified !"
+                        dismiss={() => toast.dismiss(t.id)}
+                    />
+                ));
+            }
         }
     }, [sellerInfo, router]);
 
