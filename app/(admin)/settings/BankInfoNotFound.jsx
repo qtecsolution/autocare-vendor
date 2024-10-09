@@ -1,6 +1,6 @@
 import React from 'react'
 
-function BankInfoNotFound() {
+function BankInfoNotFound({setStep}) {
   return (
     <div className="profile-section">
       <div className="profile-section-inner">
@@ -16,7 +16,7 @@ function BankInfoNotFound() {
                 You don’t have any billing method yet. Please add a bank account to get payment.
               </p>
 
-              <button className="new-campaign-btn px-5">
+              <button className="new-campaign-btn px-5" onClick={()=>setStep(2)}>
                 <span>
                   + Add Bank
                 </span>

@@ -1,16 +1,16 @@
-'use client';
-import AlertToast from '@/components/toast/AlertToast';
-import SuccessToast from '@/components/toast/Success';
-import axiosInstance from '@/lib/axiosInstance';
-import { BUSINESS_TYPE } from '@/lib/businessType';
-import { getAuthUser } from '@/utils/auth';
-import React, { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
-import Select from 'react-select';
-import { useRouter } from 'next/navigation';
-import Otp from './Otp';
-import ConfirmModal from '@/components/admin/confirm-modal/ConfirmModal';
-import BankInfoPage from './BankInfoPage';
+"use client";
+import AlertToast from "@/components/toast/AlertToast";
+import SuccessToast from "@/components/toast/Success";
+import axiosInstance from "@/lib/axiosInstance";
+import { BUSINESS_TYPE } from "@/lib/businessType";
+import { getAuthUser } from "@/utils/auth";
+import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import Select from "react-select";
+import { useRouter } from "next/navigation";
+import Otp from "./Otp";
+import ConfirmModal from "@/components/admin/confirm-modal/ConfirmModal";
+import BankInfoPage from "./BankInfoPage";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -20,27 +20,27 @@ export default function Settings() {
   const [showOtp, setShowOtp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    phone2: '',
-    dob: '',
+    fullName: "",
+    email: "",
+    phone: "",
+    phone2: "",
+    dob: "",
   });
   const [security, setSecurity] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [storeData, setStore] = useState({
-    businessTypeId: '',
-    name: '',
-    location: '',
-    divisionId: '',
-    districtId: '',
-    cityId: '',
-    thanaId: '',
-    logo: '',
-    banner: '',
+    businessTypeId: "",
+    name: "",
+    location: "",
+    divisionId: "",
+    districtId: "",
+    cityId: "",
+    thanaId: "",
+    logo: "",
+    banner: "",
   });
   const [loading, setLoading] = useState(true);
   const [showSecPhoneInput, setShowSecPhoneInput] = useState(false);
@@ -56,11 +56,100 @@ export default function Settings() {
   const [mainImage, setMainImage] = useState(null);
   const [mainImagePreview, setMainImagePreview] = useState(null);
 
+  const [location, setLocation] = useState({
+    latitude: null,
+    longitude: null,
+  });
+
+  const [timeSlots, setTimeSlots] = useState([
+    { slot: 1, openingTime: "", closingTime: "" },
+  ]);
+
+  const time_slot_options = [
+    { value: 1, label: "Morning" },
+    { value: 2, label: "Noon" },
+    { value: 3, label: "Afternoon" },
+    { value: 4, label: "Evening" },
+  ];
+
+  const addTimeSlot = () => {
+    if (timeSlots.length < 4) {
+      setTimeSlots([
+        ...timeSlots,
+        { slot: timeSlots.length + 1, openingTime: "", closingTime: "" },
+      ]);
+    }
+  };
+
+  const handleTimeSlotChange = (index, field, value) => {
+    const updatedTimeSlots = [...timeSlots];
+    updatedTimeSlots[index][field] = value;
+    setTimeSlots(updatedTimeSlots);
+  };
+
+  const getLocation = (e) => {
+    e.preventDefault();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          // Handle different error codes
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              toast.custom((t) => (
+                <AlertToast
+                  message="User denied the request for Geolocation."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+            case error.POSITION_UNAVAILABLE:
+              toast.custom((t) => (
+                <AlertToast
+                  message="Location information is unavailable."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+            case error.TIMEOUT:
+              toast.custom((t) => (
+                <AlertToast
+                  message="The request to get user location timed out."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+            default:
+              toast.custom((t) => (
+                <AlertToast
+                  message="An unknown error occurred."
+                  dismiss={() => toast.dismiss(t.id)}
+                />
+              ));
+              break;
+          }
+        }
+      );
+    } else {
+      toast.custom((t) => (
+        <AlertToast
+          message="Geolocation is not supported by this browser."
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+    }
+  };
+
   //confrim modal start
   const [isConfirmModalOpen1, setIsConfirmModalOpen1] = useState(false);
   const openConfirmModal1 = () => {
     if (!isValidateFields()) {
-      toast.custom(t => (
+      toast.custom((t) => (
         <AlertToast
           message="Please Enter All Required Fields"
           dismiss={() => toast.dismiss(t.id)}
@@ -77,7 +166,7 @@ export default function Settings() {
   const [isConfirmModalOpen2, setIsConfirmModalOpen2] = useState(false);
   const openConfirmModal2 = () => {
     if (!isValidateBussinessFields()) {
-      toast.custom(t => (
+      toast.custom((t) => (
         <AlertToast
           message="Please Enter All Required Fields"
           dismiss={() => toast.dismiss(t.id)}
@@ -95,11 +184,11 @@ export default function Settings() {
   const openConfirmModal3 = () => {
     setErrors({});
     if (
-      security.newPassword.trim() == '' ||
-      security.confirmPassword.trim() == '' ||
-      security.currentPassword.trim() == ''
+      security.newPassword.trim() == "" ||
+      security.confirmPassword.trim() == "" ||
+      security.currentPassword.trim() == ""
     ) {
-      toast.custom(t => (
+      toast.custom((t) => (
         <AlertToast
           message="Please Enter All Required Fields"
           dismiss={() => toast.dismiss(t.id)}
@@ -108,9 +197,9 @@ export default function Settings() {
       return;
     }
     if (security.newPassword.trim() !== security.confirmPassword.trim()) {
-      setErrors(prevErrors => ({
+      setErrors((prevErrors) => ({
         ...prevErrors,
-        confirmPassword: 'Confirm password does not matched',
+        confirmPassword: "Confirm password does not matched",
       }));
       return;
     }
@@ -127,28 +216,42 @@ export default function Settings() {
         const user = await getAuthUser();
 
         setUser({
-          fullName: user.full_name || '',
-          email: user.email || '',
-          phone: user.phone_number || '',
-          phone2: user.secondary_phone_number || '',
-          dob: user.birth_date || '',
+          fullName: user.full_name || "",
+          email: user.email || "",
+          phone: user.phone_number || "",
+          phone2: user.secondary_phone_number || "",
+          dob: user.birth_date || "",
         });
         setStore({
-          businessTypeId: user?.business_type?.id || '',
-          name: user?.store?.name || '',
-          location: user?.store?.address || '',
-          city: user?.store?.city?.name || '',
-          logo: user?.store?.logo || '',
-          divisionId: user?.store?.division?.id || '',
-          districtId: user?.store?.city?.id || '',
-          cityId: user?.store?.thana?.id || '',
-          banner: user?.store?.banner || '',
+          businessTypeId: user?.business_type?.id || "",
+          name: user?.store?.name || "",
+          location: user?.store?.address || "",
+          city: user?.store?.city?.name || "",
+          logo: user?.store?.logo || "",
+          divisionId: user?.store?.division?.id || "",
+          districtId: user?.store?.city?.id || "",
+          cityId: user?.store?.thana?.id || "",
+          banner: user?.store?.banner || "",
         });
         setShowSecPhoneInput(user.secondary_phone_number ? true : false);
         setThumbnailPreview(user.store.logo);
         setMainImagePreview(user.store.banner_image);
+
+        setLocation({
+          latitude: parseFloat(user?.store?.latitude),
+          longitude: parseFloat(user?.store?.longitude),
+        });
+
+        if (user?.store?.time_slots && user?.store?.time_slots?.length) {
+          const initialSlots = user?.store?.time_slots.map((slot) => ({
+            slot: slot.time_slot, // Map time_slot to slot
+            openingTime: slot.opening_time, // Map opening_time to openingTime
+            closingTime: slot.closing_time, // Map closing_time to closingTime
+          }));
+          setTimeSlots(initialSlots);
+        }
       } catch (error) {
-        console.error('Failed to fetch user data:', error);
+        console.error("Failed to fetch user data:", error);
       } finally {
         setLoading(false);
       }
@@ -156,10 +259,10 @@ export default function Settings() {
     const fetchPlaces = async () => {
       try {
         const response = await axiosInstance.get(
-          '/seller-panel-api/setup-business/'
+          "/seller-panel-api/setup-business/"
         );
         const places = response.data.places;
-        const divisionOptions = places.map(place => ({
+        const divisionOptions = places.map((place) => ({
           value: place.id,
           label: place.name,
           cities: place.cities,
@@ -167,12 +270,12 @@ export default function Settings() {
 
         setDivisions(divisionOptions);
       } catch (error) {
-        console.error('Error fetching places:', error);
+        console.error("Error fetching places:", error);
       }
     };
     fetchPlaces();
     fetchUserData();
-  }, []);
+  }, [user?.store?.time_slots]);
 
   useEffect(() => {
     if (divisions.length > 0) {
@@ -181,34 +284,37 @@ export default function Settings() {
       const districtId = storeData?.districtId;
       const cityId = storeData?.cityId;
 
-      const oldDiv = divisions.find(division => division.value === divisionId);
+      const oldDiv = divisions.find(
+        (division) => division.value === divisionId
+      );
       setSelectedDivision(oldDiv);
 
       if (oldDiv) {
-        const updatedDistricts = oldDiv.cities.map(district => ({
+        const updatedDistricts = oldDiv.cities.map((district) => ({
           value: district.id,
           label: district.name,
           thanas: district.thanas,
         }));
         setDistricts(updatedDistricts);
 
-        const oldDist = updatedDistricts.find(district => district.value === districtId);
+        const oldDist = updatedDistricts.find(
+          (district) => district.value === districtId
+        );
         setSelectedDistrict(oldDist);
 
         if (oldDist) {
-          const cityOptions = oldDist.thanas.map(thana => ({
+          const cityOptions = oldDist.thanas.map((thana) => ({
             value: thana.id,
             label: thana.name,
           }));
           setCities(cityOptions);
 
-          const oldCity = cityOptions.find(city => city.value === cityId);
+          const oldCity = cityOptions.find((city) => city.value === cityId);
           setSelectedCity(oldCity);
         }
       }
     }
   }, [divisions]);
-
 
   useEffect(() => {
     if (thumbnail) {
@@ -226,11 +332,11 @@ export default function Settings() {
     }
   }, [mainImage]);
   if (loading) return <div>Loading...</div>;
-  const handleDivisionChange = selectedOption => {
+  const handleDivisionChange = (selectedOption) => {
     setSelectedDivision(selectedOption);
     const divisionCities = selectedOption.cities;
 
-    const districtOptions = divisionCities.map(city => ({
+    const districtOptions = divisionCities.map((city) => ({
       value: city.id,
       label: city.name,
       thanas: city.thanas, // Store thanas to filter cities later
@@ -242,11 +348,11 @@ export default function Settings() {
     setSelectedCity(null); // Reset city selection
   };
 
-  const handleDistrictChange = selectedOption => {
+  const handleDistrictChange = (selectedOption) => {
     setSelectedDistrict(selectedOption);
 
     // Map cities based on the selected district
-    const cityOptions = selectedOption.thanas.map(thana => ({
+    const cityOptions = selectedOption.thanas.map((thana) => ({
       value: thana.id,
       label: thana.name,
     }));
@@ -255,7 +361,7 @@ export default function Settings() {
     setSelectedCity(null);
   };
 
-  const handleThumbnailImage = e => {
+  const handleThumbnailImage = (e) => {
     const file = e.target.files[0];
     if (file) {
       const img = new Image();
@@ -267,9 +373,9 @@ export default function Settings() {
           setThumbnail(file);
         } else {
           // Show an error message if the image ratio is not 1:1
-          toast.custom(t => (
+          toast.custom((t) => (
             <AlertToast
-              message="Thumbnail must have a 1:1 aspect ratio."
+              message="Business logo must have a 1:1 aspect ratio."
               dismiss={() => toast.dismiss(t.id)}
             />
           ));
@@ -278,25 +384,25 @@ export default function Settings() {
     }
   };
 
-  const removeThumbnailImage = e => {
+  const removeThumbnailImage = (e) => {
     e.preventDefault();
     setThumbnail(null);
     setThumbnailPreview(null);
   };
 
-  const handleMainImage = e => {
+  const handleMainImage = (e) => {
     const file = e.target.files[0];
     if (file) {
       const img = new Image();
       img.src = URL.createObjectURL(file);
       img.onload = () => {
         const { width, height } = img;
-        if (true) {
+        if (width === 1278 && height === 243) {
           setMainImage(file);
         } else {
-          toast.custom(t => (
+          toast.custom((t) => (
             <AlertToast
-              message="Thumbnail must have a 1:1 aspect ratio."
+              message="Cover photo must be exactly 1278x243 pixels."
               dismiss={() => toast.dismiss(t.id)}
             />
           ));
@@ -304,7 +410,7 @@ export default function Settings() {
       };
     }
   };
-  const removeMainImage = e => {
+  const removeMainImage = (e) => {
     e.preventDefault();
     setMainImage(null);
     setMainImagePreview(null);
@@ -315,19 +421,19 @@ export default function Settings() {
     let tempErrors = {};
 
     if (!user.fullName.trim()) {
-      tempErrors.fullName = 'Full Name Required';
+      tempErrors.fullName = "Full Name Required";
     }
 
     if (!user.email.trim()) {
-      tempErrors.email = 'Email is required';
+      tempErrors.email = "Email is required";
     }
 
     if (!user.phone.trim()) {
-      tempErrors.phone = 'Phone required';
+      tempErrors.phone = "Phone required";
     }
 
     if (!user.dob.trim()) {
-      tempErrors.dob = 'Date of birth required';
+      tempErrors.dob = "Date of birth required";
     }
 
     setErrors(tempErrors);
@@ -338,18 +444,18 @@ export default function Settings() {
   const handleUserUpdate = async () => {
     try {
       const formData = new FormData();
-      formData.append('fullName', user.fullName);
-      formData.append('email', user.email);
-      formData.append('phone', user.phone2);
-      formData.append('secondaryPhoneNumber', user.phone2);
-      formData.append('dateOfBirth', user.dob);
+      formData.append("fullName", user.fullName);
+      formData.append("email", user.email);
+      formData.append("phone", user.phone2);
+      formData.append("secondaryPhoneNumber", user.phone2);
+      formData.append("dateOfBirth", user.dob);
       const response = await axiosInstance.put(
-        '/seller-panel-api/seller-profile/',
+        "/seller-panel-api/seller-profile/",
         formData
       );
-      localStorage.setItem('seller', JSON.stringify(response.data.seller));
+      localStorage.setItem("seller", JSON.stringify(response.data.seller));
       closeConfirmModal1();
-      toast.custom(t => (
+      toast.custom((t) => (
         <SuccessToast
           message="Seller Profile Updated Successfully"
           dismiss={() => toast.dismiss(t.id)}
@@ -357,8 +463,8 @@ export default function Settings() {
       ));
     } catch (error) {
       closeConfirmModal1();
-      console.error('Error updating profile:', error);
-      toast.custom(t => (
+      console.error("Error updating profile:", error);
+      toast.custom((t) => (
         <AlertToast
           message="Failed to update profile. Please try again."
           dismiss={() => toast.dismiss(t.id)}
@@ -371,22 +477,22 @@ export default function Settings() {
     let tempErrors = {};
 
     if (!storeData.businessTypeId) {
-      tempErrors.businessTypeId = 'Business Type is required';
+      tempErrors.businessTypeId = "Business Type is required";
     }
     if (!storeData.name.trim()) {
-      tempErrors.storeName = 'Store Name is required';
+      tempErrors.storeName = "Store Name is required";
     }
-    if (!storeData.location.trim()) {
-      tempErrors.location = 'Location is required';
+    if (!location) {
+      tempErrors.location = "Location is required";
     }
     if (!selectedDivision?.value) {
-      tempErrors.division = 'Division is required';
+      tempErrors.division = "Division is required";
     }
     if (!selectedDistrict?.value) {
-      tempErrors.district = 'District is required';
+      tempErrors.district = "District is required";
     }
     if (!selectedCity?.value) {
-      tempErrors.city = 'City is required';
+      tempErrors.city = "City is required";
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -396,31 +502,35 @@ export default function Settings() {
   const handleBusinessUpdate = async () => {
     try {
       const formData = new FormData();
-      formData.append('accountType', storeData.businessTypeId);
-      formData.append('storeName', storeData.name);
-      formData.append('location', storeData.location);
-      formData.append('divisionId', selectedDivision?.value);
-      formData.append('cityId', selectedDistrict?.value);
-      formData.append('thanaId', selectedCity?.value);
+      formData.append("accountType", storeData.businessTypeId);
+      formData.append("storeName", storeData.name);
+      formData.append("latitude", location.latitude);
+      formData.append("longitude", location.longitude);
+      formData.append("divisionId", selectedDivision?.value);
+      formData.append("cityId", selectedDistrict?.value);
+      formData.append("thanaId", selectedCity?.value);
+      if (storeData?.businessTypeId !== 1 && timeSlots) {
+        formData.append("timeSlot", JSON.stringify(timeSlots));
+      }
       if (thumbnail) {
-        formData.append('logo', thumbnail);
+        formData.append("logo", thumbnail);
       }
       if (mainImage) {
-        formData.append('bannerImage', mainImage);
+        formData.append("bannerImage", mainImage);
       }
       const response = await axiosInstance.put(
-        '/seller-panel-api/update-business/',
+        "/seller-panel-api/update-business/",
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      localStorage.setItem('seller', JSON.stringify(response.data.seller));
+      localStorage.setItem("seller", JSON.stringify(response.data.seller));
       closeConfirmModal2();
       router.refresh();
-      toast.custom(t => (
+      toast.custom((t) => (
         <SuccessToast
           message="Business Profile Updated Successfully"
           dismiss={() => toast.dismiss(t.id)}
@@ -428,8 +538,8 @@ export default function Settings() {
       ));
     } catch (error) {
       closeConfirmModal2();
-      console.error('Error updating profile:', error);
-      toast.custom(t => (
+      console.error("Error updating profile:", error);
+      toast.custom((t) => (
         <AlertToast
           message={error.response.data.message}
           dismiss={() => toast.dismiss(t.id)}
@@ -441,38 +551,40 @@ export default function Settings() {
   const handlePasswordUpdate = async () => {
     try {
       const formData = new FormData();
-      formData.append('currentPassword', security.currentPassword);
-      formData.append('newPassword', security.newPassword);
+      formData.append("currentPassword", security.currentPassword);
+      formData.append("newPassword", security.newPassword);
       const response = await axiosInstance.post(
-        '/seller-panel-api/request-for-change-password/',
+        "/seller-panel-api/request-for-change-password/",
         formData
       );
       closeConfirmModal3();
       setShowOtp(true);
     } catch (error) {
       closeConfirmModal3();
-      toast.custom(t => (
+      toast.custom((t) => (
         <AlertToast
           message={error.response.data.message}
           dismiss={() => toast.dismiss(t.id)}
         />
       ));
-      console.error('Error updating profile:', error);
+      console.error("Error updating profile:", error);
     }
   };
 
   const handleDateChange = (date) => {
     if (date) {
       // Use UTC to avoid timezone issues
-      const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-      const formattedDate = utcDate.toISOString().split('T')[0]; // Convert to yyyy-mm-dd format
+      const utcDate = new Date(
+        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+      );
+      const formattedDate = utcDate.toISOString().split("T")[0]; // Convert to yyyy-mm-dd format
 
       setUser({
         ...user,
         dob: formattedDate,
       });
     } else {
-      setUser({ ...user, dob: '' });
+      setUser({ ...user, dob: "" });
     }
   };
 
@@ -515,9 +627,16 @@ export default function Settings() {
                   Business
                 </button>
 
-                <button class="basic-info" id="bankInformation-tab" data-bs-toggle="tab"
-                  data-bs-target="#bankInformation" type="button" role="tab" aria-controls="bankInformation"
-                  aria-selected="false">
+                <button
+                  class="basic-info"
+                  id="bankInformation-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#bankInformation"
+                  type="button"
+                  role="tab"
+                  aria-controls="bankInformation"
+                  aria-selected="false"
+                >
                   Bank Information
                 </button>
 
@@ -587,7 +706,7 @@ export default function Settings() {
                               required
                               name=""
                               value={user.fullName}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setUser({
                                   ...user,
                                   fullName: e.target.value,
@@ -606,7 +725,7 @@ export default function Settings() {
                           <div className="input-inner">
                             <div className="label-inner">
                               <label for="number" className="input-label">
-                                Mobile Number{' '}
+                                Mobile Number{" "}
                                 <span className="text-danger">*</span>
                               </label>
                               <p
@@ -624,14 +743,14 @@ export default function Settings() {
                               name=""
                               id="number"
                               value={user.phone}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setUser({
                                   ...user,
                                   phone: e.target.value,
                                 })
                               }
                               placeholder="Enter your phone"
-                            />{' '}
+                            />{" "}
                             {errors.phone && (
                               <span className="text-danger">
                                 {errors.phone}
@@ -644,7 +763,7 @@ export default function Settings() {
                                   type="text"
                                   id="number"
                                   value={user.phone2}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     setUser({
                                       ...user,
                                       phone2: e.target.value,
@@ -664,7 +783,7 @@ export default function Settings() {
                           <div className="input-inner">
                             <div className="label-inner">
                               <label for="Email" className="input-label">
-                                Email Address{' '}
+                                Email Address{" "}
                                 <span className="text-danger">*</span>
                               </label>
                               {/* <p className="add-another">Verify Email</p> */}
@@ -677,7 +796,7 @@ export default function Settings() {
                               name=""
                               id="Email"
                               value={user.email}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setUser({
                                   ...user,
                                   email: e.target.value,
@@ -695,7 +814,7 @@ export default function Settings() {
                           <div className="input-inner">
                             <div className="label-inner">
                               <label for="start-date" className="input-label">
-                                Date of Birth{' '}
+                                Date of Birth{" "}
                                 <span className="text-danger">*</span>
                               </label>
                             </div>
@@ -712,8 +831,7 @@ export default function Settings() {
                                 className="input-field"
                                 wrapperClassName="date-picker-wrapper"
                               />
-                            </div>
-                            {' '}
+                            </div>{" "}
                             {errors.dob && (
                               <span className="text-danger">{errors.dob}</span>
                             )}
@@ -787,26 +905,26 @@ export default function Settings() {
                                   for="accountType"
                                   className="input-label"
                                 >
-                                  Account Type{' '}
+                                  Account Type{" "}
                                   <span className="text-danger">*</span>
                                 </label>
                                 {/* <p className="add-another">Apply for garage</p> */}
                               </div>
                               <Select
                                 name="accountType"
-                                options={BUSINESS_TYPE.map(type => ({
+                                options={BUSINESS_TYPE.map((type) => ({
                                   value: type.id,
                                   label: type.label,
                                 }))}
                                 placeholder="Select Business Type"
-                                onChange={option =>
+                                onChange={(option) =>
                                   setStore({
                                     ...storeData,
                                     businessTypeId: Number(option.value),
                                   })
                                 }
                                 value={BUSINESS_TYPE.find(
-                                  type => type.id === storeData.businessTypeId
+                                  (type) => type.id === storeData.businessTypeId
                                 )}
                               />
                               {errors.businessTypeId && (
@@ -819,7 +937,7 @@ export default function Settings() {
                             <div className="input-inner">
                               <div className="label-inner">
                                 <label for="storeName" className="input-label">
-                                  Store Name{' '}
+                                  Store Name{" "}
                                   <span className="text-danger">*</span>
                                 </label>
                                 {/* <p className="add-another">Request for change</p> */}
@@ -831,7 +949,7 @@ export default function Settings() {
                                 name=""
                                 id="storeName"
                                 value={storeData.name}
-                                onChange={e =>
+                                onChange={(e) =>
                                   setStore({
                                     ...storeData,
                                     name: e.target.value,
@@ -848,35 +966,137 @@ export default function Settings() {
                             <div class="input-inner">
                               <div class="label-inner">
                                 <label for="Location" class="input-label">
-                                  Location{' '}
+                                  Location{" "}
                                   <span className="text-danger">*</span>
                                 </label>
                               </div>
-                              <input
-                                class="input-field"
-                                type="text"
-                                name=""
-                                required
-                                value={storeData.location}
-                                onChange={e =>
-                                  setStore({
-                                    ...storeData,
-                                    location: e.target.value,
-                                  })
-                                }
-                                id="Location"
-                                placeholder="Enter Your Location"
-                              />
+                              <div onClick={getLocation}>
+                                <input
+                                  readOnly
+                                  class="input-field"
+                                  type="text"
+                                  name=""
+                                  required
+                                  value={
+                                    location.latitude && location.longitude
+                                      ? location.latitude +
+                                        " " +
+                                        location.longitude
+                                      : ""
+                                  }
+                                  id="Location"
+                                  placeholder="Enter Your Location"
+                                />
+                              </div>
                               {errors.location && (
                                 <span className="text-danger">
                                   {errors.location}
                                 </span>
                               )}
                             </div>
+                            {storeData.businessTypeId !== 1 && (
+                              <div className="input-inner">
+                                {timeSlots.map((slot, index) => (
+                                  <div className="row" key={index}>
+                                    <div className="col-4">
+                                      <div>
+                                        <label className="category-select-label mb-2">
+                                          Time Slot{" "}
+                                          <span className="text-danger">*</span>
+                                        </label>
+
+                                        <Select
+                                          value={time_slot_options.find(
+                                            (option) =>
+                                              option.value === slot.slot
+                                          )}
+                                          onChange={(selectedOption) =>
+                                            handleTimeSlotChange(
+                                              index,
+                                              "slot",
+                                              selectedOption.value
+                                            )
+                                          }
+                                          options={time_slot_options}
+                                          placeholder="Select"
+                                          className="time_slot"
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="col-4">
+                                      <div className="inner-input">
+                                        <label
+                                          className="input-label mb-2"
+                                          htmlFor={`openingTime-${index}`}
+                                        >
+                                          Opening Time{" "}
+                                          <span className="text-danger">*</span>
+                                        </label>
+                                        <div className="input-field">
+                                          <input
+                                            type="time"
+                                            id={`openingTime-${index}`}
+                                            value={slot.openingTime}
+                                            onChange={(e) =>
+                                              handleTimeSlotChange(
+                                                index,
+                                                "openingTime",
+                                                e.target.value
+                                              )
+                                            }
+                                            placeholder="Type here"
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="col-4">
+                                      <div className="inner-input">
+                                        <label
+                                          className="input-label mb-2"
+                                          htmlFor={`closingTime-${index}`}
+                                        >
+                                          Closing Time{" "}
+                                          <span className="text-danger">*</span>
+                                        </label>
+                                        <div className="input-field">
+                                          <input
+                                            type="time"
+                                            id={`closingTime-${index}`}
+                                            value={slot.closingTime}
+                                            onChange={(e) =>
+                                              handleTimeSlotChange(
+                                                index,
+                                                "closingTime",
+                                                e.target.value
+                                              )
+                                            }
+                                            placeholder="Type here"
+                                            required
+                                          />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+
+                                {timeSlots.length < 4 && (
+                                  <div className="">
+                                    <button
+                                      type="button"
+                                      className="new-campaign-btn"
+                                      onClick={addTimeSlot}
+                                    >
+                                      Add more Time Slot
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                             <div className="input-inner">
                               <div class="label-inner">
                                 <label for="" class="input-label">
-                                  Division{' '}
+                                  Division{" "}
                                   <span className="text-danger">*</span>
                                 </label>
                               </div>
@@ -896,7 +1116,7 @@ export default function Settings() {
                             <div className="input-inner">
                               <div class="label-inner">
                                 <label for="" class="input-label">
-                                  District{' '}
+                                  District{" "}
                                   <span className="text-danger">*</span>
                                 </label>
                               </div>
@@ -905,7 +1125,7 @@ export default function Settings() {
                                 onChange={handleDistrictChange}
                                 options={districts}
                                 placeholder="Select District"
-                              // isDisabled={!selectedDivision}
+                                // isDisabled={!selectedDivision}
                               />
                               {errors.district && (
                                 <span className="text-danger">
@@ -925,7 +1145,7 @@ export default function Settings() {
                                 onChange={setSelectedCity}
                                 options={cities}
                                 placeholder="Select Thana"
-                              // isDisabled={!selectedDistrict}
+                                // isDisabled={!selectedDistrict}
                               />
                               {errors.city && (
                                 <span className="text-danger">
@@ -990,7 +1210,7 @@ export default function Settings() {
                                 <h1 className="title">Business Logo </h1>
                               </div>
 
-                              <h1 className="example-text">See Example</h1>
+                              {/* <h1 className="example-text">See Example</h1> */}
                             </div>
 
                             <div className="product-img-body">
@@ -1091,8 +1311,8 @@ export default function Settings() {
                                   </div>
                                 )}
 
-                                {thumbnail ? (
-                                  ''
+                                {thumbnail || thumbnailPreview ? (
+                                  ""
                                 ) : (
                                   <div className="add-product-img-inner">
                                     <label
@@ -1147,10 +1367,15 @@ export default function Settings() {
                             <div className="product-img-body">
                               <div className="uplod-img">
                                 {mainImagePreview && (
-                                  <div className="product-img">
+                                  <div
+                                    className="product-img"
+                                    style={{ width: "600px" }}
+                                  >
                                     <img
                                       src={mainImagePreview}
                                       alt="thumbnail"
+                                      width={1278}
+                                      height={243}
                                     />
                                     <div className="img-close-btn">
                                       <svg
@@ -1242,16 +1467,16 @@ export default function Settings() {
                                   </div>
                                 )}
 
-                                {mainImage ? (
-                                  ''
+                                {mainImage || mainImagePreview ? (
+                                  ""
                                 ) : (
                                   <div className="add-product-img-inner">
                                     <label
                                       for="product-main-img"
                                       className="add-product-img"
-                                      style={{ width: '700px' }}
+                                      style={{ width: "700px" }}
                                     >
-                                      {' '}
+                                      {" "}
                                       <div class="d-flex flex-column justify-content-center align-items-center">
                                         <svg
                                           xmlns="http://www.w3.org/2000/svg"
@@ -1269,7 +1494,7 @@ export default function Settings() {
                                           ></path>
                                         </svg>
                                         <p class="text">
-                                          Drag &amp; drop your Image here or{' '}
+                                          Drag &amp; drop your Image here or{" "}
                                           <span>Browse</span>
                                         </p>
                                       </div>
@@ -1278,20 +1503,20 @@ export default function Settings() {
                                         type="file"
                                         name=""
                                         id="product-main-img"
-                                        accept=".png,.jpg,.jpeg"
+                                        accept=".png,.jpg,.jpeg,.webp"
                                         onChange={handleMainImage}
                                       />
                                     </label>
                                   </div>
                                 )}
                               </div>
-                              {/* <div className="">
-                            <ul className="add-product-img-list">
-                              <li>Image Ratio: 1:1 </li>
-                              <li>Max file size: 1MB.</li>
-                              <li>Format: png, jpg</li>
-                            </ul>
-                          </div> */}
+                              <div className="">
+                                <ul className="add-product-img-list">
+                                  <li>Image Ratio: 1278px X 243px </li>
+                                  <li>Max file size: 1MB.</li>
+                                  <li>Format: png, jpg</li>
+                                </ul>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1300,7 +1525,12 @@ export default function Settings() {
                   </div>
                 </div>
               </div>
-              <div class="tab-pane fade" id="bankInformation" role="tabpanel" aria-labelledby="bankInformation-tab">
+              <div
+                class="tab-pane fade"
+                id="bankInformation"
+                role="tabpanel"
+                aria-labelledby="bankInformation-tab"
+              >
                 <BankInfoPage />
               </div>
               <div
@@ -1317,7 +1547,7 @@ export default function Settings() {
                           <div className="input-inner">
                             <div className="label-inner">
                               <label for="password" className="input-label">
-                                Current Password{' '}
+                                Current Password{" "}
                                 <span className="text-danger">*</span>
                               </label>
                             </div>
@@ -1325,11 +1555,11 @@ export default function Settings() {
                             <div className="password-field">
                               <input
                                 className=""
-                                type={showPassword ? 'text' : 'password'}
+                                type={showPassword ? "text" : "password"}
                                 name=""
                                 id="password"
                                 value={security.currentPassword}
-                                onChange={e =>
+                                onChange={(e) =>
                                   setSecurity({
                                     ...security,
                                     currentPassword: e.target.value,
@@ -1358,7 +1588,7 @@ export default function Settings() {
                           <div className="input-inner">
                             <div className="label-inner">
                               <label for="NewPassword" className="input-label">
-                                New Password{' '}
+                                New Password{" "}
                                 <span className="text-danger">*</span>
                               </label>
                             </div>
@@ -1370,7 +1600,7 @@ export default function Settings() {
                               id="NewPassword"
                               placeholder="Enter New Password"
                               value={security.newPassword}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setSecurity({
                                   ...security,
                                   newPassword: e.target.value,
@@ -1385,7 +1615,7 @@ export default function Settings() {
                                 for="RepeatPassword"
                                 className="input-label"
                               >
-                                Repeat Password{' '}
+                                Repeat Password{" "}
                                 <span className="text-danger">*</span>
                               </label>
                             </div>
@@ -1396,13 +1626,13 @@ export default function Settings() {
                               id="RepeatPassword"
                               placeholder="Enter Password again"
                               value={security.confirmPassword}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setSecurity({
                                   ...security,
                                   confirmPassword: e.target.value,
                                 })
                               }
-                            />{' '}
+                            />{" "}
                             {errors.confirmPassword && (
                               <span className="text-danger">
                                 {errors.confirmPassword}

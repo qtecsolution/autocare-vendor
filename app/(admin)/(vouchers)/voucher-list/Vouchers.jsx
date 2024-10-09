@@ -145,7 +145,7 @@ function Vouchers() {
         isToastShown.current = true;
         toast.custom((t) => (
           <AlertToast
-            message="Your store is not verified !"
+            message={!sellerInfo?.store ? "First you need to create a store !" : "Your store is not verified !"}
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
@@ -236,9 +236,8 @@ function Vouchers() {
               <div className="d-flex align-items-center gap-3 all-buttons-inner">
                 <button
                   onClick={() => filter('')}
-                  className={`manage-products-btn ${
-                    filterBy === '' ? 'active' : ''
-                  }`}
+                  className={`manage-products-btn ${filterBy === '' ? 'active' : ''
+                    }`}
                 >
                   <span className="text">All</span>
                   <span className="number">{allVouchersCount}</span>
@@ -246,9 +245,8 @@ function Vouchers() {
 
                 <button
                   onClick={() => filter('active')}
-                  className={`manage-products-btn ${
-                    filterBy === 'active' ? 'active' : ''
-                  }`}
+                  className={`manage-products-btn ${filterBy === 'active' ? 'active' : ''
+                    }`}
                 >
                   <span className="text">Active</span>
                   <span className="number">{activeCount || 0}</span>
@@ -256,9 +254,8 @@ function Vouchers() {
 
                 <button
                   onClick={() => filter('inactive')}
-                  className={`manage-products-btn ${
-                    filterBy === 'inactive' ? 'active' : ''
-                  }`}
+                  className={`manage-products-btn ${filterBy === 'inactive' ? 'active' : ''
+                    }`}
                 >
                   <span className="text">Inactive</span>
                   <span className="number"> {inActiveCount}</span>
@@ -496,14 +493,12 @@ function Vouchers() {
                     {Array.from({ length: totalPage }, (_, index) => (
                       <li
                         key={index + 1}
-                        className={`pagination-nav-list ${
-                          currentPage === index + 1 ? 'active' : ''
-                        }`}
+                        className={`pagination-nav-list ${currentPage === index + 1 ? 'active' : ''
+                          }`}
                       >
                         <a
-                          className={`pagination-nav-link ${
-                            currentPage == index + 1 ? 'btn btn-primary' : ''
-                          }`}
+                          className={`pagination-nav-link ${currentPage == index + 1 ? 'btn btn-primary' : ''
+                            }`}
                           href="#"
                           onClick={e => {
                             e.preventDefault();

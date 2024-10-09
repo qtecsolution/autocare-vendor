@@ -187,3 +187,15 @@
     background-color: #f0f0f0;
     /* Hover effect for day */
 }
+
+.time_slot .css-13cymwt-control {
+    min-height: 56px !important;
+}
+
+.time_slot .css-16xfy0z-control {
+    min-height: 56px !important;
+}
+
+.time_slot .css-t3ipsp-control {
+    min-height: 56px !important;
+}

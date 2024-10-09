@@ -61,7 +61,7 @@ function ServiceListPage({ allServices, pageProps, calculatedTotalPages }) {
                 isToastShown.current = true;
                 toast.custom((t) => (
                     <AlertToast
-                        message="Your store is not verified !"
+                        message={!sellerInfo?.store ? "First you need to create a store !" : "Your store is not verified !"}
                         dismiss={() => toast.dismiss(t.id)}
                     />
                 ));
