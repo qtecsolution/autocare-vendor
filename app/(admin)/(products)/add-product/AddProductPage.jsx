@@ -86,6 +86,7 @@ function AddProductPage() {
   const [selectedCarModelYears, setSelectedCarModelYears] = useState([]);
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [commission,setCommission] = useState(0);
 
   const handleBrandChange = (selectedOptions) => {
     setSelectedCompatibleBrands(selectedOptions);
@@ -223,11 +224,14 @@ function AddProductPage() {
 
   const handleCategoryChange = (selectedOption) => {
     setSelectedCategory(selectedOption);
+    setCommission(selectedOption?.commissionRate || 0);
+    
     if (selectedOption) {
       const subCats = selectedOption.children.map((subCategory) => ({
         value: subCategory.id,
         label: subCategory.name,
         children: subCategory.children,
+        commissionRate: subCategory.commission_rate,
       }));
       setSubCategories(subCats);
       setSubSubCategories([]);
@@ -241,12 +245,18 @@ function AddProductPage() {
 
   const handleSubCategoryChange = (selectedOptions) => {
     setSelectedSubCategories(selectedOptions);
+  
+    const maxCommission = Math.max(
+      ...selectedOptions.map(sub_category => parseFloat(sub_category.commissionRate))
+    );
+    setCommission(maxCommission || 0);
 
     if (selectedOptions && selectedOptions.length) {
       const newSubSubCats = selectedOptions.flatMap((subCategory) =>
         subCategory.children.map((subSubCategory) => ({
           value: subSubCategory.id,
           label: subSubCategory.name,
+          commissionRate: subSubCategory.commission_rate,
         }))
       );
       setSubSubCategories(newSubSubCats);
@@ -263,7 +273,12 @@ function AddProductPage() {
 
   const handleSubSubCategoryChange = (selectedOptions) => {
     setSelectedSubSubCategories(selectedOptions);
-  };
+    
+    const maxCommission = Math.max(
+      ...selectedOptions.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
+    );
+    setCommission(maxCommission || 0);
+  };  
 
   const weightUnits = [
     { value: 'kg', label: 'Kilogram' },
@@ -661,6 +676,7 @@ function AddProductPage() {
                           value: category.id,
                           label: category.name,
                           children: category.children,
+                          commissionRate: category?.commission_rate
                         }))}
                         placeholder="Select Category"
                         onChange={handleCategoryChange}
@@ -1268,7 +1284,7 @@ function AddProductPage() {
                               stroke="#0F766D" stroke-linecap="round" stroke-linejoin="round" />
                           </svg>
                         </label>
-                        <input className="input" type="text" name="" id="discount_price" placeholder="৳" value={discountPrice} onChange={(e) => setDiscountPrice(e.target.value)} />
+                        <input className="input" type="number" min={0} name="" id="discount_price" placeholder="৳" value={discountPrice} onChange={(e) => setDiscountPrice(e.target.value)} />
                       </div>
                     </div>
                   </div>
@@ -1285,15 +1301,15 @@ function AddProductPage() {
                             </svg>
                           </label>
                           <p className="commission-text">
-                            Commission 5%
+                            Commission {commission}%
                           </p>
                         </div>
                         <div className="commission">
                           <p className="price">
                             {
                               discountPrice
-                                ? Number(discountPrice) + (Number(discountPrice) * 5 / 100)
-                                : Number(price) + (Number(price) * 5 / 100)
+                                ? Number(discountPrice) + (Number(discountPrice) * commission / 100)
+                                : Number(price) + (Number(price) * commission / 100)
                             }
                           </p>
                         </div>

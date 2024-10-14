@@ -7,7 +7,6 @@ export default async function page() {
 
   try {
     res = await axiosInstance.get('/seller-panel-api/frontend/voucher-data/');
-    console.log(res,"First Response");
   } catch (error) {
     console.log(error)
   }

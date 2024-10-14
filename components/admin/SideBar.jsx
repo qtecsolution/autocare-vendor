@@ -1,42 +1,42 @@
-'use client';
-import { deleteAccessToken, deleteRefreshToken } from '@/actions/actions';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import SuccessToast from '@/components/toast/Success';
-import { getAuthUser } from '@/utils/auth';
-import Image from 'next/image';
+"use client";
+import { deleteAccessToken, deleteRefreshToken } from "@/actions/actions";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import SuccessToast from "@/components/toast/Success";
+import { getAuthUser } from "@/utils/auth";
+import Image from "next/image";
 
 export default function SideBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const isLinkActive = paths =>
-    paths.some(path =>
-      path === '/' ? pathname === '/' : pathname.startsWith(path)
+  const isLinkActive = (paths) =>
+    paths.some((path) =>
+      path === "/" ? pathname === "/" : pathname.startsWith(path)
     )
-      ? 'active'
-      : 'collapsed';
+      ? "active"
+      : "collapsed";
 
-  const isShowMenu = paths =>
-    paths.some(path =>
-      path === '/' ? pathname === '/' : pathname.startsWith(path)
+  const isShowMenu = (paths) =>
+    paths.some((path) =>
+      path === "/" ? pathname === "/" : pathname.startsWith(path)
     )
-      ? 'show'
-      : '';
+      ? "show"
+      : "";
   const [sidebarActive, sidebarSetActive] = useState(true);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
 
-  const handleSearchChange = e => setSearchText(e.target.value.toLowerCase());
+  const handleSearchChange = (e) => setSearchText(e.target.value.toLowerCase());
 
   const logout = async () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('seller');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("seller");
     await deleteAccessToken();
     await deleteRefreshToken();
-    router.push('/login');
-    toast.custom(t => (
+    router.push("/login");
+    toast.custom((t) => (
       <SuccessToast
         message="Logged Out !"
         dismiss={() => toast.dismiss(t.id)}
@@ -48,8 +48,8 @@ export default function SideBar() {
 
   const menuItems = [
     {
-      name: 'Dashboard',
-      path: '/',
+      name: "Dashboard",
+      path: "/",
       icon: (
         <svg
           className=""
@@ -75,8 +75,8 @@ export default function SideBar() {
       ),
     },
     {
-      name: 'Products',
-      path: '#dropdownmenu-1',
+      name: "Products",
+      path: "#dropdownmenu-1",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -115,15 +115,15 @@ export default function SideBar() {
         </svg>
       ),
       submenu: [
-        { name: 'Add Product', path: '/add-product' },
-        { name: 'Products', path: '/product-list' },
-        { name: 'Compatible Brands', path: '/brand-list' },
-        { name: 'Manufacturer', path: '/manufacturer' },
+        { name: "Add Product", path: "/add-product" },
+        { name: "Products", path: "/product-list" },
+        { name: "Compatible Brands", path: "/brand-list" },
+        { name: "Manufacturer", path: "/manufacturer" },
       ],
     },
     {
-      name: 'Order Management',
-      path: '#dropdownmenu-2',
+      name: "Order Management",
+      path: "#dropdownmenu-2",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -158,13 +158,13 @@ export default function SideBar() {
         </svg>
       ),
       submenu: [
-        { name: 'Orders', path: '/order-list' },
-        { name: 'Return Orders', path: '/return-order-list' },
+        { name: "Orders", path: "/order-list" },
+        { name: "Return Orders", path: "/return-order-list" },
       ],
     },
     {
-      name: 'Services',
-      path: '#dropdownmenu-8',
+      name: "Services",
+      path: "#dropdownmenu-8",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -209,14 +209,14 @@ export default function SideBar() {
         </svg>
       ),
       submenu: [
-        { name: 'Add Services', path: '/add-service' },
-        { name: 'Services', path: '/service-list' },
+        { name: "Add Services", path: "/add-service" },
+        { name: "Services", path: "/service-list" },
         // { name: 'Garage Management', path: '/garage-management' },
       ],
     },
     {
-      name: 'Bookings',
-      path: '/booking-list',
+      name: "Bookings",
+      path: "/booking-list",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -239,8 +239,8 @@ export default function SideBar() {
       ),
     },
     {
-      name: 'Feedback',
-      path: '/feedback',
+      name: "Feedback",
+      path: "/feedback",
       icon: (
         <svg
           width="20"
@@ -260,8 +260,8 @@ export default function SideBar() {
     },
 
     {
-      name: 'Badges',
-      path: '/badges',
+      name: "Badges",
+      path: "/badges",
       icon: (
         <svg
           width="24"
@@ -278,8 +278,8 @@ export default function SideBar() {
       ),
     },
     {
-      name: 'Voucher',
-      path: '#dropdownmenu-9',
+      name: "Voucher",
+      path: "#dropdownmenu-9",
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -351,8 +351,8 @@ export default function SideBar() {
         </svg>
       ),
       submenu: [
-        { name: 'Add Voucher', path: '/add-voucher' },
-        { name: 'Vouchers', path: '/voucher-list' },
+        { name: "Add Voucher", path: "/add-voucher" },
+        { name: "Vouchers", path: "/voucher-list" },
       ],
     },
     // {
@@ -439,8 +439,8 @@ export default function SideBar() {
     //   ],
     // },
     {
-      name: 'Finance',
-      path: '#dropdownmenu-5',
+      name: "Finance",
+      path: "#dropdownmenu-5",
       icon: (
         <svg
           width="20"
@@ -475,8 +475,8 @@ export default function SideBar() {
         </svg>
       ),
       submenu: [
-        { name: 'Finance Report', path: '/finance' },
-        { name: 'Commission Rates', path: '/commission-rates' },
+        { name: "Finance Report", path: "/finance" },
+        { name: "Commission Rates", path: "/commission-rates" },
       ],
     },
     // {
@@ -568,15 +568,15 @@ export default function SideBar() {
   ];
 
   const filteredMenuItems = menuItems.filter(
-    item =>
-      searchText === '' ||
+    (item) =>
+      searchText === "" ||
       item.name.toLowerCase().includes(searchText) ||
       (item.submenu &&
-        item.submenu.some(sub => sub.name.toLowerCase().includes(searchText)))
+        item.submenu.some((sub) => sub.name.toLowerCase().includes(searchText)))
   );
 
   return (
-    <nav id="sidebar" className={sidebarActive ? '' : 'active'}>
+    <nav id="sidebar" className={sidebarActive ? "" : "active"}>
       <div className="custom-menu">
         <button
           type="button"
@@ -621,9 +621,12 @@ export default function SideBar() {
       <div className="sidebar-scroll">
         <div className="sidebar-header">
           <Link href="/">
-            <h4 style={{ fontWeight: 'bold' }}>
+            {/* <h4 style={{ fontWeight: 'bold' }}>
               {sellerInfo?.full_name}
-            </h4>
+            </h4> */}
+            <figure class="d-flex justify-content-center">
+              <img src="/assets/images/logo.png" alt="logo" />
+            </figure>
           </Link>
 
           <form className="search-input">
@@ -653,14 +656,22 @@ export default function SideBar() {
         </div>
 
         <ul className="list-unstyled menu-list">
-          {filteredMenuItems.map(item => {
+          {filteredMenuItems.map((item) => {
             const businessType = sellerInfo?.business_type?.name;
-            const isProductsItem = item.name === 'Products';
-            const isServicesItem = item.name === 'Services';
-            const showProducts = isProductsItem && (businessType === "Product" || businessType === "Both");
-            const showServices = isServicesItem && (businessType === "Service" || businessType === "Both");
+            const isProductsItem = item.name === "Products";
+            const isServicesItem = item.name === "Services";
+            const showProducts =
+              isProductsItem &&
+              (businessType === "Product" || businessType === "Both");
+            const showServices =
+              isServicesItem &&
+              (businessType === "Service" || businessType === "Both");
 
-            if (!isProductsItem && !isServicesItem || showProducts || showServices) {
+            if (
+              (!isProductsItem && !isServicesItem) ||
+              showProducts ||
+              showServices
+            ) {
               return (
                 <li key={item.path} className="menu-list-item">
                   {item.submenu ? (
@@ -668,7 +679,7 @@ export default function SideBar() {
                       <a
                         className={`menu-list-link ${isLinkActive([
                           item.path,
-                          ...item.submenu.map(sub => sub.path),
+                          ...item.submenu.map((sub) => sub.path),
                         ])}`}
                         data-toggle="collapse"
                         href={item.path}
@@ -681,18 +692,22 @@ export default function SideBar() {
                         <span className="arrowicon">{item.icon2}</span>
                       </a>
                       <div
-                        className={`${item.submenu && searchText ? '' : 'collapse'}  ${isShowMenu([
+                        className={`${
+                          item.submenu && searchText ? "" : "collapse"
+                        }  ${isShowMenu([
                           item.path,
-                          ...item.submenu.map(sub => sub.path),
+                          ...item.submenu.map((sub) => sub.path),
                         ])}`}
-                        id={item.path.replace('#', '')}
+                        id={item.path.replace("#", "")}
                       >
                         <ul className="submenu list-unstyled mt-2">
-                          {item.submenu.map(subitem => (
+                          {item.submenu.map((subitem) => (
                             <li key={subitem.path} className="submenu-item">
                               <Link
                                 href={subitem.path}
-                                className={`submenu-link ${isLinkActive([`${subitem.path}`])}`}
+                                className={`submenu-link ${isLinkActive([
+                                  `${subitem.path}`,
+                                ])}`}
                               >
                                 <span className="text"> {subitem.name}</span>
                               </Link>
@@ -704,7 +719,9 @@ export default function SideBar() {
                   ) : (
                     <Link
                       href={item.path}
-                      className={`menu-list-link ${isLinkActive([`${item.path}`])}`}
+                      className={`menu-list-link ${isLinkActive([
+                        `${item.path}`,
+                      ])}`}
                     >
                       <span className="icontitle">
                         <span className="icon">{item.icon}</span>
@@ -747,7 +764,12 @@ export default function SideBar() {
             </li> */}
 
             <li className="menu-list-item">
-              <Link href="/settings" className={`menu-list-link ${pathname === "/settings" ? 'active' : ''}`}>
+              <Link
+                href="/settings"
+                className={`menu-list-link ${
+                  pathname === "/settings" ? "active" : ""
+                }`}
+              >
                 <span className="icontitle">
                   <span className="icon">
                     <svg
@@ -779,7 +801,7 @@ export default function SideBar() {
                   src={
                     sellerInfo?.image
                       ? sellerInfo.image
-                      : '/assets/images/user.png'
+                      : "/assets/images/user.png"
                   }
                   width={40}
                   height={40}

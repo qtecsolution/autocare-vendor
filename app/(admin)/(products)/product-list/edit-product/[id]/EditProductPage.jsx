@@ -43,6 +43,7 @@ function EditProductPage({ productDetails }) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [selectedSubSubCategories, setSelectedSubSubCategories] = useState([]);
+  const [commission,setCommission] = useState(0);
 
   const [manufacturers, setManufacturers] = useState([]);
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
@@ -219,14 +220,17 @@ function EditProductPage({ productDetails }) {
   useEffect(() => {
     if (productDetails?.product) {
       const { sub_category, sub_sub_category, category } = productDetails.product;
+console.log(category);
 
       // Set selected category based on product details
       const selectedCategory = {
         value: category.id,
         label: category.name,
+        commissionRate: category?.commission_rate
       };
       setSelectedCategory(selectedCategory);
-
+      setCommission(selectedCategory?.commissionRate || 0)
+      
       // Set subCategories and subSubCategories based on product details
       const newSubCategories = category.children.map((subCategory) => ({
         value: subCategory.id,
@@ -240,8 +244,16 @@ function EditProductPage({ productDetails }) {
         value: subCat.id,
         label: subCat.name,
         children: subCat.children || [],
+        commissionRate: subCat?.commission_rate
       }));
       setSelectedSubCategories(selectedSubCategories);
+        
+    const maxCommission = Math.max(
+      ...selectedSubCategories.map(sub_category => parseFloat(sub_category.commissionRate))
+    );
+    if(selectedSubCategories?.length > 0){
+      setCommission(maxCommission || 0);
+    }
 
       // Set subSubCategories based on selected subCategories
       const newSubSubCategories = selectedSubCategories.flatMap((subCategory) =>
@@ -256,19 +268,32 @@ function EditProductPage({ productDetails }) {
       const selectedSubSubCategories = sub_sub_category.map((subSubCat) => ({
         value: subSubCat.id,
         label: subSubCat.name,
+        commissionRate: subSubCat.commission_rate,
       }));
       setSelectedSubSubCategories(selectedSubSubCategories);
+      const maxCommission2 = Math.max(
+        ...selectedSubSubCategories.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
+      );
+      if(selectedSubSubCategories?.length > 0){
+        setCommission(maxCommission2 || 0);
+        console.log(maxCommission2);
+      }
+      
     }
   }, [productDetails]);
 
 
+
   const handleCategoryChange = (selectedOption) => {
     setSelectedCategory(selectedOption);
+    setCommission(selectedOption?.commissionRate || 0);
+    
     if (selectedOption && selectedOption.children) {
       const subCats = selectedOption.children.map((subCategory) => ({
         value: subCategory.id,
         label: subCategory.name,
         children: subCategory.children || [],
+        commissionRate: subCategory.commission_rate,
       }));
       setSubCategories(subCats);
       setSubSubCategories([]);
@@ -283,11 +308,18 @@ function EditProductPage({ productDetails }) {
 
   const handleSubCategoryChange = (selectedOptions) => {
     setSelectedSubCategories(selectedOptions);
+
+    const maxCommission = Math.max(
+      ...selectedOptions.map(sub_category => parseFloat(sub_category.commissionRate))
+    );
+    setCommission(maxCommission || 0);
+
     if (selectedOptions && selectedOptions.length) {
       const newSubSubCats = selectedOptions.flatMap((subCategory) =>
         subCategory.children?.map((subSubCategory) => ({
           value: subSubCategory.id,
           label: subSubCategory.name,
+          commissionRate: subSubCategory.commission_rate,
         })) || []
       );
       setSubSubCategories(newSubSubCats);
@@ -305,6 +337,10 @@ function EditProductPage({ productDetails }) {
 
   const handleSubSubCategoryChange = (selectedOptions) => {
     setSelectedSubSubCategories(selectedOptions);
+    const maxCommission = Math.max(
+      ...selectedOptions.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
+    );
+    setCommission(maxCommission || 0);
   };
 
   useEffect(() => {
@@ -757,6 +793,7 @@ function EditProductPage({ productDetails }) {
                           value: category.id,
                           label: category.name,
                           children: category.children,
+                          commissionRate: category?.commission_rate
                         }))}
                         placeholder="Select Category"
                         onChange={handleCategoryChange}
@@ -1413,7 +1450,7 @@ function EditProductPage({ productDetails }) {
                               stroke="#0F766D" stroke-linecap="round" stroke-linejoin="round" />
                           </svg>
                         </label>
-                        <input className="input" type="text" name="" id="discount_price" placeholder="৳" value={discountPrice} onChange={(e) => setDiscountPrice(e.target.value)} />
+                        <input className="input" type="number" min={0} name="" id="discount_price" placeholder="৳" value={discountPrice} onChange={(e) => setDiscountPrice(e.target.value)} />
                       </div>
                     </div>
                   </div>
@@ -1430,15 +1467,15 @@ function EditProductPage({ productDetails }) {
                             </svg>
                           </label>
                           <p className="commission-text">
-                            Commission 5%
+                            Commission {commission}%
                           </p>
                         </div>
                         <div className="commission">
                           <p className="price">
                             {
                               discountPrice
-                                ? Number(discountPrice) + (Number(discountPrice) * 5 / 100)
-                                : Number(price) + (Number(price) * 5 / 100)
+                                ? Number(discountPrice) + (Number(discountPrice) * commission / 100)
+                                : Number(price) + (Number(price) * commission / 100)
                             }
                           </p>
                         </div>

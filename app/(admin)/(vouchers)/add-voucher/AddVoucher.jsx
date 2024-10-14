@@ -24,7 +24,6 @@ export default function AddVoucher({ voucherCreationData }) {
     discountType: 'fixed',
     discountValue: '',
     minimumPurchaseAmount: '',
-    usageLimit: '',
     validFrom: '',
     validTo: '',
     isActive: true,
@@ -159,7 +158,6 @@ export default function AddVoucher({ voucherCreationData }) {
       newErrors.discountValue = 'Discount value is required';
     if (!formData.minimumPurchaseAmount)
       newErrors.minimumPurchaseAmount = 'Minimum purchase amount is required';
-    if (!formData.usageLimit) newErrors.usageLimit = 'Usage limit is required';
     if (!formData.validFrom) newErrors.validFrom = 'Start date is required';
     if (!formData.validTo) newErrors.validTo = 'End date is required';
 
