@@ -810,7 +810,9 @@ export default function SideBar() {
               </figure>
               <div className="">
                 <h2 className="user-name">{sellerInfo?.full_name}</h2>
-                <p className="user-email">{sellerInfo?.email}</p>
+                <p title={sellerInfo?.email} className="user-email">
+                  {sellerInfo?.email}
+                </p>
               </div>
             </div>
 

@@ -522,7 +522,7 @@ function SignupPage() {
                                                                 onChange={() => handleChangeBusinessType(2)}
                                                             />
                                                             <label className="label-border" htmlFor="login-checkbox2">
-                                                            Provide services
+                                                            Provide Services
                                                             </label>
                                                         </div>
 

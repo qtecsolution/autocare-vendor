@@ -237,6 +237,7 @@ function OrderListPage({ allOrders, pageProps, calculatedTotalPages }) {
                                                                 </button>
                                                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                                                     <li><Link href={"/order-list/details/" + order?.id} className="dropdown-item">Details</Link></li>
+                                                                    <li><Link href={"/order-list/edit-order/" + order?.id} className="dropdown-item">Edit Order</Link></li>
                                                                 </ul>
                                                             </div>
                                                         </td>

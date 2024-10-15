@@ -131,7 +131,7 @@ export default function CommissionRates({ categories }) {
             </div>
           </td>
           <td className="text-center">
-            <p className="pice-text">{category.commission_rate || '-'}</p>
+            <p className="pice-text">{category.commission_rate || '0.00'}</p>
           </td>
         </tr>
 
@@ -189,7 +189,7 @@ export default function CommissionRates({ categories }) {
             </div>
           </td>
           <td className="text-center">
-            <p className="pice-text">{subcategory.commission_rate || '-'}</p>
+            <p className="pice-text">{subcategory.commission_rate || '0.00'}</p>
           </td>
         </tr>
 
@@ -219,7 +219,7 @@ export default function CommissionRates({ categories }) {
         <section className="manage-all-brand-section">
           <div className="manage-all-brand-section-inner">
             <div className="manage-all-brand-section-inner-header">
-              <form className="all-products-form">
+              <div className="all-products-form">
                 <label for="search-svg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -246,7 +246,7 @@ export default function CommissionRates({ categories }) {
                   onChange={handleSearchChange}
                   placeholder="Enter name"
                 />
-              </form>
+              </div>
             </div>
 
             <div className="manage-all-brand-section-inner-body">

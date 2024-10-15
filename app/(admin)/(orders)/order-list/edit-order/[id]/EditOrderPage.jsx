@@ -1,13 +1,13 @@
 "use client";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import AlertToast from "@/components/toast/AlertToast";
 import SuccessToast from "@/components/toast/Success";
 
-function AddOrderPage({ orderIntData }) {
+function EditOrderPage({ orderIntData, orderDetails }) {
   const router = useRouter();
   const customers = orderIntData?.customers;
   const products = orderIntData?.products;
@@ -36,6 +36,52 @@ function AddOrderPage({ orderIntData }) {
     { value: 1, label: "Cash on Delivery" },
     { value: 2, label: "Online Payment" },
   ];
+
+  useEffect(() => {
+    if (orderDetails) {
+      // Set the selected customer
+      const customer = customers.find(
+        (c) => c.id === orderDetails.order.customer.id
+      );
+      setSelectedCustomer(
+        customer ? { value: customer.id, label: customer.full_name } : null
+      );
+
+      // Set the payment method
+      const paymentMethodOption = payment_method.find(
+        (pm) => pm.label === orderDetails.order.payment_method.name
+      );
+      setPaymentMethod(paymentMethodOption || null);
+
+      // Set order products
+      const initialOrderProducts = orderDetails.items.map((item) => {
+        const foundProduct = products.find((p) => p.id === item.product.id); // Ensure correct access to product ID
+
+        return {
+          selectedProduct: foundProduct
+            ? { value: foundProduct.id, label: foundProduct.name }
+            : null, // Update for product
+          selectedVariant: item.product_variant
+            ? {
+                value: item.product_variant.id,
+                label: item.product_variant.attribute_values,
+                price: item.unit_price,
+                stock: item.product_variant.stock,
+              }
+            : null,
+          hasVariant: !!item.product_variant,
+          variants: [], // You can fill this if needed
+          quantity: item.quantity,
+          stock: item.product_variant
+            ? item.product_variant.stock
+            : item.product.stock,
+          price: parseFloat(item.unit_price),
+        };
+      });
+
+      setOrderProducts(initialOrderProducts);
+    }
+  }, [orderDetails, customers, products]);
 
   const handleCustomerChange = (selectedOption) => {
     setSelectedCustomer(selectedOption);
@@ -118,7 +164,7 @@ function AddOrderPage({ orderIntData }) {
     setPaymentMethod(selectedOption);
   };
 
-  const handleSubmit = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -188,31 +234,31 @@ function AddOrderPage({ orderIntData }) {
     );
 
     const payload = {
-      customerId: selectedCustomer?.value,
+      customerId: orderDetails?.order?.customer?.id,
       paymentMethod: paymentMethod?.value,
       totalPrice: totalPrice,
       orderItems: orderItems,
     };
 
     try {
-      const response = await axiosInstance.post(
-        "/seller-panel-api/frontend/place-order/",
+      const response = await axiosInstance.put(
+        `/seller-panel-api/frontend/update-order/${orderDetails?.order?.id}/`,
         payload
       );
-      console.log("Order created successfully:", response.data);
-      setSelectedCustomer("");
-      setOrderProducts([
-        {
-          selectedProduct: "",
-          selectedVariant: "",
-          hasVariant: false,
-          variants: [],
-          quantity: 0,
-          stock: 0,
-          price: 0,
-        },
-      ]);
-      setPaymentMethod("");
+      console.log("Order updated successfully:", response.data);
+      // setSelectedCustomer("");
+      // setOrderProducts([
+      //   {
+      //     selectedProduct: "",
+      //     selectedVariant: "",
+      //     hasVariant: false,
+      //     variants: [],
+      //     quantity: 0,
+      //     stock: 0,
+      //     price: 0,
+      //   },
+      // ]);
+      // setPaymentMethod("");
 
       toast.custom((t) => (
         <SuccessToast
@@ -222,6 +268,7 @@ function AddOrderPage({ orderIntData }) {
       ));
 
       router.push("/order-list");
+      router.refresh();
     } catch (error) {
       console.error("Failed to create order:", error);
       toast.custom((t) => (
@@ -240,7 +287,7 @@ function AddOrderPage({ orderIntData }) {
       <section className="edit-garage-header">
         <div className="edit-garage-header-inner">
           <div className="header-text">
-            <h1 className="title">Create Order</h1>
+            <h1 className="title">Edit Order</h1>
             <p className="details">Make Changes and publish for review</p>
           </div>
         </div>
@@ -264,6 +311,7 @@ function AddOrderPage({ orderIntData }) {
                       placeholder="Select Customer"
                       value={selectedCustomer}
                       onChange={handleCustomerChange}
+                      isDisabled={true}
                     />
                   </div>
                   {errors.customer && (
@@ -314,7 +362,7 @@ function AddOrderPage({ orderIntData }) {
                               price: variant?.price,
                               stock: variant?.stock,
                             }))}
-                            placeholder="Select Variant"
+                            placeholder="select Variant"
                             value={orderProduct.selectedVariant}
                             onChange={(selectedOption) =>
                               handleVariantChange(index, selectedOption)
@@ -462,9 +510,9 @@ function AddOrderPage({ orderIntData }) {
                       className="primary-button"
                       type="submit"
                       disabled={loading}
-                      onClick={handleSubmit}
+                      onClick={handleUpdate}
                     >
-                      {loading ? "Submitting..." : "Submit"}
+                      {loading ? "Updating..." : "Update"}
                     </button>
                   </div>
                 </div>
@@ -477,4 +525,4 @@ function AddOrderPage({ orderIntData }) {
   );
 }
 
-export default AddOrderPage;
+export default EditOrderPage;

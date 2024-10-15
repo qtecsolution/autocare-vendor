@@ -716,7 +716,7 @@ console.log(category);
                             <input type="text" name="product-name" id="product-name"
                               placeholder="Enter product name on english" onChange={handleProductNameEN} value={productNameEN} />
                           </div>
-                          <p className="text">{productNameEN.length}/100</p>
+                          <p className="text">{productNameEN?.length}/100</p>
                         </div>
                         {errors.name && <div className="error-message text-danger"><small>{errors.name}</small></div>}
                       </div>
@@ -732,7 +732,7 @@ console.log(category);
                             <input type="text" name="product-name" id="product-name"
                               placeholder="Enter product name on bangla" onChange={handleProductNameBN} value={productNameBN} />
                           </div>
-                          <p className="text">{productNameBN.length}/100</p>
+                          <p className="text">{productNameBN?.length}/100</p>
                         </div>
                       </div>
                     </div>

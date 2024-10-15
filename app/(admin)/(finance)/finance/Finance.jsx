@@ -200,9 +200,9 @@ export default function Finance() {
     if (curP == 0) return;
     setCurrentPage(curP);
   };
-  if (!totalItem) {
-    return <EmptyFinance />;
-  }
+  // if (!totalItem) {
+  //   return <EmptyFinance />;
+  // }
 
   return (
     <main id="content">
