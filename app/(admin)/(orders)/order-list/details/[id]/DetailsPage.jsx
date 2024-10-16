@@ -1,33 +1,115 @@
-'use client'
-import GlobalSearch from '@/components/admin/GlobalSearch'
-import Progress1 from '@/components/admin/progressbar/Progress1'
-import Progress2 from '@/components/admin/progressbar/Progress2'
-import Progress3 from '@/components/admin/progressbar/Progress3'
-import Progress4 from '@/components/admin/progressbar/Progress4'
-import Progress5 from '@/components/admin/progressbar/Progress5'
-import Progress6 from '@/components/admin/progressbar/Progress6'
-import axiosInstance from '@/lib/axiosInstance'
-import moment from 'moment'
-import React from 'react'
-
+"use client";
+import GlobalSearch from "@/components/admin/GlobalSearch";
+import Progress1 from "@/components/admin/progressbar/Progress1";
+import Progress2 from "@/components/admin/progressbar/Progress2";
+import Progress3 from "@/components/admin/progressbar/Progress3";
+import Progress4 from "@/components/admin/progressbar/Progress4";
+import Progress5 from "@/components/admin/progressbar/Progress5";
+import Progress6 from "@/components/admin/progressbar/Progress6";
+import axiosInstance from "@/lib/axiosInstance";
+import moment from "moment";
+import React, { useState } from "react";
+import Select from "react-select";
+import toast from "react-hot-toast";
+import AlertToast from "@/components/toast/AlertToast";
+import SuccessToast from "@/components/toast/Success";
+import { useRouter } from "next/navigation";
 
 function DetailsPage({ orderDetails }) {
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [inputNote, setInputNote] = useState("");
+  const [selectedOrderItem, setSelectedOrderItem] = useState(null);
+  const ORDER_STATUS = [
+    { value: 1, label: "Order Placed" },
+    { value: 2, label: "Processing" },
+    { value: 3, label: "Payment" },
+    { value: 4, label: "Confirmed" },
+    { value: 5, label: "Shipped" },
+    { value: 6, label: "Delivered" },
+    { value: 7, label: "Cancelled" },
+  ];
+
+  const initialStatuses = orderDetails?.items?.reduce((acc, item) => {
+    acc[item?.order_item_id] = ORDER_STATUS.find(
+      (status) => status.label === item?.status
+    );
+    return acc;
+  }, {});
+
+  const [orderStatuses, setOrderStatuses] = useState(initialStatuses);
+
+  const handleChangeOrderStatus = (selectedOption, orderItemId, itemId) => {
+    if (selectedOption?.value === 7) {
+      // If "Cancelled" is selected, open the modal
+      setSelectedOrderItem({ orderItemId, itemId, status: selectedOption });
+      setShowModal(true);
+    } else {
+      // Handle status change for other options
+      updateOrderStatus(selectedOption, orderItemId, itemId);
+    }
+  };
+
+  const updateOrderStatus = async (
+    selectedOption,
+    orderItemId,
+    itemId,
+    note = ""
+  ) => {
+    const previousStatus = orderStatuses[orderItemId];
+    setOrderStatuses((prevStatuses) => ({
+      ...prevStatuses,
+      [orderItemId]: selectedOption,
+    }));
+
+    try {
+      const response = await axiosInstance.patch(
+        `/seller-panel-api/frontend/order-item-status-update/${itemId}/`,
+        {
+          orderItemStatus: selectedOption?.value,
+          note: note, // Pass the note here, even empty string is allowed
+        }
+      );
+      toast.custom((t) => (
+        <SuccessToast
+          message={response.data.message}
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      router.refresh();
+    } catch (error) {
+      toast.custom((t) => (
+        <AlertToast
+          message={error?.response?.data?.message}
+          dismiss={() => toast.dismiss(t.id)}
+        />
+      ));
+      setOrderStatuses((prevStatuses) => ({
+        ...prevStatuses,
+        [orderItemId]: previousStatus,
+      }));
+    }
+  };
+
   const downloadInvoice = async () => {
     try {
-      const response = await axiosInstance.get(`/seller-panel-api/frontend/download-order-invoice/${orderDetails?.order?.id}/`, {
-        responseType: 'blob',
-      });
+      const response = await axiosInstance.get(
+        `/seller-panel-api/frontend/download-order-invoice/${orderDetails?.order?.id}/`,
+        {
+          responseType: "blob",
+        }
+      );
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
 
-      link.setAttribute('download', `invoice_${orderDetails?.order?.id}.pdf`);
+      link.setAttribute("download", `invoice_${orderDetails?.order?.id}.pdf`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     } catch (error) {
-      console.error('Error downloading the invoice:', error);
+      console.error("Error downloading the invoice:", error);
     }
   };
 
@@ -45,18 +127,37 @@ function DetailsPage({ orderDetails }) {
                     <ul className="list-unstyled d-flex align-items-center">
                       <li className="shopping-icon">
                         <a href="/">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
-                            fill="none">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
                               d="M6.24958 5V5.625H4.59374C3.79374 5.625 3.12374 6.22833 3.03958 7.02417L1.98708 17.0242C1.96418 17.242 1.98733 17.4621 2.05501 17.6704C2.12268 17.8787 2.23338 18.0704 2.37993 18.2331C2.52647 18.3958 2.70558 18.5259 2.90564 18.615C3.10571 18.704 3.32226 18.75 3.54124 18.75H16.4579C16.6769 18.75 16.8934 18.704 17.0935 18.615C17.2936 18.5259 17.4727 18.3958 17.6192 18.2331C17.7658 18.0704 17.8765 17.8787 17.9441 17.6704C18.0118 17.4621 18.035 17.242 18.0121 17.0242L16.9596 7.02417C16.9192 6.64012 16.7381 6.28463 16.4511 6.02626C16.1641 5.76789 15.7916 5.62494 15.4054 5.625H13.7496V5C13.7496 4.00544 13.3545 3.05161 12.6512 2.34835C11.948 1.64509 10.9941 1.25 9.99958 1.25C9.00501 1.25 8.05119 1.64509 7.34793 2.34835C6.64466 3.05161 6.24958 4.00544 6.24958 5ZM9.99958 2.5C9.33654 2.5 8.70065 2.76339 8.23181 3.23223C7.76297 3.70107 7.49958 4.33696 7.49958 5V5.625H12.4996V5C12.4996 4.33696 12.2362 3.70107 11.7673 3.23223C11.2985 2.76339 10.6626 2.5 9.99958 2.5ZM7.49958 9.375C7.49958 10.038 7.76297 10.6739 8.23181 11.1428C8.70065 11.6116 9.33654 11.875 9.99958 11.875C10.6626 11.875 11.2985 11.6116 11.7673 11.1428C12.2362 10.6739 12.4996 10.038 12.4996 9.375V8.75C12.4996 8.58424 12.5654 8.42527 12.6826 8.30806C12.7998 8.19085 12.9588 8.125 13.1246 8.125C13.2903 8.125 13.4493 8.19085 13.5665 8.30806C13.6837 8.42527 13.7496 8.58424 13.7496 8.75V9.375C13.7496 10.3696 13.3545 11.3234 12.6512 12.0266C11.948 12.7299 10.9941 13.125 9.99958 13.125C9.00501 13.125 8.05119 12.7299 7.34793 12.0266C6.64466 11.3234 6.24958 10.3696 6.24958 9.375V8.75C6.24958 8.58424 6.31542 8.42527 6.43263 8.30806C6.54984 8.19085 6.70882 8.125 6.87458 8.125C7.04034 8.125 7.19931 8.19085 7.31652 8.30806C7.43373 8.42527 7.49958 8.58424 7.49958 8.75V9.375Z"
-                              fill="#7B7F95" />
+                              fill="#7B7F95"
+                            />
                           </svg>
                         </a>
                       </li>
                       <li className="breadcrumb-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M6 12L10 8L6 4" stroke="#D0D5DD" stroke-width="1.33333" stroke-linecap="round"
-                            stroke-linejoin="round" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                        >
+                          <path
+                            d="M6 12L10 8L6 4"
+                            stroke="#D0D5DD"
+                            stroke-width="1.33333"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
                         </svg>
                       </li>
 
@@ -66,9 +167,20 @@ function DetailsPage({ orderDetails }) {
                         </a>
                       </li>
                       <li className="breadcrumb-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M6 12L10 8L6 4" stroke="#D0D5DD" stroke-width="1.33333" stroke-linecap="round"
-                            stroke-linejoin="round" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                        >
+                          <path
+                            d="M6 12L10 8L6 4"
+                            stroke="#D0D5DD"
+                            stroke-width="1.33333"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
                         </svg>
                       </li>
 
@@ -78,20 +190,34 @@ function DetailsPage({ orderDetails }) {
                         </a>
                       </li>
                       <li className="breadcrumb-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                          <path d="M6 12L10 8L6 4" stroke="#D0D5DD" stroke-width="1.33333" stroke-linecap="round"
-                            stroke-linejoin="round" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                        >
+                          <path
+                            d="M6 12L10 8L6 4"
+                            stroke="#D0D5DD"
+                            stroke-width="1.33333"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
                         </svg>
                       </li>
 
-                      <li className="breadcrumb-active">
-                        Details
-                      </li>
+                      <li className="breadcrumb-active">Details</li>
                     </ul>
                   </div>
                 </div>
                 <div className="d-flex align-items-center gap-3">
-                  <button className="primary-50-button" onClick={downloadInvoice}>Download Invoice</button>
+                  <button
+                    className="primary-50-button"
+                    onClick={downloadInvoice}
+                  >
+                    Download Invoice
+                  </button>
                 </div>
               </div>
             </div>
@@ -102,27 +228,23 @@ function DetailsPage({ orderDetails }) {
           <div className="order-details">
             <div className="order-details-inner">
               <div className="order-details-inner-head">
-                <h1 className="heading">
-                  Order Details
-                </h1>
+                <h1 className="heading">Order Details</h1>
               </div>
               <div className="order-details-inner-body">
                 <div className="row g-4 g-xl-5">
                   <div className="col-xl-6">
                     <div className="d-flex flex-column gap-1">
                       <div className="d-flex justify-content-between align-items-center">
-                        <p className="light-text">
-                          Time
-                        </p>
+                        <p className="light-text">Time</p>
                         <p className="bold-text">
-                          {moment(orderDetails?.order?.created_at).format('DD/MM/YYYY')}
+                          {moment(orderDetails?.order?.created_at).format(
+                            "DD/MM/YYYY"
+                          )}
                         </p>
                       </div>
 
                       <div className="d-flex justify-content-between align-items-center">
-                        <p className="light-text">
-                          Order ID
-                        </p>
+                        <p className="light-text">Order ID</p>
                         <p className="bold-text">
                           #{orderDetails?.order?.order_id}
                         </p>
@@ -141,27 +263,21 @@ function DetailsPage({ orderDetails }) {
                   <div className="col-xl-6">
                     <div className="d-flex flex-column gap-1">
                       <div className="d-flex justify-content-between align-items-center">
-                        <p className="light-text">
-                          Customer
-                        </p>
+                        <p className="light-text">Customer</p>
                         <p className="bold-text">
                           {orderDetails?.order?.customer?.full_name}
                         </p>
                       </div>
 
                       <div className="d-flex justify-content-between align-items-center">
-                        <p className="light-text">
-                          Contact
-                        </p>
+                        <p className="light-text">Contact</p>
                         <p className="bold-text">
                           {orderDetails?.order?.customer?.phone_number}
                         </p>
                       </div>
 
                       <div className="d-flex justify-content-between align-items-center">
-                        <p className="light-text">
-                          Email
-                        </p>
+                        <p className="light-text">Email</p>
                         <p className="bold-text">
                           {orderDetails?.order?.customer?.email}
                         </p>
@@ -186,9 +302,7 @@ function DetailsPage({ orderDetails }) {
           <div className="order-details">
             <div className="order-details-inner">
               <div className="order-details-inner-head">
-                <h1 className="heading">
-                  Delivery Information
-                </h1>
+                <h1 className="heading">Delivery Information</h1>
               </div>
               <div className="order-details-inner-body">
                 <div className="row g-4 g-xl-5">
@@ -219,9 +333,7 @@ function DetailsPage({ orderDetails }) {
                   </div> */}
                   <div className="col-xl-4">
                     <div className="d-flex flex-column gap-1">
-                      <p className="light-text">
-                        Shipping Address
-                      </p>
+                      <p className="light-text">Shipping Address</p>
                       <p className="bold-text">
                         {orderDetails?.order?.shipping_address}
                       </p>
@@ -237,9 +349,7 @@ function DetailsPage({ orderDetails }) {
           <div className="order-details">
             <div className="order-details-inner">
               <div className="order-details-inner-head">
-                <h1 className="heading">
-                  Payment Details
-                </h1>
+                <h1 className="heading">Payment Details</h1>
               </div>
               <div className="order-details-inner-body">
                 <div className="row g-4 g-xl-5">
@@ -247,9 +357,7 @@ function DetailsPage({ orderDetails }) {
                     <div className="row">
                       <div className="col-6">
                         <div className="d-flex flex-column gap-1">
-                          <p className="light-text">
-                            Method
-                          </p>
+                          <p className="light-text">Method</p>
                           <p className="bold-text">
                             {orderDetails?.order?.payment_method}
                           </p>
@@ -258,9 +366,7 @@ function DetailsPage({ orderDetails }) {
 
                       <div className="col-6">
                         <div className="d-flex flex-column gap-1">
-                          <p className="light-text">
-                            Payment Status:
-                          </p>
+                          <p className="light-text">Payment Status:</p>
                           <p className="bold-text">
                             {orderDetails?.order?.payment_status}
                           </p>
@@ -278,9 +384,7 @@ function DetailsPage({ orderDetails }) {
           <div className="order-details">
             <div className="order-details-inner">
               <div className="order-details-inner-head">
-                <h1 className="heading">
-                  Purchase Details
-                </h1>
+                <h1 className="heading">Purchase Details</h1>
               </div>
 
               <div className="order-management-body-inner">
@@ -288,11 +392,19 @@ function DetailsPage({ orderDetails }) {
                   <table className="table mb-0">
                     <thead className="thead-light">
                       <tr>
-                        <th>Product</th>
-                        <th className="text-center">Quantity</th>
-                        <th className="text-center">rice per Unit</th>
-                        <th className="text-center">Total Price</th>
-                        <th className="text-center">status</th>
+                        <th className="order-details-table-header">Product</th>
+                        <th className="text-center order-details-table-header">
+                          Quantity
+                        </th>
+                        <th className="text-center order-details-table-header">
+                          rice per Unit
+                        </th>
+                        <th className="text-center order-details-table-header">
+                          Total Price
+                        </th>
+                        <th className="text-center order-details-table-header">
+                          status
+                        </th>
                         {/* <th className="text-center">Action</th> */}
                       </tr>
                     </thead>
@@ -307,8 +419,22 @@ function DetailsPage({ orderDetails }) {
                                     {item?.product?.name}
                                   </p>
                                   <div className="d-flex align-items-center gap-2 mt-1">
-                                    {item?.product?.is_manufacturer_active && <p className="light-text">Manufacturer: <span>{item?.product?.manufacturer}</span></p>}
-                                    {item?.product?.is_part_number_active && <p className="light-text">Part Number: <span>{item?.product?.part_number}</span></p>}
+                                    {item?.product?.is_manufacturer_active && (
+                                      <p className="light-text">
+                                        Manufacturer:{" "}
+                                        <span>
+                                          {item?.product?.manufacturer}
+                                        </span>
+                                      </p>
+                                    )}
+                                    {item?.product?.is_part_number_active && (
+                                      <p className="light-text">
+                                        Part Number:{" "}
+                                        <span>
+                                          {item?.product?.part_number}
+                                        </span>
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -334,8 +460,90 @@ function DetailsPage({ orderDetails }) {
 
                             <td className="border-bottom-0 text-center">
                               <div className="">
-                                <span className="status processing ">{item?.status}</span>
-                                {item?.status === "Delivered" && <p className="delivered-time mt-2">Delivered On:  {moment(item?.updated_at).format('YYYY-MM-DD')} </p>}
+                                {/* <span className="status processing ">
+                                  {item?.status}
+                                </span> */}
+                                <Select
+                                  options={ORDER_STATUS}
+                                  value={orderStatuses[item?.order_item_id]}
+                                  onChange={(selectedOption) =>
+                                    handleChangeOrderStatus(
+                                      selectedOption,
+                                      item?.order_item_id,
+                                      item?.id
+                                    )
+                                  }
+                                />
+                                  {showModal && <div className="modal-backdrop fade show"></div>}
+                                <div
+                                  className={`modal fade ${
+                                    showModal ? "show" : ""
+                                  }`}
+                                  style={{
+                                    display: showModal ? "block" : "none",
+                                  }}
+                                  tabindex="-1"
+                                >
+                                  <div className="modal-dialog">
+                                    <div className="modal-content">
+                                      <div className="modal-header">
+                                        <h5 className="modal-title">
+                                          Add Cancellation Note
+                                        </h5>
+                                        <button
+                                          type="button"
+                                          className="btn-close"
+                                          onClick={() => setShowModal(false)}
+                                        ></button>
+                                      </div>
+                                      <div className="modal-body">
+                                        <textarea
+                                          className="form-control"
+                                          value={inputNote}
+                                          onChange={(e) =>
+                                            setInputNote(e.target.value)
+                                          }
+                                          placeholder="Enter cancellation note"
+                                        ></textarea>
+                                      </div>
+                                      <div className="modal-footer">
+                                        <button
+                                          type="button"
+                                          className="btn btn-secondary"
+                                          onClick={() => setShowModal(false)}
+                                        >
+                                          Close
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="btn btn-danger"
+                                          style={{ color: "white" }}
+                                          onClick={() => {
+                                            // Call updateOrderStatus with the note
+                                            updateOrderStatus(
+                                              selectedOrderItem.status,
+                                              selectedOrderItem.orderItemId,
+                                              selectedOrderItem.itemId,
+                                              inputNote
+                                            );
+                                            setShowModal(false); // Close the modal
+                                          }}
+                                        >
+                                          Save
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {item?.status === "Delivered" && (
+                                  <p className="delivered-time mt-2">
+                                    Delivered On:{" "}
+                                    {moment(item?.updated_at).format(
+                                      "YYYY-MM-DD"
+                                    )}{" "}
+                                  </p>
+                                )}
                               </div>
                             </td>
 
@@ -392,9 +600,7 @@ function DetailsPage({ orderDetails }) {
             </div>
             <div className="col-lg-6">
               <div className="total-summary">
-                <h1 className="heading">
-                  Total Summary
-                </h1>
+                <h1 className="heading">Total Summary</h1>
 
                 <div className="d-flex flex-column gap-3">
                   <div className="d-flex flex-column gap-2">
@@ -405,7 +611,9 @@ function DetailsPage({ orderDetails }) {
 
                     <div className="d-flex justify-content-between align-items-center gap-3">
                       <p className="light-text">Shipping Cost</p>
-                      <p className="bold-text">+ {orderDetails?.shipping_cost} Tk</p>
+                      <p className="bold-text">
+                        + {orderDetails?.shipping_cost} Tk
+                      </p>
                     </div>
 
                     {/* <div className="d-flex justify-content-between align-items-center gap-3">
@@ -422,7 +630,9 @@ function DetailsPage({ orderDetails }) {
                   <div className="border-top pt-3">
                     <div className="d-flex justify-content-between align-items-center gap-3">
                       <p className="total-text">Total</p>
-                      <p className="total-color-text">{orderDetails?.total_price} Tk</p>
+                      <p className="total-color-text">
+                        {orderDetails?.total_price} Tk
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -431,9 +641,8 @@ function DetailsPage({ orderDetails }) {
           </div>
         </section>
       </div>
-
     </main>
-  )
+  );
 }
 
-export default DetailsPage
+export default DetailsPage;

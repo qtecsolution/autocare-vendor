@@ -131,6 +131,9 @@
 .order-management-body-inner .thead-light th {
     z-index: 0 !important;
 }
+.order-management-body-inner .thead-light th.order-details-table-header {
+    z-index: 5 !important;
+}
 
 .date-picker-wrapper {
     width: 100%;
