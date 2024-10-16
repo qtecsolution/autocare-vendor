@@ -798,7 +798,7 @@ export default function Settings() {
                               <>
                                 <input
                                   className="input-field number"
-                                  type="text"
+                                  type="number"
                                   id="number"
                                   value={user.phone2}
                                   onChange={(e) =>
