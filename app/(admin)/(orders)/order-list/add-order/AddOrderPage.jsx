@@ -1,11 +1,12 @@
 "use client";
 import axiosInstance from "@/lib/axiosInstance";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import AlertToast from "@/components/toast/AlertToast";
 import SuccessToast from "@/components/toast/Success";
+import { getAuthUser } from "@/utils/auth";
 
 function AddOrderPage({ orderIntData }) {
   const router = useRouter();
@@ -36,6 +37,24 @@ function AddOrderPage({ orderIntData }) {
     { value: 1, label: "Cash on Delivery" },
     { value: 2, label: "Online Payment" },
   ];
+
+  const isToastShown = useRef(false);
+  const sellerInfo = getAuthUser();
+  useEffect(() => {
+    const isVerified = sellerInfo?.store?.is_verified;
+    if (!isVerified) {
+      router.push('/');
+      if (!isToastShown.current) {
+        isToastShown.current = true;
+        toast.custom((t) => (
+          <AlertToast
+            message={!sellerInfo?.store ? "First you need to create a store !" : "Your store is not verified !"}
+            dismiss={() => toast.dismiss(t.id)}
+          />
+        ));
+      }
+    }
+  }, [sellerInfo, router]);
 
   const handleCustomerChange = (selectedOption) => {
     setSelectedCustomer(selectedOption);
@@ -257,7 +276,7 @@ function AddOrderPage({ orderIntData }) {
                       Customer <span>*</span>
                     </label>
                     <Select
-                      options={customers.map((customer) => ({
+                      options={customers?.map((customer) => ({
                         value: customer.id,
                         label: customer.full_name,
                       }))}
@@ -278,7 +297,7 @@ function AddOrderPage({ orderIntData }) {
                             Product <span>*</span>
                           </label>
                           <Select
-                            options={products.map((product) => ({
+                            options={products?.map((product) => ({
                               value: product.id,
                               label: product.name,
                               price: product?.discount_price

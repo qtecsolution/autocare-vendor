@@ -3,11 +3,16 @@ import AddOrderPage from "./AddOrderPage";
 import axiosInstance from "@/lib/axiosInstance";
 
 async function getOrderIntData() {
-  const response = await axiosInstance.get(`/seller-panel-api/frontend/place-order-initial-data/`);
-  if (response.status !== 200) {
-      throw new Error("Failed to fetch data");
+  try {
+    const response = await axiosInstance.get(`/seller-panel-api/frontend/place-order-initial-data/`);
+    if (response.status !== 200) {
+        throw new Error("Failed to fetch data");
+    }
+    return response.data;
+  } catch (error) {
+    console.log(error);
   }
-  return response.data;
+
 }
 
 async function page() {
