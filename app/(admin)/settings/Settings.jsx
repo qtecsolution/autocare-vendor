@@ -55,6 +55,17 @@ export default function Settings() {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [mainImagePreview, setMainImagePreview] = useState(null);
+  const [tradeLicenseFile, setTradeLicenseFile] = useState(null);
+  const [tinBinFile, setTinBinFile] = useState(null);
+
+  const sellerInfo = getAuthUser();
+
+  const handleTradeLicenseFile = (e) => {
+    setTradeLicenseFile(e.target.files[0]);
+  };
+  const handleTinBinFile = (e) => {
+    setTinBinFile(e.target.files[0]);
+  };
 
   const [location, setLocation] = useState({
     latitude: null,
@@ -482,9 +493,6 @@ export default function Settings() {
     if (!storeData.name.trim()) {
       tempErrors.storeName = "Store Name is required";
     }
-    if (!location) {
-      tempErrors.location = "Location is required";
-    }
     if (!selectedDivision?.value) {
       tempErrors.division = "Division is required";
     }
@@ -493,6 +501,16 @@ export default function Settings() {
     }
     if (!selectedCity?.value) {
       tempErrors.city = "City is required";
+    }
+
+    if (!location.latitude && !location.longitude) {
+      tempErrors.location_error = "Location is required";
+    }
+    if (!tradeLicenseFile && !sellerInfo?.store) {
+      tempErrors.trade_license = "Trade license file is required";
+    }
+    if (!tinBinFile && !sellerInfo?.store) {
+      tempErrors.tin_bin_file = "TIN/BIN file is required";
     }
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -511,6 +529,12 @@ export default function Settings() {
       formData.append("thanaId", selectedCity?.value);
       if (storeData?.businessTypeId !== 1 && timeSlots) {
         formData.append("timeSlot", JSON.stringify(timeSlots));
+      }
+      if (tradeLicenseFile) {
+        formData.append("tradeLicence", tradeLicenseFile);
+      }
+      if (tinBinFile) {
+        formData.append("binCertificate", tinBinFile);
       }
       if (thumbnail) {
         formData.append("logo", thumbnail);
@@ -988,9 +1012,9 @@ export default function Settings() {
                                   placeholder="Enter Your Location"
                                 />
                               </div>
-                              {errors.location && (
+                              {errors.location_error && (
                                 <span className="text-danger">
-                                  {errors.location}
+                                  {errors.location_error}
                                 </span>
                               )}
                             </div>
@@ -1203,6 +1227,132 @@ export default function Settings() {
                   <div className="profile-section">
                     <div className="profile-section-inner">
                       <div className="row g-4">
+                        {!sellerInfo?.store && (
+                          <>
+                            <div className="col-12">
+                              <div className="product-image-section">
+                                <div className="product-img-head">
+                                  <div className="d-flex align-items-center gap-1">
+                                    <h1 className="title">
+                                      Trade License{" "}
+                                      <span className="text-danger">*</span>{" "}
+                                    </h1>
+                                  </div>
+                                </div>
+
+                                <div className="product-img-body">
+                                  <div className="uplod-img">
+                                    <div className="add-product-img-inner">
+                                      <label
+                                        for="tradeLicense"
+                                        className="add-product-img"
+                                      >
+                                        <input
+                                          className="add-product-img-input"
+                                          type="file"
+                                          id="tradeLicense"
+                                          accept=".csv,.doc,.docx,.pdf,.png,.jpg,.jpeg"
+                                          onChange={handleTradeLicenseFile}
+                                        />
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="30"
+                                          height="30"
+                                          viewBox="0 0 30 30"
+                                          fill="none"
+                                        >
+                                          <path
+                                            d="M15 5.62451V24.3745M24.375 14.9995H5.625"
+                                            stroke="#0F766D"
+                                            stroke-width="1.875"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                        </svg>
+                                      </label>
+                                    </div>
+                                  </div>
+                                  <div className="">
+                                    <p className="paragraph">
+                                      {tradeLicenseFile
+                                        ? tradeLicenseFile?.name
+                                        : "CSV, DOC, PDF, PNG & JPG"}
+                                    </p>
+                                    <p className="light-text">
+                                      Please submit updated recent file
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {errors.trade_license && (
+                              <span className="text-danger">
+                                {errors.trade_license}
+                              </span>
+                            )}
+                            <div className="col-12">
+                              <div className="product-image-section">
+                                <div className="product-img-head">
+                                  <div className="d-flex align-items-center gap-1">
+                                    <h1 className="title">
+                                      TIN Certificate / BIN Certificate{" "}
+                                      <span className="text-danger">*</span>{" "}
+                                    </h1>
+                                  </div>
+                                </div>
+
+                                <div className="product-img-body">
+                                  <div className="uplod-img">
+                                    <div className="add-product-img-inner">
+                                      <label
+                                        for="tinBin"
+                                        className="add-product-img"
+                                      >
+                                        <input
+                                          className="add-product-img-input"
+                                          type="file"
+                                          id="tinBin"
+                                          accept=".csv,.doc,.docx,.pdf,.png,.jpg,.jpeg"
+                                          onChange={handleTinBinFile}
+                                        />
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="30"
+                                          height="30"
+                                          viewBox="0 0 30 30"
+                                          fill="none"
+                                        >
+                                          <path
+                                            d="M15 5.62451V24.3745M24.375 14.9995H5.625"
+                                            stroke="#0F766D"
+                                            stroke-width="1.875"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                        </svg>
+                                      </label>
+                                    </div>
+                                  </div>
+                                  <div className="">
+                                    <p className="paragraph">
+                                      {tinBinFile
+                                        ? tinBinFile?.name
+                                        : "CSV, DOC, PDF, PNG & JPG"}
+                                    </p>
+                                    <p className="light-text">
+                                      Please submit updated recent file
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {errors.tin_bin_file && (
+                              <span className="text-danger">
+                                {errors.tin_bin_file}
+                              </span>
+                            )}
+                          </>
+                        )}
                         <div className="col-12">
                           <div className="product-image-section">
                             <div className="product-img-head">
