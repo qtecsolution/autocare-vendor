@@ -100,6 +100,7 @@ function IdentityVerifyPage() {
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
+        localStorage.setItem("seller", JSON.stringify(response.data.seller));
         if (from && from === "settings") {
           router.push("/settings");
         } else {
