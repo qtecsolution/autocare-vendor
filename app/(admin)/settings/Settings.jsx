@@ -62,6 +62,63 @@ export default function Settings() {
   const [tinBinFile, setTinBinFile] = useState(null);
 
   const sellerInfo = getAuthUser();
+  console.log(
+    sellerInfo,
+
+    "SINF"
+  );
+
+  const [frontType, setFrontType] = useState("");
+  const [backType, setBackType] = useState("");
+  const [tinCType, setTinCType] = useState("");
+  const [licenseCType, setLicenseCType] = useState("");
+
+  const frontUrl = sellerInfo?.seller_verification?.front_part;
+  const backUrl = sellerInfo?.seller_verification?.back_part;
+  const binCirtificateUrl =
+    sellerInfo?.store?.store_verification?.bin_certificate;
+  const tradeLicenceUrl = sellerInfo?.store?.store_verification?.trade_licence;
+
+  // Determine file types based on extension
+  useEffect(() => {
+    const getFileType = (url, setType) => {
+      const extension = url?.split(".").pop();
+      setType(extension);
+    };
+    if (frontUrl) getFileType(frontUrl, setFrontType);
+    if (backUrl) getFileType(backUrl, setBackType);
+    if (binCirtificateUrl) getFileType(binCirtificateUrl, setTinCType);
+    if (tradeLicenceUrl) getFileType(tradeLicenceUrl, setLicenseCType);
+  }, [frontUrl, backUrl, binCirtificateUrl, tradeLicenceUrl]);
+
+  const renderFile = (url, type) => {
+    switch (type) {
+      case "pdf":
+        return (
+          <embed src={url} type="application/pdf" width="100%" height="300px" />
+        );
+      case "jpg":
+      case "jpeg":
+      case "png":
+      case "gif":
+        return (
+          <img
+            src={url}
+            alt="file"
+            style={{ width: "300px", height: "300px" }}
+          />
+        );
+      case "doc":
+      case "docx":
+        return (
+          <a href={url} download>
+            Download Document
+          </a>
+        );
+      default:
+        return <p>Unsupported file format</p>;
+    }
+  };
 
   const handleTradeLicenseFile = (e) => {
     setTradeLicenseFile(e.target.files[0]);
@@ -479,6 +536,8 @@ export default function Settings() {
           formData
         );
         localStorage.setItem("seller", JSON.stringify(response.data.seller));
+        console.log(response.data.seller);
+
         router.refresh();
         closeConfirmModal1();
         toast.custom((t) => (
@@ -567,6 +626,10 @@ export default function Settings() {
           },
         }
       );
+      console.log(tinBinFile);
+      console.log(tradeLicenseFile);
+      console.log(response);
+
       localStorage.setItem("seller", JSON.stringify(response.data.seller));
       closeConfirmModal2();
       router.refresh();
@@ -888,55 +951,57 @@ export default function Settings() {
                                     Your Documents
                                   </label>
                                 </div>
-                                <div className="d-flex">
-                                  <img
-                                    src="/assets/images/Documents1.png"
-                                    width={150}
-                                    height={150}
-                                  />
-                                  <img
-                                    src="/assets/images/Documents2.png"
-                                    width={150}
-                                    height={150}
-                                  />
+                                <div className="d-flex gap-3">
+                                  <div>
+                                    {frontUrl &&
+                                      renderFile(frontUrl, frontType)}
+                                  </div>
+                                  <div>
+                                    {backUrl && renderFile(backUrl, backType)}
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                            <Link
-                              href={{
-                                pathname: "/identity-verify",
-                                query: { from: "settings" },
-                              }}
-                              className="new-campaign-btn w-50"
-                            >
-                              <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
+                            {!sellerInfo?._verified && (
+                              <Link
+                                href={{
+                                  pathname: "/identity-verify",
+                                  query: { from: "settings" },
+                                }}
+                                className="new-campaign-btn w-50 mt-2"
                               >
-                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                                <g
-                                  id="SVGRepo_tracerCarrier"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                ></g>
-                                <g id="SVGRepo_iconCarrier">
-                                  {" "}
-                                  <g id="Interface / External_Link">
+                                <svg
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <g
+                                    id="SVGRepo_bgCarrier"
+                                    stroke-width="0"
+                                  ></g>
+                                  <g
+                                    id="SVGRepo_tracerCarrier"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  ></g>
+                                  <g id="SVGRepo_iconCarrier">
                                     {" "}
-                                    <path
-                                      id="Vector"
-                                      d="M10.0002 5H8.2002C7.08009 5 6.51962 5 6.0918 5.21799C5.71547 5.40973 5.40973 5.71547 5.21799 6.0918C5 6.51962 5 7.08009 5 8.2002V15.8002C5 16.9203 5 17.4801 5.21799 17.9079C5.40973 18.2842 5.71547 18.5905 6.0918 18.7822C6.5192 19 7.07899 19 8.19691 19H15.8031C16.921 19 17.48 19 17.9074 18.7822C18.2837 18.5905 18.5905 18.2839 18.7822 17.9076C19 17.4802 19 16.921 19 15.8031V14M20 9V4M20 4H15M20 4L13 11"
-                                      stroke="#ffffff"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    ></path>{" "}
-                                  </g>{" "}
-                                </g>
-                              </svg>
-                              Verify Your Identity
-                            </Link>
+                                    <g id="Interface / External_Link">
+                                      {" "}
+                                      <path
+                                        id="Vector"
+                                        d="M10.0002 5H8.2002C7.08009 5 6.51962 5 6.0918 5.21799C5.71547 5.40973 5.40973 5.71547 5.21799 6.0918C5 6.51962 5 7.08009 5 8.2002V15.8002C5 16.9203 5 17.4801 5.21799 17.9079C5.40973 18.2842 5.71547 18.5905 6.0918 18.7822C6.5192 19 7.07899 19 8.19691 19H15.8031C16.921 19 17.48 19 17.9074 18.7822C18.2837 18.5905 18.5905 18.2839 18.7822 17.9076C19 17.4802 19 16.921 19 15.8031V14M20 9V4M20 4H15M20 4L13 11"
+                                        stroke="#ffffff"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                      ></path>{" "}
+                                    </g>{" "}
+                                  </g>
+                                </svg>
+                                Verify Your Identity
+                              </Link>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1305,19 +1370,21 @@ export default function Settings() {
                   <div className="profile-section">
                     <div className="profile-section-inner">
                       <div className="row g-4">
-                        {!sellerInfo?.store && (
-                          <>
-                            <div className="col-12">
-                              <div className="product-image-section">
-                                <div className="product-img-head">
-                                  <div className="d-flex align-items-center gap-1">
-                                    <h1 className="title">
-                                      Trade License{" "}
-                                      <span className="text-danger">*</span>{" "}
-                                    </h1>
-                                  </div>
+                        <>
+                          <div className="col-12">
+                            <div className="product-image-section">
+                              <div className="product-img-head">
+                                <div className="d-flex align-items-center gap-1">
+                                  <h1 className="title">
+                                    Trade License{" "}
+                                    <span className="text-danger">*</span>{" "}
+                                  </h1>
                                 </div>
+                              </div>
+                              {tradeLicenceUrl &&
+                                renderFile(tradeLicenceUrl, licenseCType)}
 
+                              {!sellerInfo?.store?.is_verified && (
                                 <div className="product-img-body">
                                   <div className="uplod-img">
                                     <div className="add-product-img-inner">
@@ -1361,24 +1428,27 @@ export default function Settings() {
                                     </p>
                                   </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
-                            {errors.trade_license && (
-                              <span className="text-danger">
-                                {errors.trade_license}
-                              </span>
-                            )}
-                            <div className="col-12">
-                              <div className="product-image-section">
-                                <div className="product-img-head">
-                                  <div className="d-flex align-items-center gap-1">
-                                    <h1 className="title">
-                                      TIN Certificate / BIN Certificate{" "}
-                                      <span className="text-danger">*</span>{" "}
-                                    </h1>
-                                  </div>
+                          </div>
+                          {errors.trade_license && (
+                            <span className="text-danger">
+                              {errors.trade_license}
+                            </span>
+                          )}
+                          <div className="col-12">
+                            <div className="product-image-section">
+                              <div className="product-img-head">
+                                <div className="d-flex align-items-center gap-1">
+                                  <h1 className="title">
+                                    TIN Certificate / BIN Certificate{" "}
+                                    <span className="text-danger">*</span>{" "}
+                                  </h1>
                                 </div>
-
+                              </div>
+                              {binCirtificateUrl &&
+                                renderFile(binCirtificateUrl, tinCType)}
+                              {!sellerInfo?.store?.is_verified && (
                                 <div className="product-img-body">
                                   <div className="uplod-img">
                                     <div className="add-product-img-inner">
@@ -1422,15 +1492,16 @@ export default function Settings() {
                                     </p>
                                   </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
-                            {errors.tin_bin_file && (
-                              <span className="text-danger">
-                                {errors.tin_bin_file}
-                              </span>
-                            )}
-                          </>
-                        )}
+                          </div>
+                          {errors.tin_bin_file && (
+                            <span className="text-danger">
+                              {errors.tin_bin_file}
+                            </span>
+                          )}
+                        </>
+
                         <div className="col-12">
                           <div className="product-image-section">
                             <div className="product-img-head">
