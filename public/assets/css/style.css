@@ -5140,7 +5140,7 @@ table tr td {
 
 .inner-content-1 {
   padding: 0rem 0.625rem;
-  background-color: #fafafa;
+  /* background-color: #fafafa; */
 }
 @media screen and (min-width: 36rem) {
   .inner-content-1 {

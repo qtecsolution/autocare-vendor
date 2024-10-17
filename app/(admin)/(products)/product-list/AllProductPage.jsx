@@ -14,31 +14,10 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
 
     const [currentPage, setCurrentPage] = useState(parseInt(pageProps) || 1);
     const totalPages = calculatedTotalPages;
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [filter, setFilter] = useState('');
     const router = useRouter();
     const pathname = usePathname();
-
-    // const [selectedCategory, setSelectedCategory] = useState(null);
-    // const [selectedStatus, setSelectedStatus] = useState(null);
-    // const [selectedNew, setSelectedNew] = useState(null);
-
-    // const categories = [
-    //     { value: 'cat1', label: 'Category 1' },
-    //     { value: 'cat2', label: 'Category 2' },
-    //     { value: 'cat3', label: 'Category 3' },
-    // ];
-    // const statuses = [
-    //     { value: 'st1', label: 'Status 1' },
-    //     { value: 'st2', label: 'Status 2' },
-    //     { value: 'st3', label: 'Status 3' },
-    // ];
-    // const newest = [
-    //     { value: 'new1', label: 'New 1' },
-    //     { value: 'new2', label: 'New 2' },
-    //     { value: 'new3', label: 'New 3' },
-    // ];
 
     const handleSearchQuery = (e) => {
         const value = e.target.value;
@@ -205,12 +184,12 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                     <table class="table">
                                         <thead class="thead-light">
                                             <tr>
-                                                <th scope="col">
+                                                <th scope="col" class="text-center">
                                                     {/* <input class="table-header-checkbox" type="checkbox" id="table-header-checkbox" /> */}
                                                     <label for="table-header-checkbox" tabindex="4">Product</label>
                                                 </th>
-                                                <th scope="col">Price</th>
-                                                <th scope="col">In Stock</th>
+                                                <th scope="col" class="text-center">Price</th>
+                                                <th scope="col" class="text-center">In Stock</th>
                                                 <th scope="col" class="text-center">sold</th>
                                                 <th scope="col" class="text-center">Wishlist</th>
                                                 <th scope="col" class="text-center">Variants</th>
@@ -260,39 +239,19 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
                                                         </div>
                                                     </td>
 
-                                                    <td>
+                                                    <td className='text-center'>
                                                         <div>
                                                             <p class="pice-text">
-                                                                {product?.discount_price ? product.discount_price : product?.price} Tk
+                                                                {/* {product?.discount_price ? product.discount_price : product?.price} Tk */}
+                                                                {product?.final_price} Tk
                                                             </p>
                                                         </div>
                                                     </td>
 
-                                                    <td>
-                                                        <div class="d-flex align-items-center gap-4">
+                                                    <td className='text-center'>
                                                             <p class="pice-text">
                                                                 {product?.stock}
                                                             </p>
-
-                                                            {/* <div class="d-flex align-items-center gap-2">
-                                                            <button class="edit-btn">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"
-                                                                    fill="none">
-                                                                    <path
-                                                                        d="M5.99999 10.0001H10.5M1.5 10.0001H2.33727C2.58186 10.0001 2.70416 10.0001 2.81925 9.97248C2.92128 9.94799 3.01883 9.90758 3.1083 9.85275C3.20921 9.79091 3.29569 9.70444 3.46864 9.53148L9.75001 3.25011C10.1642 2.8359 10.1642 2.16433 9.75001 1.75011C9.3358 1.3359 8.66423 1.3359 8.25001 1.75011L1.96863 8.03148C1.79568 8.20444 1.7092 8.29091 1.64736 8.39183C1.59253 8.4813 1.55213 8.57885 1.52763 8.68088C1.5 8.79597 1.5 8.91826 1.5 9.16286V10.0001Z"
-                                                                        stroke="#A7AAB9" stroke-linecap="round" stroke-linejoin="round" />
-                                                                </svg>
-                                                            </button>
-                                                            <button class="delete-btn">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"
-                                                                    fill="none">
-                                                                    <path
-                                                                        d="M8 3V2.6C8 2.03995 8 1.75992 7.89101 1.54601C7.79513 1.35785 7.64215 1.20487 7.45399 1.10899C7.24008 1 6.96005 1 6.4 1H5.6C5.03995 1 4.75992 1 4.54601 1.10899C4.35785 1.20487 4.20487 1.35785 4.10899 1.54601C4 1.75992 4 2.03995 4 2.6V3M1.5 3H10.5M9.5 3V8.6C9.5 9.44008 9.5 9.86012 9.33651 10.181C9.1927 10.4632 8.96323 10.6927 8.68099 10.8365C8.36012 11 7.94008 11 7.1 11H4.9C4.05992 11 3.63988 11 3.31901 10.8365C3.03677 10.6927 2.8073 10.4632 2.66349 10.181C2.5 9.86012 2.5 9.44008 2.5 8.6V3"
-                                                                        stroke="#A7AAB9" stroke-linecap="round" stroke-linejoin="round" />
-                                                                </svg>
-                                                            </button>
-                                                        </div> */}
-                                                        </div>
                                                     </td>
 
                                                     <td class="text-center">
@@ -309,7 +268,7 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
 
                                                     <td class="text-center">
                                                         <Link href={"/product-list/generate-variant/" + product?.id}>
-                                                            <p class="pice-text text-white" style={{ borderRadius: '25px', backgroundColor: product?.is_variant_available ? 'green' : 'red', padding: '1px' }}>
+                                                            <p class="pice-text text-white" style={{ borderRadius: '30px', backgroundColor: product?.is_variant_available ? 'green' : 'red', paddingLeft: '8px',paddingRight:'8px',paddingTop:'6px',paddingBottom:'5px' }}>
                                                                 Variant | {product?.total_variant}
                                                             </p>
                                                         </Link>
