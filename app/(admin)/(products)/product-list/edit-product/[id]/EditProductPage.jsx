@@ -44,6 +44,7 @@ function EditProductPage({ productDetails }) {
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [selectedSubSubCategories, setSelectedSubSubCategories] = useState([]);
   const [commission,setCommission] = useState(0);
+  const [finalPrice,setFinalPrice] = useState(0);
 
   const [manufacturers, setManufacturers] = useState([]);
   const [selectedManufacturer, setSelectedManufacturer] = useState(null);
@@ -140,6 +141,15 @@ function EditProductPage({ productDetails }) {
     }
   };
 
+  useEffect(() => {
+    const calculatedFinalPrice =
+      discountPrice
+        ? Number(discountPrice) + (Number(discountPrice) * commission / 100)
+        : Number(price) + (Number(price) * commission / 100)
+    setFinalPrice(calculatedFinalPrice);
+    
+  }, [discountPrice,price,commission]);
+  
   const sellerInfo = getAuthUser();
   useEffect(() => {
     const businessType = sellerInfo?.business_type?.name;
@@ -220,7 +230,6 @@ function EditProductPage({ productDetails }) {
   useEffect(() => {
     if (productDetails?.product) {
       const { sub_category, sub_sub_category, category } = productDetails.product;
-console.log(category);
 
       // Set selected category based on product details
       const selectedCategory = {
@@ -309,10 +318,14 @@ console.log(category);
   const handleSubCategoryChange = (selectedOptions) => {
     setSelectedSubCategories(selectedOptions);
 
-    const maxCommission = Math.max(
-      ...selectedOptions.map(sub_category => parseFloat(sub_category.commissionRate))
-    );
-    setCommission(maxCommission || 0);
+    if (selectedOptions.length > 0) {
+      const maxCommission = Math.max(
+        ...selectedOptions.map(sub_category => parseFloat(sub_category.commissionRate))
+      );
+      setCommission(maxCommission || 0); 
+    } else {
+      setCommission(selectedCategory?.commissionRate || 0);
+    }
 
     if (selectedOptions && selectedOptions.length) {
       const newSubSubCats = selectedOptions.flatMap((subCategory) =>
@@ -337,10 +350,17 @@ console.log(category);
 
   const handleSubSubCategoryChange = (selectedOptions) => {
     setSelectedSubSubCategories(selectedOptions);
-    const maxCommission = Math.max(
-      ...selectedOptions.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
-    );
-    setCommission(maxCommission || 0);
+    if (selectedOptions.length > 0) {
+      const maxCommission = Math.max(
+        ...selectedOptions.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
+      );
+      setCommission(maxCommission || 0);
+    } else {
+      const fallbackCommission = Math.max(
+        ...selectedSubCategories.map(sub_category => parseFloat(sub_category.commissionRate))
+      );
+      setCommission(fallbackCommission || 0);
+    }
   };
 
   useEffect(() => {
@@ -593,6 +613,8 @@ console.log(category);
       if (discountPrice) {
         formData.append('discountPrice', discountPrice);
       }
+      formData.append('finalPrice', finalPrice);
+      formData.append('commissionRate', commission);
       formData.append('stock', stock);
       formData.append('metaDescription', metaDesc);
       formData.append('metaKeywords', metaKeywords);
@@ -1472,11 +1494,7 @@ console.log(category);
                         </div>
                         <div className="commission">
                           <p className="price">
-                            {
-                              discountPrice
-                                ? Number(discountPrice) + (Number(discountPrice) * commission / 100)
-                                : Number(price) + (Number(price) * commission / 100)
-                            }
+                           {finalPrice}
                           </p>
                         </div>
                       </div>

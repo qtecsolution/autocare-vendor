@@ -87,6 +87,7 @@ function AddProductPage() {
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [commission,setCommission] = useState(0);
+  const [finalPrice,setFinalPrice] = useState(0);
 
   const handleBrandChange = (selectedOptions) => {
     setSelectedCompatibleBrands(selectedOptions);
@@ -152,6 +153,15 @@ function AddProductPage() {
       };
     }
   };
+
+  useEffect(() => {
+    const calculatedFinalPrice =
+      discountPrice
+        ? Number(discountPrice) + (Number(discountPrice) * commission / 100)
+        : Number(price) + (Number(price) * commission / 100)
+    setFinalPrice(calculatedFinalPrice);
+    
+  }, [discountPrice,price,commission]);
 
   useEffect(() => {
     if (thumbnail) {
@@ -246,10 +256,14 @@ function AddProductPage() {
   const handleSubCategoryChange = (selectedOptions) => {
     setSelectedSubCategories(selectedOptions);
   
-    const maxCommission = Math.max(
-      ...selectedOptions.map(sub_category => parseFloat(sub_category.commissionRate))
-    );
-    setCommission(maxCommission || 0);
+    if (selectedOptions.length > 0) {
+      const maxCommission = Math.max(
+        ...selectedOptions.map(sub_category => parseFloat(sub_category.commissionRate))
+      );
+      setCommission(maxCommission || 0); 
+    } else {
+      setCommission(selectedCategory?.commissionRate || 0);
+    }
 
     if (selectedOptions && selectedOptions.length) {
       const newSubSubCats = selectedOptions.flatMap((subCategory) =>
@@ -274,10 +288,17 @@ function AddProductPage() {
   const handleSubSubCategoryChange = (selectedOptions) => {
     setSelectedSubSubCategories(selectedOptions);
     
-    const maxCommission = Math.max(
-      ...selectedOptions.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
-    );
-    setCommission(maxCommission || 0);
+    if (selectedOptions.length > 0) {
+      const maxCommission = Math.max(
+        ...selectedOptions.map(sub_sub_category => parseFloat(sub_sub_category.commissionRate))
+      );
+      setCommission(maxCommission || 0);
+    } else {
+      const fallbackCommission = Math.max(
+        ...selectedSubCategories.map(sub_category => parseFloat(sub_category.commissionRate))
+      );
+      setCommission(fallbackCommission || 0);
+    }
   };  
 
   const weightUnits = [
@@ -480,6 +501,8 @@ function AddProductPage() {
       if (discountPrice) {
         formData.append('discountPrice', discountPrice);
       }
+      formData.append('finalPrice', finalPrice);
+      formData.append('commissionRate', commission);
       formData.append('stock', stock);
       formData.append('metaDescription', metaDesc);
       formData.append('metaKeywords', metaKeywords);
@@ -1306,11 +1329,7 @@ function AddProductPage() {
                         </div>
                         <div className="commission">
                           <p className="price">
-                            {
-                              discountPrice
-                                ? Number(discountPrice) + (Number(discountPrice) * commission / 100)
-                                : Number(price) + (Number(price) * commission / 100)
-                            }
+                            {finalPrice}
                           </p>
                         </div>
                       </div>
