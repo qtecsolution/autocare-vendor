@@ -158,6 +158,16 @@ export default function Settings() {
     setTimeSlots(updatedTimeSlots);
   };
 
+  const getAvailableSlotOptions = (selectedIndex) => {
+    const selectedSlots = timeSlots
+      .filter((slot, index) => index !== selectedIndex)
+      .map((slot) => slot.slot);
+  
+    return time_slot_options.filter(
+      (option) => !selectedSlots.includes(option.value)
+    );
+  };
+
   const getLocation = (e) => {
     e.preventDefault();
     if (navigator.geolocation) {
@@ -536,7 +546,6 @@ export default function Settings() {
           formData
         );
         localStorage.setItem("seller", JSON.stringify(response.data.seller));
-        console.log(response.data.seller);
 
         router.refresh();
         closeConfirmModal1();
@@ -558,6 +567,14 @@ export default function Settings() {
       }
     }
   };
+
+  const slotPeriods = {
+    1: "Morning",
+    2: "Noon",
+    3: "Afternoon",
+    4: "Evening",
+  };
+
   const isValidateBussinessFields = () => {
     setErrors({});
     let tempErrors = {};
@@ -587,6 +604,21 @@ export default function Settings() {
     if (!tinBinFile && !sellerInfo?.store) {
       tempErrors.tin_bin_file = "TIN/BIN file is required";
     }
+
+    timeSlots.forEach((slot, index) => {
+      const period = slotPeriods[slot.slot]; 
+      if (!slot.openingTime.trim()) {
+        tempErrors[
+          `timeSlot_${slot.slot}_openingTime`
+        ] = `${period} slot: Opening time is required.`;
+      }
+      if (!slot.closingTime.trim()) {
+        tempErrors[
+          `timeSlot_${slot.slot}_closingTime`
+        ] = `${period} slot: Closing time is required.`;
+      }
+    });
+
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
@@ -626,9 +658,6 @@ export default function Settings() {
           },
         }
       );
-      console.log(tinBinFile);
-      console.log(tradeLicenseFile);
-      console.log(response);
 
       localStorage.setItem("seller", JSON.stringify(response.data.seller));
       closeConfirmModal2();
@@ -962,7 +991,7 @@ export default function Settings() {
                                 </div>
                               </div>
                             </div>
-                            {!sellerInfo?._verified && (
+                            {!sellerInfo?.seller_verification?.is_verified && (
                               <Link
                                 href={{
                                   pathname: "/identity-verify",
@@ -1184,7 +1213,7 @@ export default function Settings() {
                                               selectedOption.value
                                             )
                                           }
-                                          options={time_slot_options}
+                                          options={getAvailableSlotOptions(index)}
                                           placeholder="Select"
                                           className="time_slot"
                                         />
@@ -1215,6 +1244,17 @@ export default function Settings() {
                                             required
                                           />
                                         </div>
+                                        {errors[
+                                          `timeSlot_${slot.slot}_openingTime`
+                                        ] && (
+                                          <span className="text-danger">
+                                            {
+                                              errors[
+                                                `timeSlot_${slot.slot}_openingTime`
+                                              ]
+                                            }
+                                          </span>
+                                        )}
                                       </div>
                                     </div>
                                     <div className="col-4">
@@ -1242,6 +1282,17 @@ export default function Settings() {
                                             required
                                           />
                                         </div>
+                                        {errors[
+                                          `timeSlot_${slot.slot}_closingTime`
+                                        ] && (
+                                          <span className="text-danger">
+                                            {
+                                              errors[
+                                                `timeSlot_${slot.slot}_closingTime`
+                                              ]
+                                            }
+                                          </span>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
