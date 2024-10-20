@@ -79,7 +79,41 @@ export default function Settings() {
     sellerInfo?.store?.store_verification?.bin_certificate;
   const tradeLicenceUrl = sellerInfo?.store?.store_verification?.trade_licence;
 
-  // Determine file types based on extension
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get('from');
+    if (fromParam === 'garage-shop-setup') {
+      setTimeout(() => {
+        if (window.bootstrap) {
+          const descriptionTab = document.getElementById('description-tab');
+          if (descriptionTab) {
+            const tabTrigger = new window.bootstrap.Tab(descriptionTab);
+            tabTrigger.show();
+          }
+        } else {
+          console.error('Bootstrap is not available on window. Make sure it is loaded.');
+        }
+      }, 100);
+    }
+  }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get('from');
+    if (fromParam === 'billing-info-setup') {
+      setTimeout(() => {
+        if (window.bootstrap) {
+          const billInfoTab = document.getElementById('bankInformation-tab');
+          if (billInfoTab) {
+            const tabTrigger = new window.bootstrap.Tab(billInfoTab);
+            tabTrigger.show();
+          }
+        } else {
+          console.error('Bootstrap is not available on window. Make sure it is loaded.');
+        }
+      }, 100);
+    }
+  }, []);
+  
   useEffect(() => {
     const getFileType = (url, setType) => {
       const extension = url?.split(".").pop();

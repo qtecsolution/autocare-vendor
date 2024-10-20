@@ -4,7 +4,7 @@ import React from 'react';
 import Badge from './Badge';
 import BadgesPage from './BadgesPage';
 async function getMyBadges() {
-  const response = await axiosInstance.get('seller-panel-api/seller-badges/');
+  const response = await axiosInstance.get('/seller-panel-api/store-earned-badges-history/');
   return response.data;
 }
 const BadgeColor = [
@@ -21,6 +21,8 @@ const BadgeColor = [
 ];
 export default async function page() {
   const badges = await getMyBadges();
+  console.log(badges,'B');
+  
   return (
     <BadgesPage badges={badges} BadgeColor={BadgeColor}/>
   );
