@@ -194,7 +194,7 @@ function ManufacturerPage({ allManufacturer, pageProps, calculatedTotalPages }) 
                 <section className="pagination-section">
                     <div className="pagination-section-inner">
                         <div className="left">
-                            <p className="text">Showing 1 to 10 of 23 entries</p>
+                            {/* <p className="text">Showing 1 to 10 of 23 entries</p> */}
                         </div>
                         <div className="right">
                             <Pagination

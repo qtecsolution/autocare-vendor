@@ -100,7 +100,8 @@ function BankInfoPage() {
           />
         ));
         router.refresh();
-        setStep(3);
+        getBankDetails();
+        setStep(1);
 
         setAccountHolderName('');
         setAccountNumber('');
