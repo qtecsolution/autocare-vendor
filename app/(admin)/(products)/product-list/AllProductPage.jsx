@@ -256,13 +256,13 @@ function AllProductPage({ allProducts, pageProps, calculatedTotalPages }) {
 
                                                     <td class="text-center">
                                                         <p class="pice-text">
-                                                            50
+                                                        {product?.total_sold_count}
                                                         </p>
                                                     </td>
 
                                                     <td class="text-center">
                                                         <p class="pice-text ">
-                                                            50
+                                                        {product?.total_wishlist_count}
                                                         </p>
                                                     </td>
 

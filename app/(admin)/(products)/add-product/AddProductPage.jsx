@@ -111,6 +111,8 @@ function AddProductPage() {
   const [isWarrantyActive, setIsWarrantyActive] = useState(false);
   const [mainDescEN, setMainDescEN] = useState('');
   const [mainDescBN, setMainDescBN] = useState('');
+  const [compatabilityEn, setCompatabilityEn] = useState('');
+  const [compatabilityBn, setCompatabilityBn] = useState('');
   const [specificationEN, setSpecificationEN] = useState('');
   const [specificationBN, setSpecificationBN] = useState('');
 
@@ -489,6 +491,8 @@ function AddProductPage() {
       formData.append('youtubeLink', youtubeLink);
       formData.append('descriptionEn', mainDescEN);
       formData.append('descriptionBn', mainDescBN);
+      formData.append('compatabilityEn', compatabilityEn);
+      formData.append('compatabilityBn', compatabilityBn);
       formData.append('specificationEn', specificationEN);
       formData.append('specificationBn', specificationBN);
 
@@ -556,6 +560,8 @@ function AddProductPage() {
         setIsWarrantyActive(false);
         setMainDescEN('');
         setMainDescBN('');
+        setCompatabilityEn('');
+        setCompatabilityBn('');
         setSpecificationEN('');
         setSpecificationBN('');
         setImages([]);
@@ -1149,6 +1155,28 @@ function AddProductPage() {
                     <CustomCKEditor
                       content={mainDescBN}
                       onContentChange={setMainDescBN} />
+                  </div>
+
+                </div>
+                <div className="main-description">
+                  <label for="" className="main-description-label">
+                  Compatability English
+                  </label>
+                  <div className="editor-container">
+                    <CustomCKEditor
+                      content={compatabilityEn}
+                      onContentChange={setCompatabilityEn} />
+                  </div>
+                </div>
+
+                <div className="main-description">
+                  <label for="" className="main-description-label">
+                  Compatability Bangla
+                  </label>
+                  <div className="editor-container">
+                    <CustomCKEditor
+                      content={compatabilityBn}
+                      onContentChange={setCompatabilityBn} />
                   </div>
 
                 </div>

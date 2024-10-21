@@ -1,46 +1,57 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast';
-import AlertToast from '@/components/toast/AlertToast';
-import SuccessToast from '@/components/toast/Success';
-import axiosInstance from '@/lib/axiosInstance';
-import { useRouter } from 'next/navigation';
-import { getAuthUser } from '@/utils/auth';
+"use client";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import AlertToast from "@/components/toast/AlertToast";
+import SuccessToast from "@/components/toast/Success";
+import axiosInstance from "@/lib/axiosInstance";
+import { useRouter } from "next/navigation";
+import { getAuthUser } from "@/utils/auth";
 
 function EditVariantPage({ productID, variantID }) {
-
   const router = useRouter();
   const initialErrors = {
-    sku: '',
-    price: '',
+    sku: "",
+    price: "",
   };
   const [errors, setErrors] = useState(initialErrors);
-  const [sku, setSku] = useState('');
-  const [price, setPrice] = useState('');
-  const [discountPrice, setDiscountPrice] = useState('');
+  const [sku, setSku] = useState("");
+  const [price, setPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
+  const [commission, setCommission] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
   const [image, setImage] = useState(null);
-  const [stock, setStock] = useState('');
+  const [stock, setStock] = useState("");
   const [isDefaultVariant, setIsDefaultVariant] = useState(false);
 
-  const [variantDetails, setVariantDetails] = useState(''); // for loading state
+  const [variantDetails, setVariantDetails] = useState(""); // for loading state
 
   const sellerInfo = getAuthUser();
   useEffect(() => {
     const businessType = sellerInfo?.business_type?.name;
     if (businessType === "Service") {
-      router.push('/');
+      router.push("/");
     }
   }, [sellerInfo, router]);
 
+  useEffect(() => {
+    const calculatedFinalPrice = discountPrice
+      ? Number(discountPrice) + (Number(discountPrice) * commission) / 100
+      : Number(price) + (Number(price) * commission) / 100;
+    setFinalPrice(calculatedFinalPrice);
+  }, [discountPrice, price, commission]);
+
   const getVariantDetails = async () => {
     try {
-      const response = await axiosInstance.get(`/seller-panel-api/frontend/product-variant/${variantID}/get-variant-details/`);
+      const response = await axiosInstance.get(
+        `/seller-panel-api/frontend/product-variant/${variantID}/get-variant-details/`
+      );
       setVariantDetails(response.data);
-
-      setSku(response.data?.sku || '');
-      setPrice(response.data?.price || '');
-      setDiscountPrice(response.data?.discount_price || '');
-      setStock(response.data?.stock || '');
+      console.log(response, "res");
+      setCommission(response.data?.product?.commission_rate);
+      setSku(response.data?.sku || "");
+      setPrice(response.data?.price || "");
+      setDiscountPrice(response.data?.discount_price || "");
+      setStock(response.data?.stock || "");
       setIsDefaultVariant(response.data?.is_default_variant || false);
     } catch (error) {
       console.log("Error fetching variant details", error);
@@ -76,12 +87,11 @@ function EditVariantPage({ productID, variantID }) {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!sku) newErrors.sku = 'SKU is required';
-    if (!price) newErrors.price = 'Price is required';
+    if (!sku) newErrors.sku = "SKU is required";
+    if (!price) newErrors.price = "Price is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-
   };
 
   const handleSubmit = async (e) => {
@@ -89,21 +99,26 @@ function EditVariantPage({ productID, variantID }) {
     const isValid = validateForm();
     if (isValid) {
       const formData = new FormData();
-      formData.append('sku', sku);
-      formData.append('price', price);
+      formData.append("sku", sku);
+      formData.append("price", price);
+      formData.append('finalPrice', finalPrice);
       if (discountPrice) {
-        formData.append('discountPrice', discountPrice);
+        formData.append("discountPrice", discountPrice);
       }
-      formData.append('image', image);
-      formData.append('stock', stock);
-      formData.append('isDefaultVariant', isDefaultVariant);
+      formData.append("image", image);
+      formData.append("stock", stock);
+      formData.append("isDefaultVariant", isDefaultVariant);
 
       try {
-        const response = await axiosInstance.put(`/seller-panel-api/frontend/product-variant/${variantID}/update-variant/`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
+        const response = await axiosInstance.put(
+          `/seller-panel-api/frontend/product-variant/${variantID}/update-variant/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
           }
-        });
+        );
         toast.custom((t) => (
           <SuccessToast
             message={response.data.message}
@@ -111,109 +126,195 @@ function EditVariantPage({ productID, variantID }) {
           />
         ));
         router.refresh();
-        router.push(`/product-list/generate-variant/${productID}`)
+        router.push(`/product-list/generate-variant/${productID}`);
       } catch (error) {
         console.log(error);
         toast.custom((t) => (
           <AlertToast
-            message={error?.response?.data?.message || 'Something Wrong !'}
+            message={error?.response?.data?.message || "Something Wrong !"}
             dismiss={() => toast.dismiss(t.id)}
           />
         ));
       }
     }
-
-  }
+  };
   return (
     <div id="content">
-      <div class="d-flex flex-column h-100">
-        <div class="flex-grow-1">
-          <div class="inner-content">
-            <section class="variant-section">
-              <div class="variant-section-inner">
-                <div class="row g-4">
-                  <div class="col-12">
-                    <div class="variant-input-inner">
-                      <div class="variant-label">
-                        <p class="text">Product <span class="text-danger">*</span></p>
+      <div className="d-flex flex-column h-100">
+        <div className="flex-grow-1">
+          <div className="inner-content">
+            <section className="variant-section">
+              <div className="variant-section-inner">
+                <div className="row g-4">
+                  <div className="col-12">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">
+                          Product <span className="text-danger">*</span>
+                        </p>
                       </div>
 
-                      <div class="variant-input">
-                        <input type="text" name="" class="bg-light" id="" value={variantDetails?.product?.name} readOnly />
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <div class="variant-input-inner">
-                      <div class="variant-label">
-                        <p class="text">SKU <span class="text-danger">*</span></p>
-                      </div>
-
-                      <div class="variant-input">
-                        <input type="text" name="" id="" placeholder="Enter here" value={sku} onChange={(e) => setSku(e.target.value)} />
-                      </div>
-                    </div>
-                    {errors.sku && <div className="error-message text-danger"><small>{errors.sku}</small></div>}
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="variant-input-inner">
-                      <div class="variant-label">
-                        <p class="text">Price <span class="text-danger">*</span></p>
-                      </div>
-
-                      <div class="variant-input">
-                        <input type="text" name="" id="" placeholder="Enter here" value={price} onChange={(e) => setPrice(e.target.value)} />
-                      </div>
-                    </div>
-                    {errors.price && <div className="error-message text-danger"><small>{errors.price}</small></div>}
-                  </div>
-                  <div class="col-md-6">
-                    <div class="variant-input-inner">
-                      <div class="variant-label">
-                        <p class="text">Discount Price</p>
-                      </div>
-
-                      <div class="variant-input">
-                        <input type="text" name="" id="" placeholder="Enter here" value={discountPrice} onChange={(e) => setDiscountPrice(e.target.value)} />
+                      <div className="variant-input">
+                        <input
+                          type="text"
+                          name=""
+                          className="bg-light"
+                          id=""
+                          value={variantDetails?.product?.name}
+                          readOnly
+                        />
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-12">
-                    <div class="variant-input-inner">
-                      <div class="variant-label">
-                        <p class="text">Image</p>
+                  <div className="col-12">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">
+                          SKU <span className="text-danger">*</span>
+                        </p>
                       </div>
 
-                      <div class="">
-                        <input class="form-control custom-file-input" type="file" id="formFile" accept=".png,.jpg,.jpeg" onChange={handleImageChange} />
+                      <div className="variant-input">
+                        <input
+                          type="text"
+                          name=""
+                          id=""
+                          placeholder="Enter here"
+                          value={sku}
+                          onChange={(e) => setSku(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    {errors.sku && (
+                      <div className="error-message text-danger">
+                        <small>{errors.sku}</small>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="col-md-4">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">
+                          Price <span className="text-danger">*</span>
+                        </p>
                       </div>
 
+                      <div className="variant-input">
+                        <input
+                          type="number"
+                          name=""
+                          id=""
+                          placeholder="Enter here"
+                          min={0}
+                          value={price}
+                          onChange={(e) => setPrice(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    {errors.price && (
+                      <div className="error-message text-danger">
+                        <small>{errors.price}</small>
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-4">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">Discount Price</p>
+                      </div>
+
+                      <div className="variant-input">
+                        <input
+                          type="number"
+                          name=""
+                          id=""
+                          placeholder="Enter here"
+                          min={0}
+                          value={discountPrice}
+                          onChange={(e) => setDiscountPrice(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">Final Price</p>
+                      </div>
+
+                      <div className="variant-input">
+                        <input
+                          type="number"
+                          className="bg-light"
+                          name=""
+                          id=""
+                          value={finalPrice}
+                          readOnly
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div class="col-12">
-                    <div class="variant-input-inner">
-                      <div class="variant-label">
-                        <p class="text">Stock</p>
+                  <div className="col-12">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">Image</p>
                       </div>
 
-                      <div class="variant-input">
-                        <input type="number" min={0} name="" id="" placeholder="Enter here" value={stock} onChange={(e) => setStock(e.target.value)} />
+                      <div className="">
+                        <input
+                          className="form-control custom-file-input"
+                          type="file"
+                          id="formFile"
+                          accept=".png,.jpg,.jpeg"
+                          onChange={handleImageChange}
+                        />
                       </div>
                     </div>
                   </div>
 
-                  <div class="col-12">
-                    <div class="checkbox-inner">
-                      <input class="box-checkbox" type="checkbox" id="checkbox4" value={isDefaultVariant} onClick={() => setIsDefaultVariant(!isDefaultVariant)} checked={isDefaultVariant} />
-                      <label for="checkbox4" tabindex="4" class="text">Is default variant</label>
+                  <div className="col-12">
+                    <div className="variant-input-inner">
+                      <div className="variant-label">
+                        <p className="text">Stock</p>
+                      </div>
+
+                      <div className="variant-input">
+                        <input
+                          type="number"
+                          min={0}
+                          name=""
+                          id=""
+                          placeholder="Enter here"
+                          value={stock}
+                          onChange={(e) => setStock(e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  <div class="col-12">
-                    <button onClick={handleSubmit} class="primary-button px-md-5 rounded-3">
+                  <div className="col-12">
+                    <div className="checkbox-inner">
+                      <input
+                        className="box-checkbox"
+                        type="checkbox"
+                        id="checkbox4"
+                        value={isDefaultVariant}
+                        onClick={() => setIsDefaultVariant(!isDefaultVariant)}
+                        checked={isDefaultVariant}
+                      />
+                      <label for="checkbox4" tabindex="4" className="text">
+                        Is default variant
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="col-12">
+                    <button
+                      onClick={handleSubmit}
+                      className="primary-button px-md-5 rounded-3"
+                    >
                       Update
                     </button>
                   </div>
@@ -224,7 +325,7 @@ function EditVariantPage({ productID, variantID }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default EditVariantPage
+export default EditVariantPage;

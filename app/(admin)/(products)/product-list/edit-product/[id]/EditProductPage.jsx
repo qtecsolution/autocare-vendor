@@ -92,12 +92,15 @@ function EditProductPage({ productDetails }) {
     setSelectedTags(selectedOptions);
   };
 
+console.log(productDetails);
 
   const [isPartNumberActive, setIsPartNumberActive] = useState(productDetails?.product?.is_part_number_active);
   const [isManufacturerActive, setIsManufacturerActive] = useState(productDetails?.product?.is_manufacturer_active);
   const [isWarrantyActive, setIsWarrantyActive] = useState(productDetails?.product?.is_warranty_active);
   const [mainDescEN, setMainDescEN] = useState(productDetails?.product?.description_en);
   const [mainDescBN, setMainDescBN] = useState(productDetails?.product?.description_bn);
+  const [compatabilityEn, setCompatabilityEn] = useState(productDetails?.product?.compatability_en);
+  const [compatabilityBn, setCompatabilityBn] = useState(productDetails?.product?.compatability_bn);
   const [specificationEN, setSpecificationEN] = useState(productDetails?.product?.specification_en);
   const [specificationBN, setSpecificationBN] = useState(productDetails?.product?.specification_bn);
 
@@ -601,6 +604,8 @@ function EditProductPage({ productDetails }) {
       formData.append('youtubeLink', youtubeLink);
       formData.append('descriptionEn', mainDescEN);
       formData.append('descriptionBn', mainDescBN);
+      formData.append('compatabilityEn', compatabilityEn);
+      formData.append('compatabilityBn', compatabilityBn);
       formData.append('specificationEn', specificationEN);
       formData.append('specificationBn', specificationBN);
 
@@ -668,6 +673,8 @@ function EditProductPage({ productDetails }) {
         setIsWarrantyActive(false);
         setMainDescEN('');
         setMainDescBN('');
+        setCompatabilityEn('');
+        setCompatabilityBn('');
         setSpecificationEN('');
         setSpecificationBN('');
         setImages([]);
@@ -1314,6 +1321,29 @@ function EditProductPage({ productDetails }) {
                     <CustomCKEditor
                       content={mainDescBN}
                       onContentChange={setMainDescBN} />
+                  </div>
+
+                </div>
+
+                <div className="main-description">
+                  <label for="" className="main-description-label">
+                  Compatability English
+                  </label>
+                  <div className="editor-container">
+                    <CustomCKEditor
+                      content={compatabilityEn}
+                      onContentChange={setCompatabilityEn} />
+                  </div>
+                </div>
+
+                <div className="main-description">
+                  <label for="" className="main-description-label">
+                  Compatability Bangla
+                  </label>
+                  <div className="editor-container">
+                    <CustomCKEditor
+                      content={compatabilityBn}
+                      onContentChange={setCompatabilityBn} />
                   </div>
 
                 </div>
