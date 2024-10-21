@@ -59,7 +59,8 @@ export default function Settings() {
   const [mainImage, setMainImage] = useState(null);
   const [mainImagePreview, setMainImagePreview] = useState(null);
   const [tradeLicenseFile, setTradeLicenseFile] = useState(null);
-  const [tinBinFile, setTinBinFile] = useState(null);
+  const [tinFile, setTinFile] = useState(null);
+  const [binFile, setBinFile] = useState(null);
 
   const sellerInfo = getAuthUser();
   console.log(
@@ -71,49 +72,56 @@ export default function Settings() {
   const [frontType, setFrontType] = useState("");
   const [backType, setBackType] = useState("");
   const [tinCType, setTinCType] = useState("");
+  const [binCType, setBinCType] = useState("");
   const [licenseCType, setLicenseCType] = useState("");
 
   const frontUrl = sellerInfo?.seller_verification?.front_part;
   const backUrl = sellerInfo?.seller_verification?.back_part;
+  const tinCirtificateUrl =
+    sellerInfo?.store?.store_verification?.tin_certificate;
   const binCirtificateUrl =
     sellerInfo?.store?.store_verification?.bin_certificate;
   const tradeLicenceUrl = sellerInfo?.store?.store_verification?.trade_licence;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const fromParam = params.get('from');
-    if (fromParam === 'garage-shop-setup') {
+    const fromParam = params.get("from");
+    if (fromParam === "garage-shop-setup") {
       setTimeout(() => {
         if (window.bootstrap) {
-          const descriptionTab = document.getElementById('description-tab');
+          const descriptionTab = document.getElementById("description-tab");
           if (descriptionTab) {
             const tabTrigger = new window.bootstrap.Tab(descriptionTab);
             tabTrigger.show();
           }
         } else {
-          console.error('Bootstrap is not available on window. Make sure it is loaded.');
+          console.error(
+            "Bootstrap is not available on window. Make sure it is loaded."
+          );
         }
       }, 100);
     }
   }, []);
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const fromParam = params.get('from');
-    if (fromParam === 'billing-info-setup') {
+    const fromParam = params.get("from");
+    if (fromParam === "billing-info-setup") {
       setTimeout(() => {
         if (window.bootstrap) {
-          const billInfoTab = document.getElementById('bankInformation-tab');
+          const billInfoTab = document.getElementById("bankInformation-tab");
           if (billInfoTab) {
             const tabTrigger = new window.bootstrap.Tab(billInfoTab);
             tabTrigger.show();
           }
         } else {
-          console.error('Bootstrap is not available on window. Make sure it is loaded.');
+          console.error(
+            "Bootstrap is not available on window. Make sure it is loaded."
+          );
         }
       }, 100);
     }
   }, []);
-  
+
   useEffect(() => {
     const getFileType = (url, setType) => {
       const extension = url?.split(".").pop();
@@ -121,9 +129,16 @@ export default function Settings() {
     };
     if (frontUrl) getFileType(frontUrl, setFrontType);
     if (backUrl) getFileType(backUrl, setBackType);
-    if (binCirtificateUrl) getFileType(binCirtificateUrl, setTinCType);
+    if (tinCirtificateUrl) getFileType(tinCirtificateUrl, setTinCType);
+    if (binCirtificateUrl) getFileType(binCirtificateUrl, setBinCType);
     if (tradeLicenceUrl) getFileType(tradeLicenceUrl, setLicenseCType);
-  }, [frontUrl, backUrl, binCirtificateUrl, tradeLicenceUrl]);
+  }, [
+    frontUrl,
+    backUrl,
+    tinCirtificateUrl,
+    binCirtificateUrl,
+    tradeLicenceUrl,
+  ]);
 
   const renderFile = (url, type) => {
     switch (type) {
@@ -157,8 +172,11 @@ export default function Settings() {
   const handleTradeLicenseFile = (e) => {
     setTradeLicenseFile(e.target.files[0]);
   };
-  const handleTinBinFile = (e) => {
-    setTinBinFile(e.target.files[0]);
+  const handleTinFile = (e) => {
+    setTinFile(e.target.files[0]);
+  };
+  const handleBinFile = (e) => {
+    setBinFile(e.target.files[0]);
   };
 
   const [location, setLocation] = useState({
@@ -196,7 +214,7 @@ export default function Settings() {
     const selectedSlots = timeSlots
       .filter((slot, index) => index !== selectedIndex)
       .map((slot) => slot.slot);
-  
+
     return time_slot_options.filter(
       (option) => !selectedSlots.includes(option.value)
     );
@@ -635,12 +653,12 @@ export default function Settings() {
     if (!tradeLicenseFile && !sellerInfo?.store) {
       tempErrors.trade_license = "Trade license file is required";
     }
-    if (!tinBinFile && !sellerInfo?.store) {
-      tempErrors.tin_bin_file = "TIN/BIN file is required";
+    if (!tinFile && !sellerInfo?.store) {
+      tempErrors.tin_file = "TIN file is required";
     }
 
     timeSlots.forEach((slot, index) => {
-      const period = slotPeriods[slot.slot]; 
+      const period = slotPeriods[slot.slot];
       if (!slot.openingTime.trim()) {
         tempErrors[
           `timeSlot_${slot.slot}_openingTime`
@@ -674,8 +692,11 @@ export default function Settings() {
       if (tradeLicenseFile) {
         formData.append("tradeLicence", tradeLicenseFile);
       }
-      if (tinBinFile) {
-        formData.append("binCertificate", tinBinFile);
+      if (tinFile) {
+        formData.append("tinCertificate", tinFile);
+      }
+      if (binFile) {
+        formData.append("binCertificate", binFile);
       }
       if (thumbnail) {
         formData.append("logo", thumbnail);
@@ -683,6 +704,7 @@ export default function Settings() {
       if (mainImage) {
         formData.append("bannerImage", mainImage);
       }
+
       const response = await axiosInstance.put(
         "/seller-panel-api/update-business/",
         formData,
@@ -1247,7 +1269,9 @@ export default function Settings() {
                                               selectedOption.value
                                             )
                                           }
-                                          options={getAvailableSlotOptions(index)}
+                                          options={getAvailableSlotOptions(
+                                            index
+                                          )}
                                           placeholder="Select"
                                           className="time_slot"
                                         />
@@ -1466,6 +1490,7 @@ export default function Settings() {
                                   </h1>
                                 </div>
                               </div>
+                              {tradeLicenseFile?.name}
                               {tradeLicenceUrl &&
                                 renderFile(tradeLicenceUrl, licenseCType)}
 
@@ -1504,9 +1529,7 @@ export default function Settings() {
                                   </div>
                                   <div className="">
                                     <p className="paragraph">
-                                      {tradeLicenseFile
-                                        ? tradeLicenseFile?.name
-                                        : "CSV, DOC, PDF, PNG & JPG"}
+                                      CSV, DOC, PDF, PNG & JPG
                                     </p>
                                     <p className="light-text">
                                       Please submit updated recent file
@@ -1526,27 +1549,28 @@ export default function Settings() {
                               <div className="product-img-head">
                                 <div className="d-flex align-items-center gap-1">
                                   <h1 className="title">
-                                    TIN Certificate / BIN Certificate{" "}
+                                    TIN Certificate{" "}
                                     <span className="text-danger">*</span>{" "}
                                   </h1>
                                 </div>
                               </div>
-                              {binCirtificateUrl &&
-                                renderFile(binCirtificateUrl, tinCType)}
+                              {tinFile?.name}
+                              {tinCirtificateUrl &&
+                                renderFile(tinCirtificateUrl, tinCType)}
                               {!sellerInfo?.store?.is_verified && (
                                 <div className="product-img-body">
                                   <div className="uplod-img">
                                     <div className="add-product-img-inner">
                                       <label
-                                        for="tinBin"
+                                        for="tinFile"
                                         className="add-product-img"
                                       >
                                         <input
                                           className="add-product-img-input"
                                           type="file"
-                                          id="tinBin"
+                                          id="tinFile"
                                           accept=".csv,.doc,.docx,.pdf,.png,.jpg,.jpeg"
-                                          onChange={handleTinBinFile}
+                                          onChange={handleTinFile}
                                         />
                                         <svg
                                           xmlns="http://www.w3.org/2000/svg"
@@ -1568,9 +1592,7 @@ export default function Settings() {
                                   </div>
                                   <div className="">
                                     <p className="paragraph">
-                                      {tinBinFile
-                                        ? tinBinFile?.name
-                                        : "CSV, DOC, PDF, PNG & JPG"}
+                                      CSV, DOC, PDF, PNG & JPG
                                     </p>
                                     <p className="light-text">
                                       Please submit updated recent file
@@ -1580,11 +1602,66 @@ export default function Settings() {
                               )}
                             </div>
                           </div>
-                          {errors.tin_bin_file && (
+                          {errors.tin_file && (
                             <span className="text-danger">
-                              {errors.tin_bin_file}
+                              {errors.tin_file}
                             </span>
                           )}
+                          <div className="col-12">
+                            <div className="product-image-section">
+                              <div className="product-img-head">
+                                <div className="d-flex align-items-center gap-1">
+                                  <h1 className="title">BIN Certificate </h1>
+                                </div>
+                              </div>
+                              {binFile?.name}
+                              {binCirtificateUrl &&
+                                renderFile(binCirtificateUrl, binCType)}
+                              {!sellerInfo?.store?.is_verified && (
+                                <div className="product-img-body">
+                                  <div className="uplod-img">
+                                    <div className="add-product-img-inner">
+                                      <label
+                                        for="binFile"
+                                        className="add-product-img"
+                                      >
+                                        <input
+                                          className="add-product-img-input"
+                                          type="file"
+                                          id="binFile"
+                                          accept=".csv,.doc,.docx,.pdf,.png,.jpg,.jpeg"
+                                          onChange={handleBinFile}
+                                        />
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="30"
+                                          height="30"
+                                          viewBox="0 0 30 30"
+                                          fill="none"
+                                        >
+                                          <path
+                                            d="M15 5.62451V24.3745M24.375 14.9995H5.625"
+                                            stroke="#0F766D"
+                                            stroke-width="1.875"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                          />
+                                        </svg>
+                                      </label>
+                                    </div>
+                                  </div>
+                                  <div className="">
+                                    <p className="paragraph">
+                                      CSV, DOC, PDF, PNG & JPG"
+                                    </p>
+                                    <p className="light-text">
+                                      Please submit updated recent file
+                                    </p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </>
 
                         <div className="col-12">
